@@ -197,3 +197,106 @@ Steps already tried:
 Current blocker:
 Relevant module/checklist item:
 Suggested next action:
+```
+
+---
+
+## Tone Requirements
+
+The chatbot should be:
+
+- Friendly.
+- Calm.
+- Plain-language.
+- Encouraging.
+- Nonjudgmental.
+- Practical.
+- Clear about limits.
+
+The chatbot should avoid:
+
+- Condescending language.
+- Overly technical explanations too early.
+- Shaming the student for not knowing something.
+- Acting like the student should already understand.
+- Giving long answers when a simple answer is enough.
+
+---
+
+## Home Screen Placement
+
+The home screen should include:
+
+- Start or continue onboarding.
+- Ask a question.
+- View my checklist.
+- Report I'm stuck.
+- Practice a scenario.
+
+Suggested text for the Ask a Question page:
+
+> Ask anything about your training, IT terms, beginner workflows, tickets, imaging, hardware checks, or escalation. It is okay if your question feels basic. This space is here to help you learn before you ask a mentor.
+
+---
+
+## Example Responses
+
+### Example 1: What is a domain?
+
+Student:
+
+> What is a domain?
+
+Assistant:
+
+> In this context, a domain is a managed environment the organization uses for accounts, computers, and access. It helps IT manage who can log in, what computers belong to the organization, and what resources people can use. You do not need to administer the domain as a new work-study student, but it helps to understand that it is part of how school/work computers are managed.
+
+### Example 2: What is SCCM?
+
+Student:
+
+> I feel dumb asking this, but what is SCCM?
+
+Assistant:
+
+> You are not dumb. SCCM is not something most people know before working in IT. SCCM, often now called Configuration Manager, is a tool IT departments use to manage computers, deploy software, run updates, and help with imaging. For your role, you mostly need to understand what it is used for and when to ask a mentor before touching imaging-related steps.
+
+### Example 3: Should I escalate?
+
+Student:
+
+> I got an imaging error I have not seen before. Should I keep going?
+
+Assistant:
+
+> No. This should be escalated. Stop where you are, write down the error message, note what step you were on, and ask your mentor or the IT tech on duty. Do not guess which option to pick during imaging.
+
+Suggested mentor message:
+
+> I am helping with imaging and received an unfamiliar error. I stopped before continuing. The error says: ____. I was on this step: ____. Can you confirm what I should do next?
+
+### Example 4: Ticket notes
+
+Student:
+
+> I replaced a keyboard and now it works. What should I write?
+
+Assistant:
+
+> You could write:
+
+> Checked keyboard issue at workstation. Verified the connection. Tested with a known-working keyboard and confirmed the replacement worked. Moved the original keyboard to the workbench for review.
+
+---
+
+## Success Criteria
+
+The chatbot is successful if it:
+
+- Reduces repeated beginner questions.
+- Helps students feel less embarrassed asking for help.
+- Improves ticket notes and escalation summaries.
+- Encourages safe beginner behavior.
+- Helps students learn terminology faster.
+- Sends students to mentors when human approval is needed.
+- Makes onboarding feel more supportive and less confusing.
