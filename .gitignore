@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Databases / generated files
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.sqlite
+logs/
+exports/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Cache
+.cache/
