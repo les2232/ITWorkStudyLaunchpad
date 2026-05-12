@@ -505,20 +505,36 @@ Recommended Path:
 
 ## Knowledge Gaps
 
-- TODO
+- Low IT vocabulary:
+- Low beginner troubleshooting:
+- Low workflow and escalation:
+- Low confidence:
+- No prior IT experience:
 
 ## Strengths
 
-- TODO
+- Prior technology exposure:
+- Customer service or communication strengths:
+- Strong confidence areas:
+- Strong scenario responses:
 
 ## Confidence Notes
 
-- TODO
+- Student concerns:
+- Topics the student feels comfortable with:
+- Questions to revisit during first mentor check-in:
 
 ## Mentor Recommendation
 
-- TODO
+- Recommended starting path:
+- Modules to prioritize:
+- Shadowing focus:
+- First-week support plan:
 
 ## Suggested First Shadowing Focus
 
-- TODO
+- Vocabulary support:
+- Hardware observation:
+- Imaging observation:
+- Ticket/work-order observation:
+- Asking-for-help practice:

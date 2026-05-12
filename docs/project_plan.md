@@ -135,7 +135,7 @@ Create a clean repository structure and baseline documentation.
 
 ### Status
 
-In progress.
+Complete.
 
 ---
 
@@ -153,6 +153,10 @@ Create a pre-assessment and post-assessment that measure student knowledge, conf
 - Readiness levels
 - Training path recommendation logic
 - Pre/post growth report template
+
+### Status
+
+In progress. The pre-assessment and post-assessment drafts exist. The next refinement is turning scoring and growth reporting into app-ready data structures.
 
 ### Pre-Assessment Categories
 
@@ -182,6 +186,10 @@ Define what training path each student receives after the pre-assessment.
 ### Deliverable
 
 - `docs/training_paths.md`
+
+### Status
+
+Draft complete.
 
 ### Training Paths
 
@@ -214,9 +222,14 @@ Create beginner-friendly modules for students with little or no IT background.
 - `content/modules/configuration_manager_overview.md`
 - `content/modules/imaging_overview.md`
 - `content/modules/ticket_basics.md`
+- `content/modules/asset_tag_basics.md`
 - `content/modules/hardware_basics.md`
 - `content/modules/how_to_ask_for_help.md`
 - `content/modules/escalation_rules.md`
+
+### Status
+
+Initial module set complete. Next refinement should focus on scenario practice, mentor review prompts, and consistency passes.
 
 ### Module Format
 
@@ -242,6 +255,10 @@ Create Day 1 and Week 1 onboarding checklists.
 
 - `content/checklists/day_1_checklist.md`
 - `content/checklists/week_1_checklist.md`
+
+### Status
+
+Initial checklist drafts complete.
 
 ### Day 1 Checklist Should Include
 
@@ -287,6 +304,10 @@ Define how the chatbot should support students safely.
 - `docs/escalation_policy.md`
 - `docs/assistant_behavior.md`
 - `content/glossary/it_terms.md`
+
+### Status
+
+In progress. Chatbot requirements exist. Escalation policy, assistant behavior guidance, and glossary remain to be separated into dedicated files.
 
 ### Chatbot Should Help With
 
@@ -349,12 +370,16 @@ Add simple scripts to keep content consistent as the project grows.
 - `scripts/validate_content.py`
 - `scripts/check_all.py`
 
+### Status
+
+In progress.
+
 ### Validation Should Check
 
 - Required headings exist in modules
 - Assessments include answers and explanations
 - Checklists include clear items
-- No unresolved TODOs in release-ready files
+- No unresolved placeholder markers in release-ready files
 - No sensitive placeholders are accidentally included
 
 ---

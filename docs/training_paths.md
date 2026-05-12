@@ -49,7 +49,7 @@ Help the student build basic IT vocabulary and confidence before expecting them 
 5. What Is SCCM / Configuration Manager?
 6. What Is Computer Imaging?
 7. What Is a Ticket?
-8. What Is an Asset Tag?
+8. Asset Tag Basics
 9. Hardware Basics
 10. How to Ask for Help
 11. Escalation Rules
@@ -95,7 +95,7 @@ Help the student connect basic computer knowledge to real IT support workflows.
 2. Common IT Words Review
 3. Hardware Basics
 4. Imaging Overview
-5. Ticket Notes Basics
+5. Ticket Basics
 6. Escalation Rules
 7. How to Ask for Help
 8. Shadowing
@@ -138,7 +138,7 @@ Get the student into shadowing quickly while still covering required expectation
 2. Department Expectations
 3. Confidentiality Basics
 4. Imaging Overview
-5. Ticket Notes Basics
+5. Ticket Basics
 6. Escalation Rules
 7. Shadowing
 8. Scenario Practice

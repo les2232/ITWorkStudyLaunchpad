@@ -25,4 +25,28 @@ The first version focuses on:
 
 ## Current Status
 
-Initial project setup.
+Content foundation in progress.
+
+Completed foundation pieces:
+
+- Project plan and chatbot behavior requirements
+- Pre-assessment v1 and post-assessment v1
+- Adaptive training paths
+- Day 1 and Week 1 onboarding checklists
+- Beginner IT foundation modules
+- Content validation script
+
+Not started yet:
+
+- Web app prototype
+- Student progress tracking
+- Supervisor dashboard
+- Chatbot implementation
+
+## Validate Content
+
+Run:
+
+```bash
+python3 scripts/check_all.py
+```
