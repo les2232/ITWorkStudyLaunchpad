@@ -12,7 +12,7 @@ The training paths should help students:
 - Understand common IT workflows
 - Learn what tasks are beginner-safe
 - Know when to ask for help
-- Practice documentation and ticket notes
+- Practice documentation and draft ticket notes
 - Prepare for shadowing and beginner tasks
 
 ---
@@ -116,7 +116,7 @@ The student should be able to:
 
 - Complete basic onboarding tasks
 - Understand common workflow terms
-- Write simple ticket notes
+- Draft simple ticket notes for mentor review
 - Perform beginner-safe checks
 - Escalate when unsure
 
@@ -201,7 +201,7 @@ The student should be able to:
 
 - Complete required onboarding
 - Explain beginner-safe task boundaries
-- Write clear notes
+- Write clear draft notes and mentor summaries
 - Ask for help when local workflow is unclear
 - Complete scenario practice successfully
 

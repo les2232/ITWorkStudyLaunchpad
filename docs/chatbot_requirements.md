@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The chatbot gives IT work-study students a safe, private place to ask beginner questions, clarify confusing IT concepts, understand workflows, and prepare better questions for mentors.
+The chatbot gives IT work-study students a safe, low-pressure place to ask beginner questions, clarify confusing IT concepts, understand workflows, and prepare better questions for mentors.
 
 It is especially useful for students who are new to IT and may feel embarrassed asking basic questions out loud.
 
@@ -33,7 +33,7 @@ New IT work-study students may ask:
 - What is a ticket?
 - What is an asset tag?
 - What should I do if I am stuck?
-- How do I write ticket notes?
+- How do I draft a ticket note or mentor summary?
 - When should I escalate?
 - What should I check first for a monitor issue?
 - I feel dumb asking this. How do I ask my mentor?
@@ -68,13 +68,14 @@ The chatbot should:
 
 ### 3. Help Me Write This
 
-Used when a student needs a ticket note or mentor message.
+Used when a student needs a draft ticket note or mentor message.
 
 The chatbot should:
 
 - Generate a concise draft.
 - Include the issue, steps tried, result, and what help is needed.
 - Avoid saying something is complete if the student is unsure.
+- Remind newer students not to enter or update tickets/work orders until they are trained and authorized.
 
 ### 4. Should I Escalate?
 
@@ -130,6 +131,7 @@ The chatbot must not:
 - Replace mentor or supervisor judgment.
 - Give HR, payroll, legal, benefits, or disciplinary advice.
 - Tell students to delete user data or system files without an approved procedure.
+- Tell students to create, edit, close, or update tickets/work orders until they are trained and authorized.
 - Tell students to continue when they are unsure about imaging, accounts, permissions, or sensitive data.
 
 The chatbot should:
@@ -151,7 +153,7 @@ The chatbot may guide students through beginner-safe checks such as:
 - Check monitor input/source.
 - Check keyboard or mouse connection.
 - Swap a basic peripheral if allowed.
-- Restart a device if appropriate.
+- Restart a device if instructed or approved.
 - Document symptoms.
 - Move a device to the workbench if instructed.
 
@@ -275,17 +277,19 @@ Suggested mentor message:
 
 > I am helping with imaging and received an unfamiliar error. I stopped before continuing. The error says: ____. I was on this step: ____. Can you confirm what I should do next?
 
-### Example 4: Ticket notes
+### Example 4: Draft Ticket Note
 
 Student:
 
-> I replaced a keyboard and now it works. What should I write?
+> I replaced a keyboard and now it works. What should I tell my mentor?
 
 Assistant:
 
-> You could write:
+> You could tell your mentor:
 
 > Checked keyboard issue at workstation. Verified the connection. Tested with a known-working keyboard and confirmed the replacement worked. Moved the original keyboard to the workbench for review.
+>
+> Do not enter or update the ticket/work order yourself until you have been trained and approved to do so.
 
 ---
 
@@ -295,7 +299,7 @@ The chatbot is successful if it:
 
 - Reduces repeated beginner questions.
 - Helps students feel less embarrassed asking for help.
-- Improves ticket notes and escalation summaries.
+- Improves draft ticket notes and escalation summaries.
 - Encourages safe beginner behavior.
 - Helps students learn terminology faster.
 - Sends students to mentors when human approval is needed.

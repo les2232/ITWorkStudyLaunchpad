@@ -249,7 +249,7 @@ D. A storage device
 
 **Explanation:**
 
-A ticket is a record of work that needs to be done or support that was provided. Good ticket notes help other IT staff understand what happened.
+A ticket is a record of work that needs to be done or support that was provided. Good ticket notes or mentor summaries help other IT staff understand what happened.
 
 ---
 
@@ -409,7 +409,7 @@ It is better to ask for help than to guess. A strong work-study student knows wh
 
 ---
 
-### Q20. What should good ticket notes include?
+### Q20. What should good ticket notes or mentor summaries include?
 
 **Type:** Multiple choice  
 **Category:** Workflow and Escalation  
@@ -424,7 +424,7 @@ D. Nothing unless the issue is serious
 
 **Explanation:**
 
-Good ticket notes should explain the issue, what was checked, what happened, and what still needs to be done. This helps other IT staff continue the work if needed.
+Good ticket notes or mentor summaries should explain the issue, what was checked, what happened, and what still needs to be done. New students may draft this information for a mentor instead of updating the ticket/work-order system directly.
 
 ---
 
@@ -453,7 +453,7 @@ Recommended path:
 2. Common IT Words Review
 3. Hardware Basics
 4. Imaging Overview
-5. Ticket Notes
+5. Draft Ticket Notes
 6. Escalation Rules
 7. Shadowing
 

@@ -62,7 +62,7 @@ You may be asked to:
 - Confirm asset tags or labels
 - Observe an imaging process
 - Write down an error message
-- Update a ticket with what happened
+- Prepare a draft note or mentor summary about what happened
 - Ask a mentor when something does not look right
 
 ---
@@ -235,7 +235,7 @@ Depending on department procedure, beginner-safe actions may include:
 - Watch for visible error messages.
 - Write down an error code exactly as shown.
 - Tell your mentor what step you were on when the error appeared.
-- Update a ticket with approved notes.
+- Prepare a draft note or mentor summary if instructed.
 
 These actions help the team without requiring you to change restricted settings.
 
@@ -254,6 +254,7 @@ Do not do these unless you are specifically trained and authorized:
 - Mark a device complete if you are unsure.
 - Ignore error messages.
 - Work on a device if you are unsure it is the correct one.
+- Create, edit, close, or update tickets/work orders until you are trained and authorized.
 
 When in doubt, stop and ask.
 
@@ -290,7 +291,7 @@ Ask your mentor, IT tech, or supervisor when:
 - The device is missing an asset tag or label.
 - You are unsure whether the device is ready.
 - You are tempted to guess.
-- You are not sure what to write in the ticket.
+- You are not sure what details to give your mentor for the ticket/work order.
 
 Imaging and deployment workflows can affect the device, user experience, software, and data. Ask early.
 
@@ -338,11 +339,13 @@ Ask your mentor or the IT tech on duty. Using the wrong image can create extra w
 
 ---
 
-### “What should I write in the ticket?”
+### “What should I tell my mentor for the ticket/work order?”
 
-A helpful ticket note might include:
+A helpful draft note or mentor summary might include:
 
 > Observed imaging issue on device ____. Error shown: ____. I stopped before continuing and notified mentor/on-shift tech for next steps.
+
+Do not enter this into the ticket/work-order system yourself until you have been trained and approved to do so.
 
 ---
 

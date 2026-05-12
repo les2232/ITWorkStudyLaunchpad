@@ -25,7 +25,7 @@ Knowing the vocabulary helps you:
 - Understand what IT techs are talking about
 - Follow instructions more confidently
 - Ask better questions
-- Write better ticket notes
+- Prepare better draft ticket notes or mentor summaries
 - Know when to stop and ask for help
 - Feel less lost during your first few shifts
 
@@ -55,7 +55,9 @@ Examples:
 - Work-study student
 - Guest or visitor
 
-When writing ticket notes, it is helpful to explain who was affected, if appropriate.
+When preparing a ticket note or mentor summary, it is helpful to explain who was affected, if appropriate.
+
+New work-study students should not create, edit, close, or update tickets/work orders until they are trained and authorized.
 
 ---
 
@@ -199,11 +201,13 @@ Good ticket notes usually include:
 - What still needs to be done
 - Who it was escalated to, if applicable
 
-Weak ticket note:
+As a new work-study student, you may first practice writing draft notes or give a summary to your mentor. Do not enter notes directly into the ticket/work-order system until you are trained and authorized.
+
+Weak draft note:
 
 > Fixed.
 
-Better ticket note:
+Better draft note:
 
 > Checked keyboard issue at front desk workstation. Verified USB connection. Tested with known-working keyboard and confirmed replacement worked. Moved original keyboard to workbench for review.
 
@@ -394,6 +398,7 @@ Ask your mentor when:
 - You do not know whether a task is safe
 - You need help understanding a procedure
 - You want feedback on ticket notes
+- You are unsure whether you are allowed to update a ticket/work order
 
 ---
 
@@ -429,8 +434,9 @@ New IT work-study students may accidentally:
 - Pretend they understand instead of asking
 - Guess which workflow applies
 - Use words they do not fully understand yet
-- Write ticket notes that are too vague
+- Write draft ticket notes that are too vague
 - Skip documentation
+- Update tickets/work orders before being trained and authorized
 - Continue after an unfamiliar error
 - Forget to ask whether a task is beginner-safe
 - Assume every computer uses the same imaging process
@@ -466,7 +472,7 @@ Answer these in your own words.
 3. What does imaging mean?
 4. What should you do if you do not know which image to use?
 5. What is escalation?
-6. Why are clear ticket notes important?
+6. Why are clear ticket notes or mentor summaries important?
 
 ---
 
@@ -477,7 +483,7 @@ Answer these in your own words.
 3. Imaging prepares a computer with the required operating system, software, settings, and configuration.
 4. Do not guess. Ask your mentor or the IT tech on duty.
 5. Escalation means asking someone with more experience, access, or authority to help.
-6. Clear ticket notes help the IT team understand what happened, what was checked, and what still needs to be done.
+6. Clear ticket notes or mentor summaries help the IT team understand what happened, what was checked, and what still needs to be done.
 
 ---
 

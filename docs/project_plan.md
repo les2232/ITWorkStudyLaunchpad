@@ -27,7 +27,7 @@ New IT work-study students often feel lost because they may not understand:
 - What SCCM / Configuration Manager is
 - What computer imaging means
 - What tickets are for
-- How to document work
+- How to document work and prepare mentor summaries
 - What tasks are beginner-safe
 - When to stop and ask for help
 - How IT workflows actually work
@@ -82,7 +82,7 @@ They need:
 1. Confidence tracking
 2. Scenario-based practice
 3. IT glossary
-4. Ticket note writing practice
+4. Draft ticket note writing practice
 5. Beginner-safe troubleshooting guidance
 
 ### Not Yet
@@ -167,7 +167,7 @@ Create a pre-assessment and post-assessment that measure student knowledge, conf
 - Vocabulary improvement
 - Hardware workflow
 - Imaging understanding
-- Ticket note quality
+- Draft ticket note quality
 - Escalation judgment
 - Confidence reflection
 
@@ -262,7 +262,7 @@ Create Day 1 and Week 1 onboarding checklists.
 
 ### Week 1 Checklist Should Include
 
-- Ticket note basics
+- Draft ticket note basics
 - Hardware basics
 - Imaging overview
 - Equipment movement/delivery
@@ -293,7 +293,7 @@ Define how the chatbot should support students safely.
 - Explaining beginner IT terms
 - Explaining onboarding tasks
 - Walking through beginner-safe troubleshooting
-- Helping students write ticket notes
+- Helping students draft ticket notes or mentor summaries
 - Helping students decide whether to escalate
 - Generating mentor summaries
 - Encouraging students who feel embarrassed to ask questions
@@ -304,6 +304,7 @@ Define how the chatbot should support students safely.
 - Give restricted admin instructions
 - Share credentials
 - Provide sensitive internal steps
+- Tell inexperienced students to create, edit, close, or update tickets/work orders before training and approval
 - Replace mentor approval
 - Answer HR/legal/payroll questions beyond approved onboarding content
 
