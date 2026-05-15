@@ -1,6 +1,7 @@
 import unittest
 
 from launchpad.assessment import get_training_path, knowledge_gaps, load_assessment, score_assessment
+from scripts.validate_content import validate_assessment_data
 
 
 class AssessmentScoringTests(unittest.TestCase):
@@ -33,6 +34,13 @@ class AssessmentScoringTests(unittest.TestCase):
             "q18": "C",
             "q19": "C",
             "q20": "C",
+            "ra1": "B",
+            "ra2": "C",
+            "ra3": "A",
+            "ra4": "A",
+            "ra5": "B",
+            "ra6": "A",
+            "ra7": "A",
         }
 
         result = score_assessment(assessment, responses)
@@ -41,6 +49,7 @@ class AssessmentScoringTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
         self.assertEqual(path["slug"], "advanced_beginner")
         self.assertEqual(knowledge_gaps(result), [])
+        self.assertEqual(result["role_alignment"]["recommended_alignment"]["slug"], "it_launchpad")
 
     def test_pre_assessment_low_answers_routes_to_beginner_and_gaps(self):
         assessment = load_assessment("pre_assessment_v1")
@@ -66,6 +75,13 @@ class AssessmentScoringTests(unittest.TestCase):
                 "q18": "A",
                 "q19": "A",
                 "q20": "A",
+                "ra1": "B",
+                "ra2": "C",
+                "ra3": "B",
+                "ra4": "B",
+                "ra5": "B",
+                "ra6": "A",
+                "ra7": "B",
             }
         )
 
@@ -77,12 +93,53 @@ class AssessmentScoringTests(unittest.TestCase):
         self.assertEqual(path["slug"], "beginner")
         self.assertIn("IT Vocabulary", gaps)
         self.assertIn("Workflow and Escalation", gaps)
+        self.assertEqual(result["role_alignment"]["recommended_alignment"]["slug"], "student_services_exploration")
 
     def test_score_thresholds_match_training_paths(self):
         self.assertEqual(get_training_path(39)["slug"], "beginner")
         self.assertEqual(get_training_path(40)["slug"], "developing")
         self.assertEqual(get_training_path(70)["slug"], "ready_to_shadow")
         self.assertEqual(get_training_path(85)["slug"], "advanced_beginner")
+
+    def test_role_alignment_can_recommend_hybrid_support(self):
+        assessment = load_assessment("pre_assessment_v1")
+        responses = {
+            "ra1": "B",
+            "ra2": "C",
+            "ra3": "A",
+            "ra4": "B",
+            "ra5": "B",
+            "ra6": "B",
+            "ra7": "B",
+        }
+
+        result = score_assessment(assessment, responses)
+        alignment = result["role_alignment"]
+
+        self.assertEqual(alignment["recommended_alignment"]["slug"], "hybrid_it_user_support")
+        self.assertIn("Technical troubleshooting interest", [signal["label"] for signal in alignment["signals"]])
+        self.assertIn("User-facing support interest", [signal["label"] for signal in alignment["signals"]])
+
+    def test_role_alignment_can_recommend_structured_shadowing(self):
+        assessment = load_assessment("pre_assessment_v1")
+        responses = {
+            "ra1": "C",
+            "ra2": "A",
+            "ra3": "D",
+            "ra4": "D",
+            "ra5": "A",
+            "ra6": "D",
+            "ra7": "D",
+        }
+
+        result = score_assessment(assessment, responses)
+
+        self.assertEqual(result["score"], 1)
+        self.assertEqual(result["possible"], 97)
+        self.assertEqual(result["role_alignment"]["recommended_alignment"]["slug"], "structured_shadowing")
+
+    def test_pre_assessment_role_alignment_content_validates(self):
+        self.assertEqual(validate_assessment_data("pre_assessment_v1.json"), [])
 
 
 if __name__ == "__main__":

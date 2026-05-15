@@ -49,6 +49,13 @@ class FlaskRouteSmokeTests(unittest.TestCase):
                     f"{route} returned {response.status_code}",
                 )
 
+    def test_pre_assessment_marks_role_alignment_as_separate_signal(self):
+        response = self.client.get("/pre-assessment")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Work Style and Role Alignment", response.data)
+        self.assertIn(b"separate role-alignment signal", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

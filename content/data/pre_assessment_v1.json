@@ -3,6 +3,86 @@
   "title": "Pre-Assessment",
   "purpose": "Determine a new IT work-study student's starting knowledge, confidence level, and recommended training path.",
   "student_intro": "This is not pass/fail. Answer honestly so the Launchpad can recommend the right training path and help your mentor support you.",
+  "role_alignment": {
+    "title": "Work Style and Role Alignment",
+    "purpose": "Help supervisors understand which environment may help the student succeed fastest. This signal is separate from technical readiness scoring.",
+    "signals": [
+      {
+        "slug": "technical_troubleshooting_interest",
+        "label": "Technical troubleshooting interest",
+        "direction": "interest",
+        "description": "Interest in investigating device, account, printer, monitor, or other technical issues."
+      },
+      {
+        "slug": "user_facing_support_interest",
+        "label": "User-facing support interest",
+        "direction": "interest",
+        "description": "Interest in greeting users, calming support interactions, and helping people find next steps."
+      },
+      {
+        "slug": "process_documentation_strength",
+        "label": "Process/documentation strength",
+        "direction": "strength",
+        "description": "Comfort with checklists, accurate details, records, and clear mentor summaries."
+      },
+      {
+        "slug": "ambiguity_readiness",
+        "label": "Ambiguity readiness",
+        "direction": "readiness",
+        "description": "Comfort stopping, clarifying, and continuing safely when a task is unclear."
+      },
+      {
+        "slug": "help_seeking_readiness",
+        "label": "Help-seeking readiness",
+        "direction": "readiness",
+        "description": "Willingness to ask specific questions instead of guessing or waiting silently."
+      },
+      {
+        "slug": "structured_shadowing_need",
+        "label": "Structured shadowing need",
+        "direction": "need",
+        "description": "Signal that the student may benefit from observation, closer check-ins, or more role exploration before placement."
+      }
+    ],
+    "recommendations": [
+      {
+        "slug": "it_launchpad",
+        "label": "IT Launchpad",
+        "summary": "Student appears interested in technical troubleshooting and shows safe beginner habits. Begin with IT foundations, hardware basics, escalation rules, and mentor-supervised tasks.",
+        "next_steps": [
+          "Begin the recommended IT training path.",
+          "Use hardware basics, escalation rules, and mentor-supervised beginner tasks as early practice."
+        ]
+      },
+      {
+        "slug": "hybrid_it_user_support",
+        "label": "Hybrid IT/User Support",
+        "summary": "Student may benefit from supervised IT exposure while also using communication strengths in user-facing support. Begin with shadowing, documentation practice, and structured beginner-safe IT tasks.",
+        "next_steps": [
+          "Pair IT shadowing with user-facing support observation.",
+          "Practice documentation, greeting users, and beginner-safe checks with mentor review."
+        ]
+      },
+      {
+        "slug": "student_services_exploration",
+        "label": "Student Services Exploration",
+        "summary": "Student shows stronger current alignment with user-facing process support than technical troubleshooting. Admissions, Advising, front desk support, or another structured student services role may match the student's current strengths.",
+        "next_steps": [
+          "Explore Admissions, Advising, front desk, or related student services workflows.",
+          "Use communication, process guidance, and structured support strengths while continuing role discovery."
+        ]
+      },
+      {
+        "slug": "structured_shadowing",
+        "label": "Structured Shadowing",
+        "summary": "Student may benefit from observing IT, Admissions, and Advising workflows before final placement. Focus on confidence, communication, and task preference discovery.",
+        "next_steps": [
+          "Schedule structured observation across IT and student services environments.",
+          "Review confidence, communication, and task preferences before final placement."
+        ]
+      }
+    ]
+  },
   "total_points": 100,
   "sections": [
     {
@@ -308,6 +388,251 @@
           ],
           "correct_answer": "C",
           "explanation": "Good summaries explain the issue, checks, result, and what still needs to happen."
+        }
+      ]
+    },
+    {
+      "title": "Work Style and Role Alignment",
+      "intro": "These questions are separate from technical readiness scoring. They help your supervisor understand which environment may help you succeed fastest.",
+      "score_scope": "role_alignment",
+      "questions": [
+        {
+          "id": "ra1",
+          "prompt": "You are given a task, but one step is unclear. What would you most likely do?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["ambiguity_readiness", "help_seeking_readiness", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "Guess and keep going so I do not slow anyone down",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["clarification_practice"]
+            },
+            {
+              "value": "B",
+              "label": "Stop and ask a specific clarification question",
+              "signals": {"ambiguity_readiness": 2, "help_seeking_readiness": 2},
+              "alignment_tags": ["specific_help_seeking", "safe_ambiguity_response"]
+            },
+            {
+              "value": "C",
+              "label": "Wait silently until someone checks on me",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["confidence_check_ins"]
+            },
+            {
+              "value": "D",
+              "label": "Skip the unclear step",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["workflow_boundaries"]
+            }
+          ]
+        },
+        {
+          "id": "ra2",
+          "prompt": "A user is frustrated and says, \"IT never fixes anything.\" What is the best beginner-safe response?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["user_facing_support_interest", "ambiguity_readiness", "help_seeking_readiness", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "Tell them another IT person probably forgot",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["user_response_practice"]
+            },
+            {
+              "value": "B",
+              "label": "Promise the issue will be fixed today",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["expectation_setting_practice"]
+            },
+            {
+              "value": "C",
+              "label": "Stay calm, avoid blame, and tell them you will check with your mentor",
+              "signals": {"user_facing_support_interest": 1, "ambiguity_readiness": 1, "help_seeking_readiness": 1},
+              "alignment_tags": ["safe_user_communication", "mentor_escalation"]
+            },
+            {
+              "value": "D",
+              "label": "Ignore the comment",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["user_response_practice"]
+            }
+          ]
+        },
+        {
+          "id": "ra3",
+          "prompt": "Which type of work sounds most interesting to you?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "Figuring out why a computer, monitor, printer, or account is not working",
+              "signals": {"technical_troubleshooting_interest": 2},
+              "alignment_tags": ["technical_troubleshooting"]
+            },
+            {
+              "value": "B",
+              "label": "Helping students or users understand a process, form, appointment, or next step",
+              "signals": {"user_facing_support_interest": 2},
+              "alignment_tags": ["people_process_support"]
+            },
+            {
+              "value": "C",
+              "label": "Organizing information, checking records, and making sure details are correct",
+              "signals": {"process_documentation_strength": 2},
+              "alignment_tags": ["records_and_details"]
+            },
+            {
+              "value": "D",
+              "label": "I am not sure yet",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["role_exploration"]
+            }
+          ]
+        },
+        {
+          "id": "ra4",
+          "prompt": "Which task would you feel most comfortable learning first?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "Checking cables, asset tags, device names, and error messages",
+              "signals": {"technical_troubleshooting_interest": 2, "process_documentation_strength": 1},
+              "alignment_tags": ["technical_observation", "detail_capture"]
+            },
+            {
+              "value": "B",
+              "label": "Greeting students or users and helping direct them to the right person",
+              "signals": {"user_facing_support_interest": 2},
+              "alignment_tags": ["front_desk_support"]
+            },
+            {
+              "value": "C",
+              "label": "Reviewing a checklist and making sure each step is complete",
+              "signals": {"process_documentation_strength": 2},
+              "alignment_tags": ["checklist_work"]
+            },
+            {
+              "value": "D",
+              "label": "Watching someone else first before choosing",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["structured_observation"]
+            }
+          ]
+        },
+        {
+          "id": "ra5",
+          "prompt": "A mentor asks you to document what happened during a task. What would you include?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["process_documentation_strength", "help_seeking_readiness", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "Only \"done\"",
+              "signals": {"structured_shadowing_need": 1},
+              "alignment_tags": ["documentation_practice"]
+            },
+            {
+              "value": "B",
+              "label": "What I checked, what happened, and what I still need help with",
+              "signals": {"process_documentation_strength": 2, "help_seeking_readiness": 1},
+              "alignment_tags": ["clear_documentation", "specific_help_seeking"]
+            },
+            {
+              "value": "C",
+              "label": "My opinion about who caused the problem",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["neutral_language_practice"]
+            },
+            {
+              "value": "D",
+              "label": "Private information, just in case it helps",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["privacy_boundary_practice"]
+            }
+          ]
+        },
+        {
+          "id": "ra6",
+          "prompt": "Which situation sounds most stressful to you?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "A computer problem where I do not know the answer yet",
+              "signals": {"structured_shadowing_need": 1},
+              "alignment_tags": ["technical_confidence_support"]
+            },
+            {
+              "value": "B",
+              "label": "A frustrated person asking for help",
+              "signals": {"structured_shadowing_need": 1},
+              "alignment_tags": ["communication_confidence_support"]
+            },
+            {
+              "value": "C",
+              "label": "A task with many small details that must be accurate",
+              "signals": {"structured_shadowing_need": 1},
+              "alignment_tags": ["detail_confidence_support"]
+            },
+            {
+              "value": "D",
+              "label": "A quiet task where I have to work independently",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["check_in_structure"]
+            }
+          ]
+        },
+        {
+          "id": "ra7",
+          "prompt": "Which statement best describes you right now?",
+          "type": "multiple_choice",
+          "category": "Work Style and Role Alignment",
+          "points": 0,
+          "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "ambiguity_readiness", "structured_shadowing_need"],
+          "options": [
+            {
+              "value": "A",
+              "label": "I want to learn technical troubleshooting, even if it feels challenging",
+              "signals": {"technical_troubleshooting_interest": 2, "ambiguity_readiness": 1},
+              "alignment_tags": ["technical_growth_interest"]
+            },
+            {
+              "value": "B",
+              "label": "I mostly want to help people navigate processes and get answers",
+              "signals": {"user_facing_support_interest": 2},
+              "alignment_tags": ["people_process_support"]
+            },
+            {
+              "value": "C",
+              "label": "I like organized tasks with clear steps and records",
+              "signals": {"process_documentation_strength": 2},
+              "alignment_tags": ["structured_records_work"]
+            },
+            {
+              "value": "D",
+              "label": "I am still exploring what kind of work fits me",
+              "signals": {"structured_shadowing_need": 2},
+              "alignment_tags": ["role_exploration"]
+            }
+          ]
         }
       ]
     }

@@ -5,6 +5,9 @@ from typing import Any
 from .content import load_json
 
 
+ROLE_ALIGNMENT_SCOPE = "role_alignment"
+
+
 def load_assessment(assessment_id: str) -> dict[str, Any]:
     return load_json(f"{assessment_id}.json")
 
@@ -12,7 +15,12 @@ def load_assessment(assessment_id: str) -> dict[str, Any]:
 def all_questions(assessment: dict[str, Any]) -> list[dict[str, Any]]:
     questions: list[dict[str, Any]] = []
     for section in assessment.get("sections", []):
-        questions.extend(section.get("questions", []))
+        for question in section.get("questions", []):
+            item = dict(question)
+            if section.get("score_scope") and "score_scope" not in item:
+                item["score_scope"] = section["score_scope"]
+            item.setdefault("section_title", section.get("title", ""))
+            questions.append(item)
     return questions
 
 
@@ -20,8 +28,13 @@ def score_assessment(assessment: dict[str, Any], responses: dict[str, Any]) -> d
     category_scores: dict[str, dict[str, float]] = {}
     question_results = []
     mentor_review_items = []
+    role_questions = []
 
     for question in all_questions(assessment):
+        if is_role_alignment_question(question):
+            role_questions.append(question)
+            continue
+
         category = question["category"]
         response = responses.get(question["id"])
         possible = float(question["points"])
@@ -67,7 +80,7 @@ def score_assessment(assessment: dict[str, Any], responses: dict[str, Any]) -> d
             }
         )
 
-    return {
+    result = {
         "assessment_id": assessment["id"],
         "score": round(percentage),
         "earned": _clean_number(total_earned),
@@ -77,6 +90,12 @@ def score_assessment(assessment: dict[str, Any], responses: dict[str, Any]) -> d
         "categories": categories,
         "questions": question_results,
     }
+
+    role_alignment = score_role_alignment(assessment, responses, role_questions)
+    if role_alignment:
+        result["role_alignment"] = role_alignment
+
+    return result
 
 
 def score_question(question: dict[str, Any], response: Any) -> float:
@@ -107,6 +126,95 @@ def score_question(question: dict[str, Any], response: Any) -> float:
         return 0.0
 
     return 0.0
+
+
+def is_role_alignment_question(question: dict[str, Any]) -> bool:
+    return question.get("score_scope") == ROLE_ALIGNMENT_SCOPE
+
+
+def role_alignment_questions(assessment: dict[str, Any]) -> list[dict[str, Any]]:
+    return [question for question in all_questions(assessment) if is_role_alignment_question(question)]
+
+
+def score_role_alignment(
+    assessment: dict[str, Any],
+    responses: dict[str, Any],
+    questions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    questions = questions if questions is not None else role_alignment_questions(assessment)
+    if not questions:
+        return None
+
+    config = assessment.get("role_alignment", {})
+    signal_metadata = _role_signal_metadata(config, questions)
+    signal_scores = {slug: 0.0 for slug in signal_metadata}
+    signal_possible = {slug: 0.0 for slug in signal_metadata}
+    question_results = []
+    answered_count = 0
+
+    for question in questions:
+        options = question.get("options", [])
+        selected_value = str(responses.get(question["id"]) or "")
+        selected_option = next((option for option in options if option.get("value") == selected_value), None)
+
+        for slug in signal_metadata:
+            max_value = max(float(option.get("signals", {}).get(slug, 0)) for option in options) if options else 0
+            signal_possible[slug] += max_value
+
+        if selected_option is None:
+            continue
+
+        answered_count += 1
+        selected_signals = selected_option.get("signals", {})
+        for slug, value in selected_signals.items():
+            signal_scores.setdefault(slug, 0.0)
+            signal_possible.setdefault(slug, 0.0)
+            signal_scores[slug] += float(value)
+
+        question_results.append(
+            {
+                "id": question["id"],
+                "prompt": question["prompt"],
+                "selected_value": selected_value,
+                "selected_label": selected_option.get("label", ""),
+                "alignment_tags": selected_option.get("alignment_tags", []),
+                "signals": selected_signals,
+            }
+        )
+
+    if answered_count == 0:
+        return None
+
+    signals = []
+    for slug, metadata in signal_metadata.items():
+        possible = signal_possible.get(slug, 0.0)
+        score = signal_scores.get(slug, 0.0)
+        percent = round((score / possible) * 100) if possible else 0
+        signals.append(
+            {
+                "slug": slug,
+                "label": metadata["label"],
+                "description": metadata.get("description", ""),
+                "score": _clean_number(score),
+                "possible": _clean_number(possible),
+                "percent": percent,
+                "level": _role_signal_level(metadata.get("direction", "strength"), percent),
+            }
+        )
+
+    recommendation = _classify_role_alignment(signals, config)
+
+    return {
+        "title": config.get("title", "Work Style and Role Alignment"),
+        "answered_questions": answered_count,
+        "signals": signals,
+        "recommended_alignment": recommendation,
+        "question_results": question_results,
+        "mentor_note": (
+            "Use this as a planning signal alongside the technical readiness path, "
+            "not as a pass/fail placement decision."
+        ),
+    }
 
 
 def is_mentor_review_question(question: dict[str, Any]) -> bool:
@@ -184,3 +292,93 @@ def _clean_number(value: float) -> int | float:
     if float(value).is_integer():
         return int(value)
     return round(value, 2)
+
+
+def _role_signal_metadata(config: dict[str, Any], questions: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    metadata = {
+        signal["slug"]: signal
+        for signal in config.get("signals", [])
+        if signal.get("slug") and signal.get("label")
+    }
+
+    for question in questions:
+        for option in question.get("options", []):
+            for slug in option.get("signals", {}):
+                metadata.setdefault(
+                    slug,
+                    {
+                        "slug": slug,
+                        "label": slug.replace("_", " ").title(),
+                        "direction": "strength",
+                        "description": "",
+                    },
+                )
+
+    return metadata
+
+
+def _role_signal_level(direction: str, percent: int) -> str:
+    if direction == "need":
+        if percent >= 60:
+            return "Higher"
+        if percent >= 30:
+            return "Moderate"
+        return "Lower"
+
+    if direction == "readiness":
+        if percent >= 67:
+            return "Strong"
+        if percent >= 34:
+            return "Developing"
+        return "Support needed"
+
+    if percent >= 67:
+        return "Strong signal"
+    if percent >= 34:
+        return "Moderate signal"
+    return "Lower signal"
+
+
+def _classify_role_alignment(signals: list[dict[str, Any]], config: dict[str, Any]) -> dict[str, Any]:
+    percentages = {signal["slug"]: signal["percent"] for signal in signals}
+    tech = percentages.get("technical_troubleshooting_interest", 0)
+    user_support = percentages.get("user_facing_support_interest", 0)
+    process = percentages.get("process_documentation_strength", 0)
+    ambiguity = percentages.get("ambiguity_readiness", 0)
+    help_seeking = percentages.get("help_seeking_readiness", 0)
+    shadowing = percentages.get("structured_shadowing_need", 0)
+
+    people_process = max(user_support, process)
+    safe_beginner_habits = min(ambiguity, help_seeking)
+
+    if shadowing >= 50 or (ambiguity < 35 and help_seeking < 35):
+        slug = "structured_shadowing"
+    elif tech >= 60 and safe_beginner_habits >= 50 and tech >= people_process:
+        slug = "it_launchpad"
+    elif tech >= 30 and people_process >= 45:
+        slug = "hybrid_it_user_support"
+    elif people_process >= 50 and tech < 60:
+        slug = "student_services_exploration"
+    elif tech >= 50:
+        slug = "it_launchpad" if safe_beginner_habits >= 50 else "hybrid_it_user_support"
+    else:
+        slug = "structured_shadowing"
+
+    return _role_recommendation(config, slug)
+
+
+def _role_recommendation(config: dict[str, Any], slug: str) -> dict[str, Any]:
+    recommendations = {item["slug"]: item for item in config.get("recommendations", []) if item.get("slug")}
+    fallback = {
+        "slug": "structured_shadowing",
+        "label": "Structured Shadowing",
+        "summary": (
+            "Student may benefit from observing IT, Admissions, and Advising workflows before final placement. "
+            "Focus on confidence, communication, and task preference discovery."
+        ),
+        "next_steps": [
+            "Schedule short observations across available support environments.",
+            "Review confidence, communication, and task preferences after shadowing.",
+        ],
+    }
+    return recommendations.get(slug, recommendations.get("structured_shadowing", fallback))

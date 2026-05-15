@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Scenario Practice | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Practice</p>
+  <h1>Scenario Practice</h1>
+  <p class="lede">Practice beginner-safe judgment, documentation, and escalation before working independently.</p>
+</section>
+
+<section class="card-grid">
+  {% for scenario in scenarios %}
+    <a class="resource-card" href="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
+      <strong>{{ scenario.title }}</strong>
+      <span>{{ scenario.summary }}</span>
+      {% if scenario.module_slugs %}
+        <small>
+          {% for module_slug in scenario.module_slugs %}
+            {% if modules_by_slug[module_slug] %}{{ modules_by_slug[module_slug].title }}{% if not loop.last %} · {% endif %}{% endif %}
+          {% endfor %}
+        </small>
+      {% endif %}
+    </a>
+  {% endfor %}
+</section>
+{% endblock %}

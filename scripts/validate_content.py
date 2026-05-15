@@ -51,6 +51,29 @@ REQUIRED_DATA_FILES = [
     "post_assessment_v1.json",
 ]
 
+ROLE_ALIGNMENT_SCOPE = "role_alignment"
+ROLE_ALIGNMENT_SECTION_TITLE = "Work Style and Role Alignment"
+ROLE_ALIGNMENT_SIGNALS = {
+    "technical_troubleshooting_interest",
+    "user_facing_support_interest",
+    "process_documentation_strength",
+    "ambiguity_readiness",
+    "help_seeking_readiness",
+    "structured_shadowing_need",
+}
+ROLE_ALIGNMENT_RECOMMENDATIONS = {
+    "it_launchpad",
+    "hybrid_it_user_support",
+    "student_services_exploration",
+    "structured_shadowing",
+}
+ROLE_ALIGNMENT_DIRECTIONS = {"interest", "strength", "readiness", "need"}
+FORBIDDEN_ROLE_ALIGNMENT_WORDING = [
+    ("not a good", "fit for it"),
+    ("failed", "it placement"),
+    ("better suited for admissions", "not technical"),
+]
+
 
 def check_balanced_code_fences(text: str, path: Path) -> list[str]:
     fence_count = text.count("```")
@@ -257,6 +280,7 @@ def validate_assessment_data(file_name: str) -> list[str]:
         errors.extend(require_fields(section, ["title", "questions"], file_name))
         for question in section.get("questions", []):
             errors.extend(require_fields(question, ["id", "prompt", "type", "category", "points"], file_name))
+            is_role_question = is_role_alignment_question(section, question)
             question_id = question.get("id")
             if question_id in question_ids:
                 errors.append(f"{DATA_DIR / file_name}: duplicate question id: {question_id}")
@@ -265,7 +289,12 @@ def validate_assessment_data(file_name: str) -> list[str]:
             question_type = question.get("type")
             if question_type in {"multiple_choice", "select_all"} and not question.get("options"):
                 errors.append(f"{DATA_DIR / file_name}: {question_id} missing options")
-            if question_type == "multiple_choice" and "correct_answer" not in question and "score_map" not in question:
+            if (
+                question_type == "multiple_choice"
+                and not is_role_question
+                and "correct_answer" not in question
+                and "score_map" not in question
+            ):
                 errors.append(f"{DATA_DIR / file_name}: {question_id} missing correct_answer or score_map")
             if question_type == "rating" and "score_map" not in question:
                 errors.append(f"{DATA_DIR / file_name}: {question_id} missing score_map")
@@ -273,6 +302,145 @@ def validate_assessment_data(file_name: str) -> list[str]:
     expected_total = float(data.get("total_points", 0))
     if round(point_total, 2) != round(expected_total, 2):
         errors.append(f"{DATA_DIR / file_name}: question points total {point_total} but expected {expected_total}")
+
+    if file_name == "pre_assessment_v1.json":
+        errors.extend(validate_role_alignment_data(data, file_name))
+
+    return errors
+
+
+def is_role_alignment_question(section: dict, question: dict) -> bool:
+    return question.get("score_scope", section.get("score_scope")) == ROLE_ALIGNMENT_SCOPE
+
+
+def validate_role_alignment_data(data: dict, file_name: str) -> list[str]:
+    errors = []
+    path = DATA_DIR / file_name
+    config = data.get("role_alignment")
+
+    if not isinstance(config, dict):
+        return [f"{path}: missing role_alignment metadata"]
+
+    errors.extend(require_fields(config, ["title", "purpose", "signals", "recommendations"], file_name))
+    errors.extend(validate_role_alignment_signals(config, file_name))
+    errors.extend(validate_role_alignment_recommendations(config, file_name))
+
+    role_text = json.dumps(config).lower()
+    for phrase_parts in FORBIDDEN_ROLE_ALIGNMENT_WORDING:
+        if all(part in role_text for part in phrase_parts):
+            errors.append(f"{path}: role alignment wording contains discouraged phrasing: {' / '.join(phrase_parts)}")
+
+    sections = [section for section in data.get("sections", []) if section.get("title") == ROLE_ALIGNMENT_SECTION_TITLE]
+    if len(sections) != 1:
+        errors.append(f"{path}: expected exactly one {ROLE_ALIGNMENT_SECTION_TITLE} section")
+        return errors
+
+    section = sections[0]
+    if section.get("score_scope") != ROLE_ALIGNMENT_SCOPE:
+        errors.append(f"{path}: {ROLE_ALIGNMENT_SECTION_TITLE} section must use score_scope={ROLE_ALIGNMENT_SCOPE}")
+
+    questions = section.get("questions", [])
+    if len(questions) < 7:
+        errors.append(f"{path}: expected at least 7 role alignment questions")
+
+    covered_signals = set()
+    for question in questions:
+        question_id = question.get("id", "<missing id>")
+        errors.extend(
+            require_fields(
+                question,
+                ["id", "prompt", "type", "category", "points", "alignment_traits", "options"],
+                file_name,
+            )
+        )
+
+        if question.get("type") != "multiple_choice":
+            errors.append(f"{path}: {question_id} role alignment question must be multiple_choice")
+        if float(question.get("points", 0)) != 0:
+            errors.append(f"{path}: {question_id} role alignment question must use 0 points")
+        if question.get("category") != ROLE_ALIGNMENT_SECTION_TITLE:
+            errors.append(f"{path}: {question_id} role alignment category must be {ROLE_ALIGNMENT_SECTION_TITLE}")
+
+        traits = set(question.get("alignment_traits", []))
+        unknown_traits = traits - ROLE_ALIGNMENT_SIGNALS
+        if unknown_traits:
+            errors.append(f"{path}: {question_id} unknown alignment traits: {sorted(unknown_traits)}")
+
+        option_values = set()
+        for option in question.get("options", []):
+            errors.extend(require_fields(option, ["value", "label", "signals", "alignment_tags"], file_name))
+            value = option.get("value")
+            if value in option_values:
+                errors.append(f"{path}: {question_id} duplicate option value: {value}")
+            option_values.add(value)
+            if value not in {"A", "B", "C", "D"}:
+                errors.append(f"{path}: {question_id} unexpected role alignment option value: {value}")
+
+            if not isinstance(option.get("alignment_tags"), list) or not option.get("alignment_tags"):
+                errors.append(f"{path}: {question_id} option {value} missing alignment_tags")
+
+            signals = option.get("signals", {})
+            if not isinstance(signals, dict) or not signals:
+                errors.append(f"{path}: {question_id} option {value} missing signals")
+                continue
+
+            for signal, amount in signals.items():
+                if signal not in ROLE_ALIGNMENT_SIGNALS:
+                    errors.append(f"{path}: {question_id} option {value} unknown signal: {signal}")
+                if signal not in traits:
+                    errors.append(f"{path}: {question_id} option {value} signal not declared in alignment_traits: {signal}")
+                if not isinstance(amount, (int, float)) or isinstance(amount, bool) or amount < 0:
+                    errors.append(f"{path}: {question_id} option {value} signal must be a non-negative number: {signal}")
+                if amount > 0:
+                    covered_signals.add(signal)
+
+    missing_signals = ROLE_ALIGNMENT_SIGNALS - covered_signals
+    if missing_signals:
+        errors.append(f"{path}: role alignment signals not covered by any option: {sorted(missing_signals)}")
+
+    return errors
+
+
+def validate_role_alignment_signals(config: dict, file_name: str) -> list[str]:
+    errors = []
+    path = DATA_DIR / file_name
+    seen_slugs = set()
+
+    for signal in config.get("signals", []):
+        errors.extend(require_fields(signal, ["slug", "label", "direction", "description"], file_name))
+        slug = signal.get("slug")
+        if slug in seen_slugs:
+            errors.append(f"{path}: duplicate role alignment signal: {slug}")
+        seen_slugs.add(slug)
+        if slug not in ROLE_ALIGNMENT_SIGNALS:
+            errors.append(f"{path}: unknown role alignment signal: {slug}")
+        if signal.get("direction") not in ROLE_ALIGNMENT_DIRECTIONS:
+            errors.append(f"{path}: invalid role alignment direction for {slug}: {signal.get('direction')}")
+
+    missing_signals = ROLE_ALIGNMENT_SIGNALS - seen_slugs
+    if missing_signals:
+        errors.append(f"{path}: missing role alignment signal metadata: {sorted(missing_signals)}")
+
+    return errors
+
+
+def validate_role_alignment_recommendations(config: dict, file_name: str) -> list[str]:
+    errors = []
+    path = DATA_DIR / file_name
+    seen_slugs = set()
+
+    for recommendation in config.get("recommendations", []):
+        errors.extend(require_fields(recommendation, ["slug", "label", "summary", "next_steps"], file_name))
+        slug = recommendation.get("slug")
+        if slug in seen_slugs:
+            errors.append(f"{path}: duplicate role alignment recommendation: {slug}")
+        seen_slugs.add(slug)
+        if slug not in ROLE_ALIGNMENT_RECOMMENDATIONS:
+            errors.append(f"{path}: unknown role alignment recommendation: {slug}")
+
+    missing_recommendations = ROLE_ALIGNMENT_RECOMMENDATIONS - seen_slugs
+    if missing_recommendations:
+        errors.append(f"{path}: missing role alignment recommendations: {sorted(missing_recommendations)}")
 
     return errors
 

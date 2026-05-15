@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Scenario Practice</p>
+  <h1>{{ scenario.title }}</h1>
+  <p class="lede">{{ scenario.summary }}</p>
+</section>
+
+<section class="split-layout">
+  <div>
+    <h2>Situation</h2>
+    <p>{{ scenario.situation }}</p>
+    <p><strong>{{ scenario.student_prompt }}</strong></p>
+    <form class="question-form" method="post" action="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
+      <label for="student_response">Your draft response</label>
+      <textarea id="student_response" name="student_response" rows="7" required>{{ student_response }}</textarea>
+      <button class="button primary" type="submit">Review Scenario</button>
+    </form>
+  </div>
+  <div>
+    <h2>Related Modules</h2>
+    <div class="inline-links">
+      {% for module_slug in scenario.module_slugs %}
+        {% if modules_by_slug[module_slug] %}
+          <a href="{{ url_for('module_reader', slug=module_slug) }}">{{ modules_by_slug[module_slug].title }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if feedback %}
+<section class="result-panel">
+  <h2>Mentor Review Guide</h2>
+  <p>{{ feedback.review_note }}</p>
+  <p><strong>Mentor feedback:</strong> {{ feedback.mentor_feedback }}</p>
+  <div class="category-grid">
+    <div>
+      <strong>Safe Actions</strong>
+      <ul>
+        {% for item in feedback.safe_actions %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <strong>Document</strong>
+      <ul>
+        {% for item in feedback.document %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <strong>Ask a Mentor When</strong>
+      <ul>
+        {% for item in feedback.ask_mentor_when %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <strong>Avoid</strong>
+      <ul>
+        {% for item in feedback.avoid %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

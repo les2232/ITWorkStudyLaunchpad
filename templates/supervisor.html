@@ -16,6 +16,35 @@
   </div>
 </section>
 
+<section class="result-panel">
+  <h2>Current Session Assessment Signals</h2>
+  {% if pre_result %}
+    <div class="category-grid">
+      <div>
+        <strong>{{ pre_result.score }}%</strong>
+        <span>Technical readiness · {{ pre_result.recommended_path }}</span>
+      </div>
+      {% if pre_result.role_alignment %}
+        <div>
+          <strong>{{ pre_result.role_alignment.recommended_alignment.label }}</strong>
+          <span>Recommended role alignment</span>
+        </div>
+        <div>
+          <strong>{{ pre_result.role_alignment.title }}</strong>
+          <span>{{ pre_result.role_alignment.recommended_alignment.summary }}</span>
+        </div>
+      {% else %}
+        <div>
+          <strong>Role alignment not recorded</strong>
+          <span>Complete the current pre-assessment to view work style and support needs.</span>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>No pre-assessment result is stored in this browser session yet.</p>
+  {% endif %}
+</section>
+
 <section class="card-grid">
   {% for path in paths %}
     <a class="resource-card" href="{{ url_for('training_path', slug=path.slug) }}">

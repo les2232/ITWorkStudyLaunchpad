@@ -4,11 +4,11 @@
 <section class="content-header">
   <p class="eyebrow">Pre-assessment result</p>
   <h1>{{ result.path_label }}</h1>
-  <p class="lede">{{ result.score }}% · {{ result.recommended_path }}</p>
+  <p class="lede">Technical readiness: {{ result.score }}% · {{ result.recommended_path }}</p>
 </section>
 
 <section class="result-panel">
-  <h2>Category Breakdown</h2>
+  <h2>Technical Readiness Breakdown</h2>
   <div class="category-grid">
     {% for category in result.categories %}
       <div>
@@ -19,6 +19,32 @@
     {% endfor %}
   </div>
 </section>
+
+{% if result.role_alignment %}
+<section class="result-panel">
+  <p class="eyebrow">{{ result.role_alignment.title }}</p>
+  <h2>Recommended Alignment: {{ result.role_alignment.recommended_alignment.label }}</h2>
+  <p>{{ result.role_alignment.recommended_alignment.summary }}</p>
+  <p class="meta">{{ result.role_alignment.mentor_note }}</p>
+  <div class="category-grid">
+    {% for signal in result.role_alignment.signals %}
+      <div>
+        <strong>{{ signal.label }}</strong>
+        <span>{{ signal.level }} · {{ signal.score }} / {{ signal.possible }}</span>
+        <meter min="0" max="100" value="{{ signal.percent }}">{{ signal.percent }}%</meter>
+      </div>
+    {% endfor %}
+  </div>
+  {% if result.role_alignment.recommended_alignment.next_steps %}
+    <h3>Supervisor Focus</h3>
+    <ul>
+      {% for step in result.role_alignment.recommended_alignment.next_steps %}
+        <li>{{ step }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>
+{% endif %}
 
 <section class="split-layout">
   <div>
