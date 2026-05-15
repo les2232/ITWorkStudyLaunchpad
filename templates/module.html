@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<article class="reader">
+  <div class="reader-heading">
+    <a href="{{ url_for('module_index') }}">All modules</a>
+    <h1>{{ item.title }}</h1>
+    <p>{{ item.summary }}</p>
+  </div>
+  <div class="markdown-body">
+    {{ body|safe }}
+  </div>
+</article>
+{% endblock %}

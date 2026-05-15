@@ -1,0 +1,148 @@
+{
+  "levels": [
+    {
+      "slug": "beginner",
+      "label": "Beginner",
+      "min_score": 0,
+      "max_score": 39,
+      "recommended_path": "Full IT Foundations path",
+      "intro": "Start with vocabulary, mental models, and safe documentation habits before expecting workflow independence.",
+      "required_items": [
+        {"type": "module", "slug": "what_does_it_do"},
+        {"type": "module", "slug": "common_it_words"},
+        {"type": "module", "slug": "domain_basics"},
+        {"type": "module", "slug": "configuration_manager_overview"},
+        {"type": "module", "slug": "imaging_overview"},
+        {"type": "module", "slug": "ticket_basics"},
+        {"type": "module", "slug": "asset_tag_basics"},
+        {"type": "module", "slug": "hardware_basics"},
+        {"type": "module", "slug": "how_to_ask_for_help"},
+        {"type": "module", "slug": "escalation_rules"},
+        {"type": "checklist", "slug": "day_1"},
+        {"type": "activity", "label": "Shadow a mentor or IT tech"}
+      ],
+      "mentor_focus": [
+        "Explain common IT vocabulary in plain language.",
+        "Point out which parts of observed work are beginner-safe.",
+        "Normalize asking questions early instead of guessing."
+      ],
+      "completion_criteria": [
+        "Student can explain basic IT terms in simple language.",
+        "Student can identify beginner-safe checks.",
+        "Student can ask for help clearly and escalate when unsure."
+      ]
+    },
+    {
+      "slug": "developing",
+      "label": "Developing",
+      "min_score": 40,
+      "max_score": 69,
+      "recommended_path": "Foundations plus Day 1 checklist",
+      "intro": "Connect general computer comfort to safe IT support workflows, documentation, and escalation.",
+      "required_items": [
+        {"type": "checklist", "slug": "day_1"},
+        {"type": "module", "slug": "common_it_words"},
+        {"type": "module", "slug": "hardware_basics"},
+        {"type": "module", "slug": "imaging_overview"},
+        {"type": "module", "slug": "ticket_basics"},
+        {"type": "module", "slug": "escalation_rules"},
+        {"type": "module", "slug": "how_to_ask_for_help"},
+        {"type": "activity", "label": "Shadow a mentor or IT tech"},
+        {"type": "activity", "label": "Scenario practice"}
+      ],
+      "mentor_focus": [
+        "Connect concepts to local workflows.",
+        "Review draft notes before they reach any official system.",
+        "Reinforce when to escalate instead of continuing alone."
+      ],
+      "completion_criteria": [
+        "Student can draft a simple mentor summary.",
+        "Student can perform approved beginner-safe checks.",
+        "Student can stop and ask when the workflow is unclear."
+      ]
+    },
+    {
+      "slug": "ready_to_shadow",
+      "label": "Ready to Shadow",
+      "min_score": 70,
+      "max_score": 84,
+      "recommended_path": "Day 1 checklist plus shadowing",
+      "intro": "Move into shadowing quickly while confirming local expectations, safety boundaries, and documentation habits.",
+      "required_items": [
+        {"type": "checklist", "slug": "day_1"},
+        {"type": "activity", "label": "Department expectations review"},
+        {"type": "activity", "label": "Confidentiality basics review"},
+        {"type": "module", "slug": "imaging_overview"},
+        {"type": "module", "slug": "ticket_basics"},
+        {"type": "module", "slug": "escalation_rules"},
+        {"type": "activity", "label": "Shadow a mentor or IT tech"},
+        {"type": "activity", "label": "Scenario practice"}
+      ],
+      "mentor_focus": [
+        "Explain department-specific workflow expectations.",
+        "Review ticketing and imaging boundaries.",
+        "Listen for assumptions from prior experience and correct them early."
+      ],
+      "completion_criteria": [
+        "Student can shadow productively.",
+        "Student asks specific workflow questions.",
+        "Student documents observations and knows when approval is needed."
+      ]
+    },
+    {
+      "slug": "advanced_beginner",
+      "label": "Advanced Beginner",
+      "min_score": 85,
+      "max_score": 100,
+      "recommended_path": "Faster path with required safety modules",
+      "intro": "Confirm strong starting knowledge while making sure local rules, safety boundaries, and mentor approval still come first.",
+      "required_items": [
+        {"type": "checklist", "slug": "day_1"},
+        {"type": "activity", "label": "Department expectations review"},
+        {"type": "activity", "label": "Confidentiality basics review"},
+        {"type": "module", "slug": "imaging_overview"},
+        {"type": "module", "slug": "escalation_rules"},
+        {"type": "activity", "label": "Scenario practice"},
+        {"type": "activity", "label": "Mentor check-in"},
+        {"type": "assessment", "label": "Post-assessment"}
+      ],
+      "mentor_focus": [
+        "Confirm that previous habits match local expectations.",
+        "Watch for overconfidence around restricted tasks.",
+        "Assign next-step practice only after safety expectations are clear."
+      ],
+      "completion_criteria": [
+        "Student completes required onboarding.",
+        "Student explains beginner-safe task boundaries.",
+        "Student writes clear draft notes and escalates unclear workflows."
+      ]
+    }
+  ],
+  "knowledge_gap_routing": [
+    {
+      "area": "IT Vocabulary",
+      "category": "IT Vocabulary",
+      "recommended_modules": ["common_it_words", "domain_basics", "imaging_overview", "configuration_manager_overview"]
+    },
+    {
+      "area": "Beginner Troubleshooting",
+      "category": "Beginner Troubleshooting",
+      "recommended_modules": ["hardware_basics", "how_to_ask_for_help", "escalation_rules"]
+    },
+    {
+      "area": "Workflow and Escalation",
+      "category": "Workflow and Escalation",
+      "recommended_modules": ["how_to_ask_for_help", "escalation_rules", "ticket_basics"]
+    },
+    {
+      "area": "Confidence",
+      "category": "Confidence",
+      "recommended_modules": ["how_to_ask_for_help", "escalation_rules"]
+    },
+    {
+      "area": "No Prior IT Experience",
+      "category": "Background / Experience",
+      "recommended_modules": ["what_does_it_do", "common_it_words", "hardware_basics", "ticket_basics"]
+    }
+  ]
+}

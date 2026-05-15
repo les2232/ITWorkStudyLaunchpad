@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Ask a Question | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Safe guidance</p>
+  <h1>Ask a Question</h1>
+  <p class="lede">Ask about training, IT terms, beginner workflows, tickets, imaging, hardware checks, or escalation.</p>
+</section>
+
+<form class="question-form" method="post" action="{{ url_for('ask') }}">
+  <label for="question">Question</label>
+  <textarea id="question" name="question" rows="5" required>{{ question }}</textarea>
+  <button class="button primary" type="submit">Get Guidance</button>
+</form>
+
+{% if answer %}
+<section class="answer-panel {% if answer.should_escalate %}needs-escalation{% endif %}">
+  <p class="eyebrow">{% if answer.should_escalate %}Escalate{% else %}Guidance{% endif %}</p>
+  <h2>{{ answer.title }}</h2>
+  {% for paragraph in answer.paragraphs %}
+    <p>{{ paragraph }}</p>
+  {% endfor %}
+  {% if answer.related_module %}
+    <a class="button" href="{{ url_for('module_reader', slug=answer.related_module) }}">Open Related Module</a>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

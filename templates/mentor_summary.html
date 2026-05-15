@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Mentor Summary | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Template</p>
+  <h1>Mentor Summary</h1>
+  <p class="lede">Use this format when a student needs help and the next step should come from a mentor or IT tech.</p>
+</section>
+
+<section class="summary-output">
+<pre>Work-study student needs help.
+
+Student:
+Topic:
+Issue:
+Steps already tried:
+Current blocker:
+Relevant module/checklist item:
+Suggested next action: Stop here, share this summary with a mentor or IT tech, and wait for the next approved step.</pre>
+</section>
+
+<a class="button primary" href="{{ url_for('stuck') }}">Build a Summary</a>
+{% endblock %}

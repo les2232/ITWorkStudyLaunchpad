@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import sys
 
@@ -6,6 +7,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODULES_DIR = PROJECT_ROOT / "content" / "modules"
 ASSESSMENTS_DIR = PROJECT_ROOT / "content" / "assessments"
 CHECKLISTS_DIR = PROJECT_ROOT / "content" / "checklists"
+DATA_DIR = PROJECT_ROOT / "content" / "data"
 
 REQUIRED_MODULE_HEADINGS = [
     "## Goal",
@@ -39,6 +41,14 @@ REQUIRED_ASSESSMENT_HEADINGS = [
 REQUIRED_CHECKLIST_MARKERS = [
     "## Purpose",
     "- [ ]",
+]
+
+REQUIRED_DATA_FILES = [
+    "modules.json",
+    "checklists.json",
+    "training_paths.json",
+    "pre_assessment_v1.json",
+    "post_assessment_v1.json",
 ]
 
 
@@ -135,6 +145,138 @@ def validate_checklists() -> list[str]:
     return errors
 
 
+def validate_data_files() -> list[str]:
+    errors = []
+
+    if not DATA_DIR.exists():
+        return [f"Missing data directory: {DATA_DIR}"]
+
+    for file_name in REQUIRED_DATA_FILES:
+        path = DATA_DIR / file_name
+        if not path.exists():
+            errors.append(f"{path}: missing required data file")
+            continue
+        try:
+            json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"{path}: invalid JSON: {exc}")
+
+    if errors:
+        return errors
+
+    errors.extend(validate_module_manifest())
+    errors.extend(validate_checklist_manifest())
+    errors.extend(validate_training_paths())
+    errors.extend(validate_assessment_data("pre_assessment_v1.json"))
+    errors.extend(validate_assessment_data("post_assessment_v1.json"))
+
+    return errors
+
+
+def validate_module_manifest() -> list[str]:
+    errors = []
+    modules = read_json("modules.json")
+    seen_slugs = set()
+
+    if not isinstance(modules, list) or not modules:
+        return [f"{DATA_DIR / 'modules.json'}: expected a non-empty list"]
+
+    for module in modules:
+        errors.extend(require_fields(module, ["slug", "title", "path", "summary"], "modules.json"))
+        slug = module.get("slug")
+        if slug in seen_slugs:
+            errors.append(f"{DATA_DIR / 'modules.json'}: duplicate module slug: {slug}")
+        seen_slugs.add(slug)
+        path = PROJECT_ROOT / module.get("path", "")
+        if not path.exists():
+            errors.append(f"{DATA_DIR / 'modules.json'}: module path does not exist: {path}")
+
+    return errors
+
+
+def validate_checklist_manifest() -> list[str]:
+    errors = []
+    checklists = read_json("checklists.json")
+    seen_slugs = set()
+
+    if not isinstance(checklists, list) or not checklists:
+        return [f"{DATA_DIR / 'checklists.json'}: expected a non-empty list"]
+
+    for checklist in checklists:
+        errors.extend(require_fields(checklist, ["slug", "title", "path", "summary"], "checklists.json"))
+        slug = checklist.get("slug")
+        if slug in seen_slugs:
+            errors.append(f"{DATA_DIR / 'checklists.json'}: duplicate checklist slug: {slug}")
+        seen_slugs.add(slug)
+        path = PROJECT_ROOT / checklist.get("path", "")
+        if not path.exists():
+            errors.append(f"{DATA_DIR / 'checklists.json'}: checklist path does not exist: {path}")
+
+    return errors
+
+
+def validate_training_paths() -> list[str]:
+    errors = []
+    data = read_json("training_paths.json")
+    module_slugs = {module["slug"] for module in read_json("modules.json")}
+    checklist_slugs = {checklist["slug"] for checklist in read_json("checklists.json")}
+    seen_slugs = set()
+
+    levels = data.get("levels", [])
+    if not levels:
+        errors.append(f"{DATA_DIR / 'training_paths.json'}: missing levels")
+
+    for level in levels:
+        errors.extend(require_fields(level, ["slug", "label", "min_score", "max_score", "recommended_path", "required_items"], "training_paths.json"))
+        slug = level.get("slug")
+        if slug in seen_slugs:
+            errors.append(f"{DATA_DIR / 'training_paths.json'}: duplicate level slug: {slug}")
+        seen_slugs.add(slug)
+
+        for item in level.get("required_items", []):
+            item_type = item.get("type")
+            item_slug = item.get("slug")
+            if item_type == "module" and item_slug not in module_slugs:
+                errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown module slug: {item_slug}")
+            if item_type == "checklist" and item_slug not in checklist_slugs:
+                errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown checklist slug: {item_slug}")
+            if item_type not in {"module", "checklist", "activity", "assessment"}:
+                errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown required item type: {item_type}")
+
+    return errors
+
+
+def validate_assessment_data(file_name: str) -> list[str]:
+    errors = []
+    data = read_json(file_name)
+    errors.extend(require_fields(data, ["id", "title", "purpose", "total_points", "sections"], file_name))
+
+    question_ids = set()
+    point_total = 0.0
+    for section in data.get("sections", []):
+        errors.extend(require_fields(section, ["title", "questions"], file_name))
+        for question in section.get("questions", []):
+            errors.extend(require_fields(question, ["id", "prompt", "type", "category", "points"], file_name))
+            question_id = question.get("id")
+            if question_id in question_ids:
+                errors.append(f"{DATA_DIR / file_name}: duplicate question id: {question_id}")
+            question_ids.add(question_id)
+            point_total += float(question.get("points", 0))
+            question_type = question.get("type")
+            if question_type in {"multiple_choice", "select_all"} and not question.get("options"):
+                errors.append(f"{DATA_DIR / file_name}: {question_id} missing options")
+            if question_type == "multiple_choice" and "correct_answer" not in question and "score_map" not in question:
+                errors.append(f"{DATA_DIR / file_name}: {question_id} missing correct_answer or score_map")
+            if question_type == "rating" and "score_map" not in question:
+                errors.append(f"{DATA_DIR / file_name}: {question_id} missing score_map")
+
+    expected_total = float(data.get("total_points", 0))
+    if round(point_total, 2) != round(expected_total, 2):
+        errors.append(f"{DATA_DIR / file_name}: question points total {point_total} but expected {expected_total}")
+
+    return errors
+
+
 def validate_markdown_files() -> list[str]:
     errors = []
 
@@ -146,12 +288,30 @@ def validate_markdown_files() -> list[str]:
     return errors
 
 
+def read_json(file_name: str):
+    return json.loads((DATA_DIR / file_name).read_text(encoding="utf-8"))
+
+
+def require_fields(item: dict, fields: list[str], file_name: str) -> list[str]:
+    errors = []
+    for field in fields:
+        if field not in item or item[field] is None:
+            errors.append(f"{DATA_DIR / file_name}: missing required field: {field}")
+            continue
+        if isinstance(item[field], str) and item[field].strip() == "":
+            errors.append(f"{DATA_DIR / file_name}: missing required field: {field}")
+        if isinstance(item[field], list) and not item[field]:
+            errors.append(f"{DATA_DIR / file_name}: missing required field: {field}")
+    return errors
+
+
 def main() -> int:
     errors = []
     errors.extend(validate_markdown_files())
     errors.extend(validate_modules())
     errors.extend(validate_assessments())
     errors.extend(validate_checklists())
+    errors.extend(validate_data_files())
 
     if errors:
         print("Content validation failed:\n")

@@ -1,0 +1,279 @@
+{
+  "id": "post_assessment_v1",
+  "title": "Post-Assessment",
+  "purpose": "Measure what a new IT work-study student learned after completing assigned Launchpad modules, checklists, and shadowing.",
+  "student_intro": "This is not proof that you are fully trained. It helps you and your mentor decide what to review and whether you are ready for beginner-safe tasks with appropriate supervision.",
+  "total_points": 100,
+  "readiness_levels": [
+    {
+      "slug": "needs_more_foundation_review",
+      "label": "Needs More Foundation Review",
+      "min_score": 0,
+      "max_score": 59,
+      "mentor_action": "Repeat key modules and shadow closely."
+    },
+    {
+      "slug": "developing_readiness",
+      "label": "Developing Readiness",
+      "min_score": 60,
+      "max_score": 74,
+      "mentor_action": "Allow limited beginner-safe tasks with close guidance."
+    },
+    {
+      "slug": "ready_for_beginner_safe_tasks",
+      "label": "Ready for Beginner-Safe Tasks",
+      "min_score": 75,
+      "max_score": 89,
+      "mentor_action": "Approve supervised beginner-safe work if local expectations are met."
+    },
+    {
+      "slug": "strong_beginner_readiness",
+      "label": "Strong Beginner Readiness",
+      "min_score": 90,
+      "max_score": 100,
+      "mentor_action": "Approve supervised work and add next-step practice."
+    }
+  ],
+  "sections": [
+    {
+      "title": "Confidence Reflection",
+      "intro": "Use 1 = Not confident and 5 = Very confident.",
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "How confident do you feel asking for help when you are stuck?",
+          "type": "rating",
+          "category": "Confidence Reflection",
+          "points": 5,
+          "score_map": {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5}
+        },
+        {
+          "id": "q2",
+          "prompt": "What is one thing you feel more comfortable with now than you did before training?",
+          "type": "free_response",
+          "category": "Confidence Reflection",
+          "points": 5,
+          "mentor_review_needed": true,
+          "review_rubric": [
+            "Names a concrete skill, concept, or workflow.",
+            "Shows honest reflection about confidence or remaining questions.",
+            "Gives the mentor a useful follow-up topic."
+          ],
+          "mentor_use": "Use this answer to guide the mentor check-in."
+        }
+      ]
+    },
+    {
+      "title": "IT Vocabulary",
+      "questions": [
+        {
+          "id": "q3",
+          "prompt": "In a workplace or school IT environment, what is a domain?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "A managed environment used for accounts, computers, and access"},
+            {"value": "B", "label": "A monitor cable"},
+            {"value": "C", "label": "A keyboard shortcut"},
+            {"value": "D", "label": "A printer tray"}
+          ],
+          "correct_answer": "A",
+          "explanation": "A domain helps the organization manage logins, computers, permissions, and access."
+        },
+        {
+          "id": "q4",
+          "prompt": "What does computer imaging mean?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "Taking a photo of a computer"},
+            {"value": "B", "label": "Preparing a computer with the required operating system, software, settings, and configuration"},
+            {"value": "C", "label": "Changing a monitor background"},
+            {"value": "D", "label": "Printing a label"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Imaging prepares a computer so it is ready for the correct user, department, classroom, or lab."
+        },
+        {
+          "id": "q5",
+          "prompt": "What is a ticket?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "A record of an issue, request, task, or support interaction"},
+            {"value": "B", "label": "A password"},
+            {"value": "C", "label": "A cable adapter"},
+            {"value": "D", "label": "A software license key"}
+          ],
+          "correct_answer": "A",
+          "explanation": "A ticket helps IT track work, document what happened, and know what still needs to be done."
+        },
+        {
+          "id": "q6",
+          "prompt": "What is an asset tag used for?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "Tracking equipment"},
+            {"value": "B", "label": "Resetting passwords"},
+            {"value": "C", "label": "Choosing monitor input"},
+            {"value": "D", "label": "Opening email"}
+          ],
+          "correct_answer": "A",
+          "explanation": "An asset tag helps IT identify and track equipment."
+        }
+      ]
+    },
+    {
+      "title": "Hardware Workflow",
+      "questions": [
+        {
+          "id": "q7",
+          "prompt": "A monitor says \"No Signal.\" What is a good beginner-safe response if your department allows it?",
+          "type": "multiple_choice",
+          "category": "Hardware Workflow",
+          "points": 7,
+          "options": [
+            {"value": "A", "label": "Reimage the computer immediately"},
+            {"value": "B", "label": "Check power, cable connection, monitor input/source, and whether the computer is on"},
+            {"value": "C", "label": "Delete the user profile"},
+            {"value": "D", "label": "Change domain settings"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Power, cable, input/source, and device power are safe first checks when approved by your department."
+        },
+        {
+          "id": "q8",
+          "prompt": "A keyboard is not working. What should your summary include after an approved basic check?",
+          "type": "multiple_choice",
+          "category": "Hardware Workflow",
+          "points": 8,
+          "options": [
+            {"value": "A", "label": "Only \"fixed\""},
+            {"value": "B", "label": "The issue, what you checked, what happened, and whether more help is needed"},
+            {"value": "C", "label": "The user's password"},
+            {"value": "D", "label": "A guess about who caused the problem"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Clear summaries help mentors and other IT staff understand the work."
+        }
+      ]
+    },
+    {
+      "title": "Imaging Understanding",
+      "questions": [
+        {
+          "id": "q9",
+          "prompt": "You are helping with imaging and do not know which image or workflow applies. What should you do?",
+          "type": "multiple_choice",
+          "category": "Imaging Understanding",
+          "points": 10,
+          "options": [
+            {"value": "A", "label": "Pick the image that sounds closest"},
+            {"value": "B", "label": "Stop and ask your mentor or the IT tech on duty"},
+            {"value": "C", "label": "Skip the imaging step"},
+            {"value": "D", "label": "Mark the computer ready"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Using the wrong image can configure the computer incorrectly. Do not guess."
+        },
+        {
+          "id": "q10",
+          "prompt": "An unfamiliar imaging error appears. What information should you collect before asking for help?",
+          "type": "free_response",
+          "category": "Imaging Understanding",
+          "points": 10,
+          "mentor_review_needed": true,
+          "review_rubric": [
+            "Includes device name, asset tag, or location when appropriate.",
+            "Captures the exact error message or code.",
+            "Explains what step was happening.",
+            "States that the student stopped and asked for help instead of guessing."
+          ],
+          "strong_answer_should_include": [
+            "Device name or asset tag",
+            "Exact error message or code",
+            "What step was happening",
+            "What the student was instructed to do",
+            "Whether the process stopped or continued",
+            "Confirmation that the student stopped and asked for help"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Draft Documentation",
+      "questions": [
+        {
+          "id": "q11",
+          "prompt": "Draft a mentor summary for this situation: You checked a monitor issue at the front desk. The monitor had power, the DisplayPort cable was connected, and the monitor still showed \"No Signal.\"",
+          "type": "free_response",
+          "category": "Draft Documentation",
+          "points": 10,
+          "mentor_review_needed": true,
+          "review_rubric": [
+            "Explains the issue and location clearly.",
+            "Lists what was checked.",
+            "States the result without guessing.",
+            "Uses mentor-safe next-step language instead of claiming resolution too early."
+          ],
+          "strong_answer_example": "Checked monitor issue at front desk workstation. Monitor had power and DisplayPort cable was connected. Monitor still showed No Signal. Stopped and asked mentor for next approved step."
+        },
+        {
+          "id": "q12",
+          "prompt": "Draft a mentor summary for this situation: You observed an imaging error on a computer at the workbench. The error code was 0x00000000. You were not sure what it meant.",
+          "type": "free_response",
+          "category": "Draft Documentation",
+          "points": 10,
+          "mentor_review_needed": true,
+          "review_rubric": [
+            "Includes the exact imaging error code.",
+            "Gives device or workbench context.",
+            "Says what the student did not know.",
+            "Shows that the student stopped and escalated before continuing."
+          ],
+          "strong_answer_example": "Observed imaging error on workbench computer. Error code shown: 0x00000000. I was not sure what it meant, so I stopped before continuing and notified my mentor for next steps."
+        }
+      ]
+    },
+    {
+      "title": "Escalation Judgment",
+      "questions": [
+        {
+          "id": "q13",
+          "prompt": "Which situation should usually be escalated?",
+          "type": "multiple_choice",
+          "category": "Escalation Judgment",
+          "points": 7,
+          "options": [
+            {"value": "A", "label": "A user says they cannot access a system they normally use"},
+            {"value": "B", "label": "A monitor cable is visibly unplugged and you were told to reconnect it"},
+            {"value": "C", "label": "You are reading a training module"},
+            {"value": "D", "label": "You are checking your own schedule"}
+          ],
+          "correct_answer": "A",
+          "explanation": "Access and permission issues should usually be escalated because they can affect security and user access."
+        },
+        {
+          "id": "q14",
+          "prompt": "What should you do if you are unsure whether a task is beginner-safe?",
+          "type": "multiple_choice",
+          "category": "Escalation Judgment",
+          "points": 8,
+          "options": [
+            {"value": "A", "label": "Try it quietly"},
+            {"value": "B", "label": "Search randomly and follow the first result"},
+            {"value": "C", "label": "Stop, document what you know, and ask your mentor"},
+            {"value": "D", "label": "Tell the user IT cannot help"}
+          ],
+          "correct_answer": "C",
+          "explanation": "Stopping and asking protects users, devices, data, and the team."
+        }
+      ]
+    }
+  ]
+}

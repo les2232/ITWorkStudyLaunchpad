@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ path.label }} Path | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Training path</p>
+  <h1>{{ path.label }}</h1>
+  <p class="lede">{{ path.intro }}</p>
+</section>
+
+<section class="split-layout">
+  <div>
+    <h2>Required Items</h2>
+    <ol class="path-list">
+      {% for item in path.required_items %}
+        <li>
+          {% if item.type == "module" %}
+            {% set module = modules_by_slug[item.slug] %}
+            <a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a>
+          {% elif item.type == "checklist" %}
+            {% set checklist = checklists_by_slug[item.slug] %}
+            <a href="{{ url_for('checklist_reader', slug=checklist.slug) }}">{{ checklist.title }}</a>
+          {% else %}
+            {{ item.label }}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+  <div>
+    <h2>Mentor Focus</h2>
+    <ul>
+      {% for focus in path.mentor_focus %}
+        <li>{{ focus }}</li>
+      {% endfor %}
+    </ul>
+    <h2>Completion Criteria</h2>
+    <ul>
+      {% for item in path.completion_criteria %}
+        <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

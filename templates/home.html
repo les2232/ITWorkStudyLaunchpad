@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Home | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="intro-band">
+  <div>
+    <p class="eyebrow">Beginner IT onboarding</p>
+    <h1>Start with safe learning, clear notes, and mentor escalation.</h1>
+    <p class="lede">This prototype helps new work-study students complete assessments, read foundation modules, use checklists, ask beginner questions, and prepare mentor summaries.</p>
+  </div>
+  <div class="status-panel">
+    <span>{{ module_count }} modules</span>
+    <span>{{ checklist_count }} checklists</span>
+    <span>{{ paths|length }} paths</span>
+  </div>
+</section>
+
+<section class="action-grid" aria-label="Launchpad actions">
+  <a class="action-card primary" href="{{ url_for('pre_assessment') }}">
+    <span>Start</span>
+    <strong>Pre-Assessment</strong>
+    <small>Get a recommended starting path.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('module_index') }}">
+    <span>Learn</span>
+    <strong>IT Foundations</strong>
+    <small>Read beginner-friendly modules.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('day_1_checklist') }}">
+    <span>Check</span>
+    <strong>Day 1 Checklist</strong>
+    <small>Review first-day expectations.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('week_1_checklist') }}">
+    <span>Build</span>
+    <strong>Week 1 Checklist</strong>
+    <small>Move into supervised practice.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('ask') }}">
+    <span>Ask</span>
+    <strong>Ask a Question</strong>
+    <small>Get safe beginner guidance.</small>
+  </a>
+  <a class="action-card urgent" href="{{ url_for('stuck') }}">
+    <span>Escalate</span>
+    <strong>Report I'm Stuck</strong>
+    <small>Generate a mentor-ready summary.</small>
+  </a>
+</section>
+
+<section class="path-strip" aria-label="Training paths">
+  {% for path in paths %}
+    <a href="{{ url_for('training_path', slug=path.slug) }}">
+      <strong>{{ path.label }}</strong>
+      <span>{{ path.min_score }}-{{ path.max_score }}</span>
+    </a>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}IT Work Study Launchpad{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="{{ url_for('home') }}">IT Work Study Launchpad</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="{{ url_for('pre_assessment') }}">Pre-Assessment</a>
+        <a href="{{ url_for('module_index') }}">Modules</a>
+        <a href="{{ url_for('day_1_checklist') }}">Day 1</a>
+        <a href="{{ url_for('week_1_checklist') }}">Week 1</a>
+        <a href="{{ url_for('ask') }}">Ask</a>
+        <a href="{{ url_for('stuck') }}">Stuck</a>
+        <a href="{{ url_for('supervisor') }}">Supervisor</a>
+      </nav>
+    </header>
+    <main class="page">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

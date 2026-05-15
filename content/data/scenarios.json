@@ -1,0 +1,187 @@
+[
+  {
+    "id": "ticket_term_unknown",
+    "title": "A Ticket Uses a Word You Do Not Know",
+    "summary": "Practice asking about an unfamiliar term before acting on a ticket.",
+    "readiness_levels": ["beginner", "developing"],
+    "module_slugs": ["common_it_words", "ticket_basics", "how_to_ask_for_help"],
+    "situation": "You are shadowing a mentor and reading a ticket. The ticket mentions a term you do not understand, and you are not sure how it changes the work.",
+    "student_prompt": "What would you do next before taking action?",
+    "safe_actions": [
+      "Pause and write down the term exactly as it appears.",
+      "Check the related training module or glossary if your mentor has asked you to review it.",
+      "Ask your mentor what the term means in this local workflow before doing anything with the ticket."
+    ],
+    "document": [
+      "The ticket topic or task you were reading.",
+      "The unfamiliar term.",
+      "The question you need answered before continuing."
+    ],
+    "ask_mentor_when": [
+      "The term affects what action should be taken.",
+      "You are not sure whether you are allowed to continue.",
+      "A user is waiting for an answer you cannot confirm."
+    ],
+    "avoid": [
+      "Do not guess what the ticket means.",
+      "Do not update, close, or change the ticket until trained and authorized.",
+      "Do not tell a user a next step unless a mentor confirms it."
+    ],
+    "mentor_feedback": "A strong answer stops before acting, identifies the confusing term, and asks the mentor for clarification. Learning the language of IT is part of the work."
+  },
+  {
+    "id": "slow_computer",
+    "title": "A User Says Their Computer Is Slow",
+    "summary": "Practice collecting symptoms without jumping to risky fixes.",
+    "readiness_levels": ["beginner", "developing", "ready_to_shadow"],
+    "module_slugs": ["hardware_basics", "ticket_basics", "escalation_rules"],
+    "situation": "A user says their computer is running slowly. They are frustrated and want it fixed quickly.",
+    "student_prompt": "What information would you collect, and when would you ask for help?",
+    "safe_actions": [
+      "Document the symptom in the user's own words.",
+      "Ask what the user was trying to do when the slowness happened.",
+      "If approved, observe simple facts such as whether the device is powered on, responsive, or showing an error."
+    ],
+    "document": [
+      "Device name, asset tag, or location if available.",
+      "What the user was doing when the issue appeared.",
+      "Any exact error message, timing, or pattern.",
+      "What beginner-safe checks were approved and what happened."
+    ],
+    "ask_mentor_when": [
+      "The issue may involve user data, accounts, permissions, or software changes.",
+      "Approved beginner-safe checks are complete and the issue remains.",
+      "The user needs a timeline or answer you cannot confirm."
+    ],
+    "avoid": [
+      "Do not delete files to make the computer faster.",
+      "Do not reimage the computer as a first step.",
+      "Do not change settings or install tools without approval."
+    ],
+    "mentor_feedback": "A strong answer gathers facts, avoids random fixes, and escalates before touching data, accounts, software, or settings."
+  },
+  {
+    "id": "printer_not_working",
+    "title": "A Printer Is Not Working",
+    "summary": "Practice safe information gathering for a common support request.",
+    "readiness_levels": ["developing", "ready_to_shadow", "advanced_beginner"],
+    "module_slugs": ["what_does_it_do", "ticket_basics", "escalation_rules"],
+    "situation": "A staff member says the shared printer near their area is not printing.",
+    "student_prompt": "What can you safely collect or check before asking for the next step?",
+    "safe_actions": [
+      "Ask what the user expected to print and what happened instead.",
+      "Record the printer location or visible printer name if available.",
+      "If allowed, check simple visible conditions such as power, paper, or an error message on the display."
+    ],
+    "document": [
+      "Printer location or visible printer name.",
+      "Whether one user or multiple users appear affected, if known.",
+      "Any exact error message shown on the printer or user's screen.",
+      "What visible checks were approved and what you observed."
+    ],
+    "ask_mentor_when": [
+      "The issue may involve print queues, drivers, network settings, or permissions.",
+      "The printer shows an unfamiliar error.",
+      "The user needs a timeline you cannot confirm."
+    ],
+    "avoid": [
+      "Do not change printer drivers, queues, or network settings without approval.",
+      "Do not clear or cancel other users' jobs unless trained and authorized.",
+      "Do not promise the issue is resolved unless a mentor confirms it."
+    ],
+    "mentor_feedback": "A strong answer records visible facts, avoids system changes, and asks a mentor before touching queues, drivers, permissions, or network settings."
+  },
+  {
+    "id": "ticket_update_permission",
+    "title": "You Are Unsure Whether You Can Update a Ticket",
+    "summary": "Practice preparing a draft note instead of changing official records too early.",
+    "readiness_levels": ["beginner", "developing", "ready_to_shadow"],
+    "module_slugs": ["ticket_basics", "how_to_ask_for_help", "escalation_rules"],
+    "situation": "You observed a mentor check a monitor issue. You think you know what happened, but you are not sure whether you are allowed to add a note to the ticket.",
+    "student_prompt": "What would you do with the information you observed?",
+    "safe_actions": [
+      "Prepare a draft note for mentor review.",
+      "Include the issue, what was checked, what happened, and what still needs to happen.",
+      "Ask your mentor whether the ticket needs an update and who should enter it."
+    ],
+    "document": [
+      "The issue or request.",
+      "The device or location if appropriate.",
+      "The checks you observed or were instructed to perform.",
+      "The result and any next step that still needs mentor confirmation."
+    ],
+    "ask_mentor_when": [
+      "You have not been trained and authorized to update tickets.",
+      "You are unsure whether the issue is resolved.",
+      "You do not know what ticket status or wording applies."
+    ],
+    "avoid": [
+      "Do not create, edit, close, assign, or update tickets without approval.",
+      "Do not write guesses as facts.",
+      "Do not mark an issue complete if you are unsure."
+    ],
+    "mentor_feedback": "A strong answer uses a draft note and asks who should update the official system. Drafting is good practice; changing records requires training and approval."
+  },
+  {
+    "id": "missing_asset_tag",
+    "title": "A Device Has No Visible Asset Tag",
+    "summary": "Practice safe equipment identification when tracking information is missing.",
+    "readiness_levels": ["beginner", "developing", "ready_to_shadow"],
+    "module_slugs": ["asset_tag_basics", "hardware_basics", "escalation_rules"],
+    "situation": "You are asked to identify a laptop on the workbench, but you cannot find a visible asset tag.",
+    "student_prompt": "What should you document, and what should you avoid doing?",
+    "safe_actions": [
+      "Stop and avoid guessing the asset tag.",
+      "Record that the asset tag is missing or not visible.",
+      "If instructed, collect other visible identifiers such as device location, device name on a label, or serial number."
+    ],
+    "document": [
+      "Device type and location.",
+      "That no asset tag was visible.",
+      "Any other approved visible identifier you were instructed to collect.",
+      "Who you asked for the next step."
+    ],
+    "ask_mentor_when": [
+      "The asset tag is missing, unreadable, or does not match the task.",
+      "Inventory may need to be updated.",
+      "You are unsure whether this is the correct device."
+    ],
+    "avoid": [
+      "Do not invent or guess an asset tag.",
+      "Do not replace or write over an asset tag unless trained and authorized.",
+      "Do not move or work on the device if you are unsure it matches the task."
+    ],
+    "mentor_feedback": "A strong answer treats missing asset information as a reason to stop, document, and ask. Accurate identification prevents work on the wrong equipment."
+  },
+  {
+    "id": "untrained_task_request",
+    "title": "You Are Asked to Do Something You Have Not Been Trained On",
+    "summary": "Practice responding professionally when a task may not be beginner-safe.",
+    "readiness_levels": ["beginner", "developing", "ready_to_shadow", "advanced_beginner"],
+    "module_slugs": ["how_to_ask_for_help", "escalation_rules"],
+    "situation": "Someone asks you to complete a task that sounds important, but you have not been trained on it and do not know whether it is allowed.",
+    "student_prompt": "What would you say or do next?",
+    "safe_actions": [
+      "Stay professional and explain that you need mentor confirmation before continuing.",
+      "Write down what was requested and who requested it if appropriate.",
+      "Contact your mentor, IT tech, or supervisor for the next approved step."
+    ],
+    "document": [
+      "What task was requested.",
+      "What part you are unsure about.",
+      "Whether a user is waiting or work is affected.",
+      "Who you contacted for approval."
+    ],
+    "ask_mentor_when": [
+      "You have not been trained on the task.",
+      "The task may involve accounts, permissions, data, imaging, inventory, or official records.",
+      "You feel tempted to guess because someone is waiting."
+    ],
+    "avoid": [
+      "Do not perform untrained tasks just because they sound simple.",
+      "Do not use admin credentials or restricted systems without approval.",
+      "Do not promise completion before a mentor confirms the workflow."
+    ],
+    "mentor_feedback": "A strong answer protects the user and the department by asking for approval before acting. Confidence in IT includes knowing when not to proceed alone."
+  }
+]

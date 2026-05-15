@@ -11,7 +11,16 @@ The system helps new student workers:
 - Complete a post-assessment
 - Generate mentor/supervisor summaries when stuck
 
-## Initial MVP Focus
+## Product Philosophy
+
+- Teach the mental model before the workflow.
+- Use beginner-friendly, supportive language.
+- Reinforce safe checks, clear documentation, and mentor escalation.
+- Treat assessments as placement and growth tools, not pass/fail labels.
+- Keep the assistant inside approved training content and safety boundaries.
+- Do not include credentials, admin-only steps, sensitive internal procedures, real student data, or production integrations.
+
+## MVP Focus
 
 The first version focuses on:
 
@@ -25,28 +34,108 @@ The first version focuses on:
 
 ## Current Status
 
-Content foundation in progress.
+Usable MVP prototype in progress.
 
-Completed foundation pieces:
+Completed pieces:
 
 - Project plan and chatbot behavior requirements
 - Pre-assessment v1 and post-assessment v1
 - Adaptive training paths
 - Day 1 and Week 1 onboarding checklists
 - Beginner IT foundation modules
-- Content validation script
+- App-readable JSON manifests for modules, checklists, assessments, and training paths
+- Flask web prototype
+- Safe rule-based "Ask a Question" guidance
+- "Report I'm Stuck" mentor-summary flow
+- Basic supervisor overview
+- Content validation and unit tests
 
-Not started yet:
+Not included in this MVP:
 
-- Web app prototype
-- Student progress tracking
-- Supervisor dashboard
-- Chatbot implementation
+- Full authentication or SSO
+- Real student records
+- Production database
+- Teams or SharePoint integration
+- Full chatbot or LLM integration
+- Sensitive internal IT procedures
+- Advanced analytics
 
-## Validate Content
+## Setup
 
-Run:
+Use a local virtual environment:
 
 ```bash
-python3 scripts/check_all.py
+python3 -m venv .venv
+./.venv/bin/pip install -r requirements.txt
 ```
+
+## Run Locally
+
+```bash
+./.venv/bin/flask --app app run --debug --host 0.0.0.0 --port 5000
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
+
+## Run Checks
+
+After setup:
+
+```bash
+./.venv/bin/python scripts/check_all.py
+```
+
+The check command validates Markdown and JSON content, then runs the unit tests.
+
+The tests cover:
+
+- Assessment scoring
+- Training path routing
+- Content/checklist loading
+- Safe guidance behavior
+- Stuck summary generation
+
+## Project Structure
+
+```text
+app.py                         Flask entrypoint
+launchpad/                     App logic, content loading, scoring, guidance
+templates/                     Jinja screens for the MVP prototype
+static/                        CSS and lightweight client behavior
+content/modules/               Human-readable training modules
+content/checklists/            Day 1 and Week 1 checklist Markdown
+content/assessments/           Human-readable assessment drafts
+content/data/                  App-readable manifests and assessment data
+docs/                          Planning and behavior requirements
+scripts/check_all.py           One-command validation and tests
+scripts/validate_content.py    Content and data validation
+tests/                         Unit tests
+```
+
+## MVP Routes
+
+- `/` home
+- `/pre-assessment`
+- `/assessment-results`
+- `/training-path/<level>`
+- `/modules`
+- `/modules/<module>`
+- `/day-1-checklist`
+- `/week-1-checklist`
+- `/ask`
+- `/stuck`
+- `/mentor-summary`
+- `/post-assessment`
+- `/supervisor`
+
+## Known Next Steps
+
+- Add a lightweight progress model if student progress needs to persist beyond browser-local checklist state.
+- Add mentor review prompts and scenario practice pages.
+- Improve free-response assessment review so mentors can score quality instead of relying on placeholder auto-credit.
+- Add app route smoke tests once Flask is expected in every development environment.
+- Separate glossary content into dedicated app-readable terms when the module list grows.

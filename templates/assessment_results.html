@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Assessment Results | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Pre-assessment result</p>
+  <h1>{{ result.path_label }}</h1>
+  <p class="lede">{{ result.score }}% · {{ result.recommended_path }}</p>
+</section>
+
+<section class="result-panel">
+  <h2>Category Breakdown</h2>
+  <div class="category-grid">
+    {% for category in result.categories %}
+      <div>
+        <strong>{{ category.name }}</strong>
+        <span>{{ category.earned }} / {{ category.possible }} points</span>
+        <meter min="0" max="100" value="{{ category.percent }}">{{ category.percent }}%</meter>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="split-layout">
+  <div>
+    <h2>Recommended Path</h2>
+    <p>{{ path.intro }}</p>
+    <a class="button primary" href="{{ url_for('training_path', slug=path.slug) }}">Open {{ path.label }} Path</a>
+  </div>
+  <div>
+    <h2>Review Areas</h2>
+    {% if result.knowledge_gaps %}
+      <ul>
+        {% for gap in result.knowledge_gaps %}
+          <li>
+            <strong>{{ gap.area }}</strong>: {{ gap.percent }}%
+            <div class="inline-links">
+              {% for module_slug in gap.recommended_modules %}
+                {% set module = modules_by_slug[module_slug] %}
+                <a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a>
+              {% endfor %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No category fell below the review threshold. Still complete required safety modules and mentor check-ins.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

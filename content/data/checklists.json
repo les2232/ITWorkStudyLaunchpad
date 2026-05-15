@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "day_1",
+    "title": "Day 1 Checklist",
+    "path": "content/checklists/day_1_checklist.md",
+    "route": "/day-1-checklist",
+    "summary": "First-day orientation, safety boundaries, learning, and check-out."
+  },
+  {
+    "slug": "week_1",
+    "title": "Week 1 Checklist",
+    "path": "content/checklists/week_1_checklist.md",
+    "route": "/week-1-checklist",
+    "summary": "First-week foundations, workflow orientation, practice, and review."
+  }
+]

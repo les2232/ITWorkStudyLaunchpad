@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<article class="reader">
+  <div class="reader-heading">
+    <a href="{{ url_for('home') }}">Home</a>
+    <h1>{{ item.title }}</h1>
+    <p>{{ item.summary }}</p>
+  </div>
+  <div class="toolbar">
+    <button class="button" type="button" data-reset-checklist>Reset Checks</button>
+  </div>
+  <div class="markdown-body checklist-body" data-checklist="{{ item.slug }}">
+    {{ body|safe }}
+  </div>
+</article>
+<script>
+  const scope = document.querySelector("[data-checklist]");
+  if (scope) {
+    const key = "launchpad-checklist-" + scope.dataset.checklist;
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    const boxes = Array.from(scope.querySelectorAll("input[type='checkbox']"));
+    boxes.forEach((box, index) => {
+      box.checked = Boolean(saved[index]);
+      box.addEventListener("change", () => {
+        const state = {};
+        boxes.forEach((item, itemIndex) => state[itemIndex] = item.checked);
+        localStorage.setItem(key, JSON.stringify(state));
+      });
+    });
+    document.querySelector("[data-reset-checklist]").addEventListener("click", () => {
+      localStorage.removeItem(key);
+      boxes.forEach((box) => box.checked = false);
+    });
+  }
+</script>
+{% endblock %}

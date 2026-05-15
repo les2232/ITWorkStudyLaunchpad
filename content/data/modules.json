@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "common_it_words",
+    "title": "Common IT Words",
+    "path": "content/modules/common_it_words.md",
+    "summary": "Beginner-friendly glossary for common IT department terms."
+  },
+  {
+    "slug": "what_does_it_do",
+    "title": "What Does IT Do?",
+    "path": "content/modules/what_does_it_do.md",
+    "summary": "Plain-language overview of what an IT department supports."
+  },
+  {
+    "slug": "domain_basics",
+    "title": "Domain Basics",
+    "path": "content/modules/domain_basics.md",
+    "summary": "What a managed domain means for accounts, computers, and access."
+  },
+  {
+    "slug": "configuration_manager_overview",
+    "title": "Configuration Manager Overview",
+    "path": "content/modules/configuration_manager_overview.md",
+    "summary": "Beginner-safe overview of SCCM / Configuration Manager."
+  },
+  {
+    "slug": "imaging_overview",
+    "title": "Computer Imaging Overview",
+    "path": "content/modules/imaging_overview.md",
+    "summary": "Mental model for imaging without exposing internal procedures."
+  },
+  {
+    "slug": "ticket_basics",
+    "title": "Ticket Basics",
+    "path": "content/modules/ticket_basics.md",
+    "summary": "How tickets help IT track requests, issues, and draft notes."
+  },
+  {
+    "slug": "asset_tag_basics",
+    "title": "Asset Tag Basics",
+    "path": "content/modules/asset_tag_basics.md",
+    "summary": "How asset tags identify equipment and prevent mix-ups."
+  },
+  {
+    "slug": "hardware_basics",
+    "title": "Hardware Basics",
+    "path": "content/modules/hardware_basics.md",
+    "summary": "Common hardware terms, safe checks, and escalation boundaries."
+  },
+  {
+    "slug": "how_to_ask_for_help",
+    "title": "How to Ask for Help",
+    "path": "content/modules/how_to_ask_for_help.md",
+    "summary": "How to prepare clear mentor questions and summaries."
+  },
+  {
+    "slug": "escalation_rules",
+    "title": "Escalation Rules",
+    "path": "content/modules/escalation_rules.md",
+    "summary": "When to stop, document, and ask a mentor or supervisor."
+  }
+]

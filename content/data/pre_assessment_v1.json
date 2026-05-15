@@ -1,0 +1,315 @@
+{
+  "id": "pre_assessment_v1",
+  "title": "Pre-Assessment",
+  "purpose": "Determine a new IT work-study student's starting knowledge, confidence level, and recommended training path.",
+  "student_intro": "This is not pass/fail. Answer honestly so the Launchpad can recommend the right training path and help your mentor support you.",
+  "total_points": 100,
+  "sections": [
+    {
+      "title": "Background / Experience",
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Have you worked in an IT, computer lab, help desk, repair, or tech support role before?",
+          "type": "multiple_choice",
+          "category": "Background / Experience",
+          "points": 3,
+          "options": [
+            {"value": "A", "label": "Yes"},
+            {"value": "B", "label": "No"},
+            {"value": "C", "label": "Somewhat"}
+          ],
+          "score_map": {"A": 3, "C": 2, "B": 1}
+        },
+        {
+          "id": "q2",
+          "prompt": "Which of these have you done before? Select all that apply.",
+          "type": "select_all",
+          "category": "Background / Experience",
+          "points": 4,
+          "options": [
+            {"value": "connected_peripherals", "label": "Connected monitors, keyboards, or mice"},
+            {"value": "installed_software", "label": "Installed software"},
+            {"value": "troubleshot_computer", "label": "Helped someone troubleshoot a computer"},
+            {"value": "ticketing_system", "label": "Used a ticketing system"},
+            {"value": "asset_tags", "label": "Worked with inventory or asset tags"},
+            {"value": "imaged_computer", "label": "Imaged or reset a computer"},
+            {"value": "customer_service", "label": "Worked in customer service"},
+            {"value": "none", "label": "None of these"}
+          ],
+          "scoring": {
+            "none_value": "none",
+            "count_rules": [
+              {"min": 5, "points": 4},
+              {"min": 3, "max": 4, "points": 3},
+              {"min": 1, "max": 2, "points": 2},
+              {"min": 0, "max": 0, "points": 1}
+            ]
+          }
+        },
+        {
+          "id": "q3",
+          "prompt": "What are you most nervous about in this role?",
+          "type": "free_response",
+          "category": "Background / Experience",
+          "points": 3,
+          "mentor_review_needed": true,
+          "review_rubric": [
+            "Names a real concern or support need honestly.",
+            "Gives the mentor useful context for the first check-in.",
+            "Uses safe language instead of pretending to know more than they do."
+          ],
+          "mentor_use": "Use this answer to identify early support needs and confidence concerns."
+        }
+      ]
+    },
+    {
+      "title": "Confidence",
+      "intro": "Use 1 = Not confident and 5 = Very confident.",
+      "questions": [
+        {
+          "id": "q4",
+          "prompt": "How confident do you feel using computers in general?",
+          "type": "rating",
+          "category": "Confidence",
+          "points": 2.5,
+          "score_map": {"1": 0.5, "2": 1, "3": 1.5, "4": 2, "5": 2.5}
+        },
+        {
+          "id": "q5",
+          "prompt": "How confident do you feel troubleshooting basic computer problems?",
+          "type": "rating",
+          "category": "Confidence",
+          "points": 2.5,
+          "score_map": {"1": 0.5, "2": 1, "3": 1.5, "4": 2, "5": 2.5}
+        },
+        {
+          "id": "q6",
+          "prompt": "How confident do you feel asking for help when you are stuck?",
+          "type": "rating",
+          "category": "Confidence",
+          "points": 2.5,
+          "score_map": {"1": 0.5, "2": 1, "3": 1.5, "4": 2, "5": 2.5}
+        },
+        {
+          "id": "q7",
+          "prompt": "How confident do you feel reading step-by-step technical documentation?",
+          "type": "rating",
+          "category": "Confidence",
+          "points": 2.5,
+          "score_map": {"1": 0.5, "2": 1, "3": 1.5, "4": 2, "5": 2.5}
+        }
+      ]
+    },
+    {
+      "title": "IT Vocabulary",
+      "questions": [
+        {
+          "id": "q8",
+          "prompt": "In a school or workplace IT environment, what is a domain?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "A website address only"},
+            {"value": "B", "label": "A managed network environment used for accounts, computers, and access"},
+            {"value": "C", "label": "A type of monitor cable"},
+            {"value": "D", "label": "A folder on the desktop"}
+          ],
+          "correct_answer": "B",
+          "explanation": "In this context, a domain helps an organization manage user accounts, computers, permissions, and access in a central way."
+        },
+        {
+          "id": "q9",
+          "prompt": "What does computer imaging mean?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "Taking a picture of a computer"},
+            {"value": "B", "label": "Preparing a computer with the required operating system, software, and settings"},
+            {"value": "C", "label": "Printing a computer label"},
+            {"value": "D", "label": "Changing the desktop background"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Computer imaging prepares a computer with the standard operating system, software, settings, and configuration it needs before being used."
+        },
+        {
+          "id": "q10",
+          "prompt": "SCCM or Configuration Manager is generally used for what?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "Managing and deploying software, updates, and operating systems"},
+            {"value": "B", "label": "Designing websites"},
+            {"value": "C", "label": "Replacing broken screens"},
+            {"value": "D", "label": "Sending email"}
+          ],
+          "correct_answer": "A",
+          "explanation": "Configuration Manager is commonly used to manage computers, deploy software, run updates, and support imaging."
+        },
+        {
+          "id": "q11",
+          "prompt": "What is a ticket?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "A record of a request, issue, task, or support interaction"},
+            {"value": "B", "label": "A password"},
+            {"value": "C", "label": "A computer cable"},
+            {"value": "D", "label": "A storage device"}
+          ],
+          "correct_answer": "A",
+          "explanation": "A ticket is a record of work that needs to be done or support that was provided."
+        },
+        {
+          "id": "q12",
+          "prompt": "What is an asset tag?",
+          "type": "multiple_choice",
+          "category": "IT Vocabulary",
+          "points": 5,
+          "options": [
+            {"value": "A", "label": "A label or ID used to track equipment"},
+            {"value": "B", "label": "A Wi-Fi password"},
+            {"value": "C", "label": "A username"},
+            {"value": "D", "label": "A software update"}
+          ],
+          "correct_answer": "A",
+          "explanation": "An asset tag is used to identify and track equipment such as computers, monitors, printers, and other technology."
+        }
+      ]
+    },
+    {
+      "title": "Beginner Troubleshooting",
+      "questions": [
+        {
+          "id": "q13",
+          "prompt": "A monitor says \"No Signal.\" What should you check first?",
+          "type": "multiple_choice",
+          "category": "Beginner Troubleshooting",
+          "points": 6,
+          "options": [
+            {"value": "A", "label": "Reimage the computer"},
+            {"value": "B", "label": "Check power, display cable, monitor input/source, and whether the computer is on"},
+            {"value": "C", "label": "Delete the user profile"},
+            {"value": "D", "label": "Replace the computer immediately"}
+          ],
+          "correct_answer": "B",
+          "explanation": "A No Signal message is often related to power, cabling, monitor input/source, or whether the computer is sending video."
+        },
+        {
+          "id": "q14",
+          "prompt": "A keyboard is not working. What is a beginner-safe first step?",
+          "type": "multiple_choice",
+          "category": "Beginner Troubleshooting",
+          "points": 6,
+          "options": [
+            {"value": "A", "label": "Open the computer case"},
+            {"value": "B", "label": "Check the connection or try a known-working keyboard"},
+            {"value": "C", "label": "Reinstall Windows"},
+            {"value": "D", "label": "Change domain settings"}
+          ],
+          "correct_answer": "B",
+          "explanation": "Checking the connection or testing with a known-working keyboard is a safe first step when approved by the department."
+        },
+        {
+          "id": "q15",
+          "prompt": "Which of these is usually beginner-safe?",
+          "type": "multiple_choice",
+          "category": "Beginner Troubleshooting",
+          "points": 6,
+          "options": [
+            {"value": "A", "label": "Guessing which image to use"},
+            {"value": "B", "label": "Changing system settings without approval"},
+            {"value": "C", "label": "Checking whether a monitor cable is connected"},
+            {"value": "D", "label": "Deleting old user folders"}
+          ],
+          "correct_answer": "C",
+          "explanation": "Checking a cable connection is usually safe. Guessing, changing settings, or deleting files can cause problems."
+        },
+        {
+          "id": "q16",
+          "prompt": "A computer is running slowly. What is the safest beginner response?",
+          "type": "multiple_choice",
+          "category": "Beginner Troubleshooting",
+          "points": 7,
+          "options": [
+            {"value": "A", "label": "Delete files until the computer is faster"},
+            {"value": "B", "label": "Document the symptoms, ask what the user was doing, and check beginner-safe items if instructed"},
+            {"value": "C", "label": "Reimage the computer immediately"},
+            {"value": "D", "label": "Ignore the issue because slow computers are normal"}
+          ],
+          "correct_answer": "B",
+          "explanation": "The safest beginner response is to collect basic context, perform only approved beginner-safe checks, and escalate when needed."
+        }
+      ]
+    },
+    {
+      "title": "Workflow and Escalation",
+      "questions": [
+        {
+          "id": "q17",
+          "prompt": "You are asked to help image a computer, but you are not sure which image or workflow to use. What should you do?",
+          "type": "multiple_choice",
+          "category": "Workflow and Escalation",
+          "points": 7,
+          "options": [
+            {"value": "A", "label": "Pick the one that seems closest"},
+            {"value": "B", "label": "Stop and ask your mentor or the IT tech on duty"},
+            {"value": "C", "label": "Skip the imaging step"},
+            {"value": "D", "label": "Mark the computer complete"}
+          ],
+          "correct_answer": "B",
+          "explanation": "A new work-study student should not guess during imaging."
+        },
+        {
+          "id": "q18",
+          "prompt": "You see an unfamiliar error while helping with a computer. What should you do?",
+          "type": "multiple_choice",
+          "category": "Workflow and Escalation",
+          "points": 7,
+          "options": [
+            {"value": "A", "label": "Keep clicking until something works"},
+            {"value": "B", "label": "Restart the process repeatedly without telling anyone"},
+            {"value": "C", "label": "Document the error and ask your mentor"},
+            {"value": "D", "label": "Ignore it"}
+          ],
+          "correct_answer": "C",
+          "explanation": "Unfamiliar errors should be documented and escalated."
+        },
+        {
+          "id": "q19",
+          "prompt": "A user asks you a question and you do not know the answer. What should you do?",
+          "type": "multiple_choice",
+          "category": "Workflow and Escalation",
+          "points": 8,
+          "options": [
+            {"value": "A", "label": "Guess"},
+            {"value": "B", "label": "Tell them IT cannot help"},
+            {"value": "C", "label": "Ask your mentor or supervisor and document the question if needed"},
+            {"value": "D", "label": "Avoid the user"}
+          ],
+          "correct_answer": "C",
+          "explanation": "It is better to ask for help than to guess."
+        },
+        {
+          "id": "q20",
+          "prompt": "What should good ticket notes or mentor summaries include?",
+          "type": "multiple_choice",
+          "category": "Workflow and Escalation",
+          "points": 8,
+          "options": [
+            {"value": "A", "label": "\"Fixed\""},
+            {"value": "B", "label": "Only the user's name"},
+            {"value": "C", "label": "The issue, what was checked, what happened, and what still needs to be done"},
+            {"value": "D", "label": "Nothing unless the issue is serious"}
+          ],
+          "correct_answer": "C",
+          "explanation": "Good summaries explain the issue, checks, result, and what still needs to happen."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Supervisor Overview | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Supervisor view</p>
+  <h1>Launchpad Overview</h1>
+  <p class="lede">Prototype overview for reviewing paths, required safety content, and mentor check-in focus. No real student records are stored.</p>
+</section>
+
+<section class="result-panel">
+  <h2>MVP Content</h2>
+  <div class="category-grid">
+    <div><strong>{{ module_count }}</strong><span>Foundation modules</span></div>
+    <div><strong>{{ checklist_count }}</strong><span>Onboarding checklists</span></div>
+    <div><strong>{{ paths|length }}</strong><span>Training paths</span></div>
+  </div>
+</section>
+
+<section class="card-grid">
+  {% for path in paths %}
+    <a class="resource-card" href="{{ url_for('training_path', slug=path.slug) }}">
+      <strong>{{ path.label }}</strong>
+      <span>{{ path.min_score }}-{{ path.max_score }} · {{ path.recommended_path }}</span>
+    </a>
+  {% endfor %}
+</section>
+{% endblock %}

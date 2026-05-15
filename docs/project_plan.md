@@ -156,7 +156,7 @@ Create a pre-assessment and post-assessment that measure student knowledge, conf
 
 ### Status
 
-In progress. The pre-assessment and post-assessment drafts exist. The next refinement is turning scoring and growth reporting into app-ready data structures.
+In progress. The pre-assessment and post-assessment drafts exist, and app-readable JSON data now supports prototype scoring, category breakdowns, readiness levels, and training path recommendations.
 
 ### Pre-Assessment Categories
 
@@ -189,7 +189,7 @@ Define what training path each student receives after the pre-assessment.
 
 ### Status
 
-Draft complete.
+Draft complete. App-readable training path data now supports score-based routing and knowledge gap recommendations.
 
 ### Training Paths
 
@@ -229,7 +229,7 @@ Create beginner-friendly modules for students with little or no IT background.
 
 ### Status
 
-Initial module set complete. Next refinement should focus on scenario practice, mentor review prompts, and consistency passes.
+Initial module set complete. Module manifest data now allows the web prototype to load modules programmatically. Next refinement should focus on scenario practice, mentor review prompts, and consistency passes.
 
 ### Module Format
 
@@ -258,7 +258,7 @@ Create Day 1 and Week 1 onboarding checklists.
 
 ### Status
 
-Initial checklist drafts complete.
+Initial checklist drafts complete. Checklist manifest data now allows the web prototype to load Day 1 and Week 1 checklists programmatically.
 
 ### Day 1 Checklist Should Include
 
@@ -307,7 +307,7 @@ Define how the chatbot should support students safely.
 
 ### Status
 
-In progress. Chatbot requirements exist. Escalation policy, assistant behavior guidance, and glossary remain to be separated into dedicated files.
+In progress. Chatbot requirements exist, and the prototype includes a safe rule-based Ask a Question page. Escalation policy, assistant behavior guidance, and glossary remain to be separated into dedicated files.
 
 ### Chatbot Should Help With
 
@@ -357,6 +357,10 @@ Build a simple web prototype after the content structure is stable.
 - Supervisor summary
 - Post-assessment
 
+### Status
+
+In progress. A Flask prototype now includes the initial MVP screens, structured content loading, pre/post assessment scoring, training path recommendation, safe guidance, stuck summary generation, and a basic supervisor overview. It does not store real student records or provide authentication.
+
 ---
 
 ## Phase 7: Content Validation
@@ -372,7 +376,7 @@ Add simple scripts to keep content consistent as the project grows.
 
 ### Status
 
-In progress.
+In progress. Validation now checks required Markdown structure, required JSON data files, manifest fields, path existence, assessment question fields, and assessment point totals. `scripts/check_all.py` runs validation and unit tests.
 
 ### Validation Should Check
 

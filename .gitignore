@@ -13,6 +13,7 @@ data/*.db
 data/*.sqlite
 logs/
 exports/
+instance/
 
 # Editor / OS
 .vscode/
@@ -21,3 +22,4 @@ exports/
 
 # Cache
 .cache/
+.pytest_cache/

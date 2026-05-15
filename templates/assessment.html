@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ assessment.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Assessment</p>
+  <h1>{{ assessment.title }}</h1>
+  <p class="lede">{{ assessment.student_intro }}</p>
+</section>
+
+{% if result %}
+<section class="result-panel">
+  <p class="eyebrow">Result</p>
+  <h2>{{ result.score }}%</h2>
+  {% if readiness %}
+    <p><strong>{{ readiness.label }}</strong>: {{ readiness.mentor_action }}</p>
+  {% endif %}
+  <div class="category-grid">
+    {% for category in result.categories %}
+      <div>
+        <strong>{{ category.name }}</strong>
+        <span>{{ category.earned }} / {{ category.possible }} points</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<form class="assessment-form" method="post" action="{{ action }}">
+  {% for section in assessment.sections %}
+    <section class="form-section">
+      <h2>{{ section.title }}</h2>
+      {% if section.intro %}<p>{{ section.intro }}</p>{% endif %}
+      {% for question in section.questions %}
+        <fieldset class="question">
+          <legend>{{ question.prompt }}</legend>
+          <p class="meta">{{ question.category }} · {{ question.points }} points</p>
+          {% if question.type == "multiple_choice" %}
+            {% for option in question.options %}
+              <label class="choice">
+                <input type="radio" name="{{ question.id }}" value="{{ option.value }}" required>
+                <span>{{ option.label }}</span>
+              </label>
+            {% endfor %}
+          {% elif question.type == "select_all" %}
+            {% for option in question.options %}
+              <label class="choice">
+                <input type="checkbox" name="{{ question.id }}" value="{{ option.value }}">
+                <span>{{ option.label }}</span>
+              </label>
+            {% endfor %}
+          {% elif question.type == "rating" %}
+            <div class="rating-row" role="group" aria-label="{{ question.prompt }}">
+              {% for value in ["1", "2", "3", "4", "5"] %}
+                <label>
+                  <input type="radio" name="{{ question.id }}" value="{{ value }}" required>
+                  <span>{{ value }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% elif question.type == "free_response" %}
+            <textarea name="{{ question.id }}" rows="4" required></textarea>
+          {% endif %}
+        </fieldset>
+      {% endfor %}
+    </section>
+  {% endfor %}
+  <button class="button primary" type="submit">Submit Assessment</button>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Modules | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">IT Foundations</p>
+  <h1>Training Modules</h1>
+  <p class="lede">Each module starts with the mental model, then moves into safe beginner checks and escalation.</p>
+</section>
+
+<section class="card-grid">
+  {% for module in modules %}
+    <a class="resource-card" href="{{ url_for('module_reader', slug=module.slug) }}">
+      <strong>{{ module.title }}</strong>
+      <span>{{ module.summary }}</span>
+    </a>
+  {% endfor %}
+</section>
+{% endblock %}
