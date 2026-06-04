@@ -187,6 +187,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Mentor Review Items", response.data)
+        self.assertIn(b"Saved progress counts come from local demo SQLite", response.data)
         self.assertIn(b"Free-response assessment answers need mentor or supervisor review", response.data)
         self.assertIn(b"not auto-scored", response.data)
         self.assertIn(b"I want help understanding imaging safely.", response.data)
