@@ -72,6 +72,63 @@
   {% endif %}
 </section>
 
+<section class="result-panel">
+  <p class="eyebrow">Assessment review</p>
+  <h2>Mentor Review Items</h2>
+  <p>Free-response assessment answers need mentor or supervisor review. They are not auto-scored and are separate from readiness percentages.</p>
+  {% if mentor_review_items %}
+    <ul>
+      {% for item in mentor_review_items %}
+        <li>
+          <strong>{{ item.assessment_label }} · {{ item.category }}</strong>: {{ item.prompt }}
+          {% if item.response %}
+            <span class="meta">Response: {{ item.response }}</span>
+          {% else %}
+            <span class="meta">No written response saved in this session.</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No mentor-review assessment items are stored in this browser session yet.</p>
+  {% endif %}
+</section>
+
+<section class="result-panel">
+  <p class="eyebrow">Local demo handoffs</p>
+  <h2>Recent Stuck Reports</h2>
+  <p>These summaries come from the local demo Report I'm Stuck flow. They are not production student records.</p>
+  {% if stuck_reports %}
+    {% for report in stuck_reports %}
+      <div class="summary-output">
+        <strong>{{ report.student or "Demo student" }}</strong>
+        {% if report.topic %}<span class="meta">Topic: {{ report.topic }}</span>{% endif %}
+        <pre>{{ report.summary }}</pre>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No stuck reports are stored in this browser session yet.</p>
+  {% endif %}
+</section>
+
+<section class="result-panel">
+  <p class="eyebrow">Practice review</p>
+  <h2>Scenario Practice</h2>
+  <p>Scenario attempts are practice responses for mentor discussion, not scored readiness decisions.</p>
+  {% if scenario_attempts %}
+    <ul>
+      {% for attempt in scenario_attempts %}
+        <li>
+          <strong>{{ attempt.scenario_title }}</strong>
+          <span class="meta">Response: {{ attempt.student_response or "No response saved" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No scenario practice attempts are stored in this browser session yet.</p>
+  {% endif %}
+</section>
+
 <section class="card-grid">
   {% for path in paths %}
     <a class="resource-card" href="{{ url_for('training_path', slug=path.slug) }}">

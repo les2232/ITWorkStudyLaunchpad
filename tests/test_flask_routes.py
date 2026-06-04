@@ -170,6 +170,72 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Correct answer:", submitted.data)
         self.assertIn(b"Use this result to decide what to review next", submitted.data)
 
+    def test_supervisor_renders_mentor_review_items(self):
+        assessment = load_assessment("pre_assessment_v1")
+        result = score_assessment(assessment, {"q3": "I want help understanding imaging safely."})
+        path = get_training_path(result["score"])
+        result["path_label"] = path["label"]
+        result["recommended_path"] = path["recommended_path"]
+        result.pop("questions", None)
+        result.pop("role_alignment", None)
+
+        with self.client.session_transaction() as session:
+            session.clear()
+            session["pre_assessment_result"] = result
+
+        response = self.client.get("/supervisor")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Mentor Review Items", response.data)
+        self.assertIn(b"Free-response assessment answers need mentor or supervisor review", response.data)
+        self.assertIn(b"not auto-scored", response.data)
+        self.assertIn(b"I want help understanding imaging safely.", response.data)
+        self.assertNotIn(b"automatically scored", response.data)
+
+    def test_supervisor_renders_stuck_report_details(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+
+        self.client.post(
+            "/stuck",
+            data={
+                "student": "Taylor Demo",
+                "topic": "monitor issue",
+                "trying_to_do": "check a training monitor",
+                "what_happened": "it still showed No Signal",
+                "already_checked": "power and cable",
+                "current_blocker": "need the next approved step",
+                "related_item": "Hardware Basics",
+            },
+        )
+
+        response = self.client.get("/supervisor")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Recent Stuck Reports", response.data)
+        self.assertIn(b"Taylor Demo", response.data)
+        self.assertIn(b"monitor issue", response.data)
+        self.assertIn(b"Work-study student needs help.", response.data)
+        self.assertIn(b"Stop here", response.data)
+        self.assertIn(b"not production student records", response.data)
+
+    def test_supervisor_renders_scenario_practice_details(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+
+        self.client.post(
+            "/scenarios/ticket_term_unknown",
+            data={"student_response": "I would pause and ask my mentor about the term."},
+        )
+
+        response = self.client.get("/supervisor")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Scenario Practice", response.data)
+        self.assertIn(b"A Ticket Uses a Word You Do Not Know", response.data)
+        self.assertIn(b"I would pause and ask my mentor about the term.", response.data)
+        self.assertIn(b"not scored readiness decisions", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()
