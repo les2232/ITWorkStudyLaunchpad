@@ -615,10 +615,10 @@ Use these rules to recommend extra modules.
 | Weak Area | Suggested Modules |
 |---|---|
 | Low IT Vocabulary | Common IT Words, Domain Basics, Imaging Overview, Configuration Manager Overview |
-| Low Beginner Troubleshooting | Hardware Basics, Cables and Peripherals, Beginner Troubleshooting Workflow |
-| Low Workflow and Escalation | How to Ask for Help, Escalation Rules, Ticket Notes Basics |
-| Low Confidence | Extra Shadowing, Mentor Check-In, How to Read a Procedure |
-| No Prior IT Experience | Full IT Foundations path |
+| Low Beginner Troubleshooting | Hardware Basics, How to Ask for Help, Escalation Rules |
+| Low Workflow and Escalation | How to Ask for Help, Escalation Rules, Ticket Basics |
+| Low Confidence | How to Ask for Help, Escalation Rules |
+| No Prior IT Experience | What Does IT Do?, Common IT Words, Hardware Basics, Ticket Basics |
 
 ---
 

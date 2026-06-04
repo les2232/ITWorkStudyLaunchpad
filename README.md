@@ -38,7 +38,7 @@ The first version focuses on:
 
 ## Current Status
 
-Usable MVP prototype in progress.
+Usable local-demo MVP prototype.
 
 Completed pieces:
 
@@ -66,6 +66,19 @@ Not included in this MVP:
 - Full chatbot or LLM integration
 - Sensitive internal IT procedures
 - Advanced analytics
+
+## Demo Walkthrough
+
+For a supervisor or work-study demo, use this flow:
+
+1. Open `/student` and enter a demo display name. Do not enter real student records.
+2. Open `/pre-assessment`, submit a sample assessment, and review the recommended training path.
+3. Open the recommended training path and follow the linked modules, checklists, scenarios, and post-assessment.
+4. Open one module, mark it complete, and take its short knowledge check.
+5. Open `/stuck` and generate a mentor-ready summary from a sample blocker.
+6. Open `/supervisor` to review saved local demo progress and current-session assessment signals.
+
+All saved progress uses the local SQLite database under `instance/`. This is for prototype demos only, not production student tracking.
 
 ## Setup
 
@@ -120,7 +133,7 @@ instance/                      Ignored local SQLite database location
 content/modules/               Human-readable training modules
 content/checklists/            Day 1 and Week 1 checklist Markdown
 content/assessments/           Human-readable assessment drafts
-content/data/                  App-readable manifests and assessment data
+content/data/                  App-readable manifests, quizzes, and assessment data
 docs/                          Planning and behavior requirements
 scripts/check_all.py           One-command validation and tests
 scripts/validate_content.py    Content and data validation
@@ -148,7 +161,5 @@ tests/                         Unit tests
 ## Known Next Steps
 
 - Add authentication or SSO before using saved progress with real student records.
-- Add mentor review prompts and scenario practice pages.
-- Add a mentor workflow for reviewing free-response assessment answers.
-- Add app route smoke tests once Flask is expected in every development environment.
+- Add a mentor workflow for reviewing free-response assessment answers and scenario attempts.
 - Separate glossary content into dedicated app-readable terms when the module list grows.

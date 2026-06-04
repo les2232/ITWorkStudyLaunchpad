@@ -70,13 +70,14 @@ They need:
 1. Pre-assessment
 2. Training path recommendation
 3. IT Foundations modules
-4. Day 1 checklist
-5. Week 1 checklist
-6. Helpful chatbot requirements
-7. Report I'm Stuck flow
-8. Mentor/supervisor summary templates
-9. Post-assessment
-10. Basic supervisor view requirements
+4. Module knowledge checks
+5. Day 1 checklist
+6. Week 1 checklist
+7. Helpful chatbot requirements
+8. Report I'm Stuck flow
+9. Mentor/supervisor summary templates
+10. Post-assessment
+11. Basic supervisor view requirements
 
 ### Should Have
 
@@ -157,7 +158,7 @@ Create a pre-assessment and post-assessment that measure student knowledge, conf
 
 ### Status
 
-In progress. The pre-assessment and post-assessment drafts exist, and app-readable JSON data now supports auto-scored category breakdowns, readiness levels, and training path recommendations. Free-response answers remain separate mentor-review items.
+MVP complete for demo. The pre-assessment and post-assessment exist as Markdown drafts and app-readable JSON. Scoring supports auto-scored category breakdowns, readiness levels, training path recommendations, and separate mentor-review free-response items.
 
 ### Pre-Assessment Categories
 
@@ -190,7 +191,7 @@ Define what training path each student receives after the pre-assessment.
 
 ### Status
 
-Draft complete. App-readable training path data now supports score-based routing and knowledge gap recommendations.
+MVP complete for demo. App-readable training path data supports score-based routing, linked path steps, scenario practice recommendations, post-assessment discovery, and knowledge gap recommendations.
 
 ### Training Paths
 
@@ -231,7 +232,7 @@ Create beginner-friendly modules for students with little or no IT background.
 
 ### Status
 
-Initial module set complete. Module manifest data now allows the web prototype to load modules programmatically. Each module now has a short, low-stakes knowledge check in app-readable JSON. Next refinement should focus on mentor review prompts and consistency passes.
+MVP complete for demo. Module manifest data allows the web prototype to load modules programmatically, and each module has a short, low-stakes knowledge check in app-readable JSON.
 
 ### Module Format
 
@@ -261,7 +262,7 @@ Create Day 1 and Week 1 onboarding checklists.
 
 ### Status
 
-Initial checklist drafts complete. Checklist manifest data now allows the web prototype to load Day 1 and Week 1 checklists programmatically.
+MVP complete for demo. Checklist manifest data allows the web prototype to load Day 1 and Week 1 checklists programmatically, and local demo progress can save checked items.
 
 ### Day 1 Checklist Should Include
 
@@ -304,13 +305,11 @@ Define how the chatbot should support students safely.
 ### Deliverables
 
 - `docs/chatbot_requirements.md`
-- `docs/escalation_policy.md`
-- `docs/assistant_behavior.md`
-- `content/glossary/it_terms.md`
+- Safe rule-based Ask a Question prototype
 
 ### Status
 
-In progress. Chatbot requirements exist, and the prototype includes a safe rule-based Ask a Question page. Escalation policy, assistant behavior guidance, and glossary remain to be separated into dedicated files.
+MVP complete for demo. Chatbot requirements exist, and the prototype includes a safe rule-based Ask a Question page. A full chatbot, separate glossary data, and broader assistant behavior documentation remain future work.
 
 ### Chatbot Should Help With
 
@@ -359,10 +358,13 @@ Build a simple web prototype after the content structure is stable.
 - Report I'm stuck
 - Supervisor summary
 - Post-assessment
+- Module knowledge check
+- Scenario practice
+- Saved local progress
 
 ### Status
 
-In progress. A Flask prototype now includes the initial MVP screens, structured content loading, pre/post assessment scoring, training path recommendation, module knowledge checks, safe guidance, stuck summary generation, and a basic supervisor overview. It does not store real student records or provide authentication.
+MVP complete for local demo. A Flask prototype now includes the initial MVP screens, structured content loading, pre/post assessment scoring, training path recommendation, module knowledge checks, safe guidance, stuck summary generation, saved local demo progress, and a basic supervisor overview. It does not store real student records or provide authentication.
 
 ---
 
@@ -379,7 +381,7 @@ Add simple scripts to keep content consistent as the project grows.
 
 ### Status
 
-In progress. Validation now checks required Markdown structure, required JSON data files, manifest fields, path existence, assessment question fields, and assessment point totals. `scripts/check_all.py` runs validation and unit tests.
+MVP complete for demo. Validation checks required Markdown structure, required JSON data files, manifest fields, path existence, module quiz data, assessment question fields, and assessment point totals. `scripts/check_all.py` runs validation and unit tests.
 
 ### Validation Should Check
 
@@ -399,7 +401,7 @@ Plan future integration without distracting from the MVP.
 
 ### Deliverable
 
-- `docs/teams_sharepoint_integration_plan.md`
+- Future integration plan
 
 ### Future Use
 
@@ -429,43 +431,45 @@ Plan future integration without distracting from the MVP.
 
 ### Milestone 1: Planning Foundation
 
-- [ ] README exists
-- [ ] Project plan exists
-- [ ] Chatbot requirements exist
-- [ ] Pre-assessment draft exists
-- [ ] Initial commits are clean
+- [x] README exists
+- [x] Project plan exists
+- [x] Chatbot requirements exist
+- [x] Pre-assessment draft exists
+- [x] Initial commits are clean
 
 ### Milestone 2: Assessment System
 
-- [ ] Pre-assessment finalized
-- [ ] Training path logic documented
-- [ ] Post-assessment drafted
-- [ ] Growth report template drafted
+- [x] Pre-assessment finalized for MVP
+- [x] Training path logic documented
+- [x] Post-assessment drafted
+- [x] Auto-scored and mentor-review scoring clarified
 
 ### Milestone 3: Training Content
 
-- [ ] Common IT Words
-- [ ] Domain Basics
-- [ ] SCCM / Configuration Manager Overview
-- [ ] Imaging Overview
-- [ ] Ticket Basics
-- [ ] Hardware Basics
-- [ ] Escalation Rules
+- [x] Common IT Words
+- [x] Domain Basics
+- [x] SCCM / Configuration Manager Overview
+- [x] Imaging Overview
+- [x] Ticket Basics
+- [x] Hardware Basics
+- [x] Escalation Rules
+- [x] Module knowledge checks
 
 ### Milestone 4: Onboarding Flow
 
-- [ ] Day 1 checklist
-- [ ] Week 1 checklist
-- [ ] First-day check-in
-- [ ] Report I'm Stuck flow
-- [ ] Mentor summary templates
+- [x] Day 1 checklist
+- [x] Week 1 checklist
+- [x] Scenario practice
+- [x] Report I'm Stuck flow
+- [x] Mentor summary templates
 
 ### Milestone 5: Prototype
 
-- [ ] Basic web app
-- [ ] Pre-assessment page
-- [ ] Training path result
-- [ ] Module viewer
-- [ ] Checklist tracker
-- [ ] Ask a question page
-- [ ] Supervisor view
+- [x] Basic web app
+- [x] Pre-assessment page
+- [x] Training path result
+- [x] Module viewer
+- [x] Checklist tracker
+- [x] Module knowledge checks
+- [x] Ask a question page
+- [x] Supervisor view

@@ -8,7 +8,7 @@
 </section>
 
 <form class="stuck-form" method="post" action="{{ url_for('stuck') }}">
-  <label>Student name <input type="text" name="student" autocomplete="name"></label>
+  <label>Student name <input type="text" name="student" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}"></label>
   <label>Topic <input type="text" name="topic" placeholder="Example: imaging, monitor issue, asset tag"></label>
   <label>What were you trying to do? <textarea name="trying_to_do" rows="3" required></textarea></label>
   <label>What happened? <textarea name="what_happened" rows="3" required></textarea></label>

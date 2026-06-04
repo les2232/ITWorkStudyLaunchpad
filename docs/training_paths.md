@@ -59,21 +59,20 @@ Students who have little or no prior IT experience and may not yet understand co
 
 Help the student build basic IT vocabulary and confidence before expecting them to understand workflows.
 
-### Required Modules
+### Required Items
 
-1. Welcome to IT Work Study
-2. What Does IT Do?
-3. Common IT Words
-4. What Is a Domain?
-5. What Is SCCM / Configuration Manager?
-6. What Is Computer Imaging?
-7. What Is a Ticket?
-8. Asset Tag Basics
-9. Hardware Basics
-10. How to Ask for Help
-11. Escalation Rules
-12. Day 1 Checklist
-13. Shadowing
+1. What Does IT Do?
+2. Common IT Words
+3. Domain Basics
+4. Configuration Manager Overview
+5. Computer Imaging Overview
+6. Ticket Basics
+7. Asset Tag Basics
+8. Hardware Basics
+9. How to Ask for Help
+10. Escalation Rules
+11. Day 1 Checklist
+12. Shadow a mentor or IT tech
 
 ### Mentor Focus
 
@@ -92,6 +91,7 @@ The student should be able to:
 - Explain basic IT terms in simple language
 - Identify beginner-safe checks
 - Ask for help clearly
+- Complete module knowledge checks
 - Complete the Day 1 checklist
 - Shadow a mentor or IT tech
 - Understand when not to guess
@@ -108,10 +108,10 @@ Students who are comfortable using computers but are new to IT department workfl
 
 Help the student connect basic computer knowledge to real IT support workflows.
 
-### Required Modules
+### Required Items
 
 1. Day 1 Checklist
-2. Common IT Words Review
+2. Common IT Words
 3. Hardware Basics
 4. Imaging Overview
 5. Ticket Basics
@@ -137,6 +137,7 @@ The student should be able to:
 - Understand common workflow terms
 - Draft simple ticket notes for mentor review
 - Perform beginner-safe checks
+- Complete module knowledge checks
 - Escalate when unsure
 
 ---
@@ -151,11 +152,11 @@ Students who have some relevant experience and understand several basic IT conce
 
 Get the student into shadowing quickly while still covering required expectations and safety boundaries.
 
-### Required Modules
+### Required Items
 
 1. Day 1 Checklist
-2. Department Expectations
-3. Confidentiality Basics
+2. Department expectations review
+3. Confidentiality basics review
 4. Imaging Overview
 5. Ticket Basics
 6. Escalation Rules
@@ -180,6 +181,7 @@ The student should be able to:
 - Ask specific questions
 - Follow basic procedures
 - Document what they observe
+- Complete module knowledge checks for assigned modules
 - Recognize when mentor approval is needed
 
 ---
@@ -194,11 +196,11 @@ Students with stronger prior experience, such as previous help desk, computer la
 
 Move the student through required onboarding efficiently while still confirming they understand local rules.
 
-### Required Modules
+### Required Items
 
 1. Day 1 Checklist
-2. Department Expectations
-3. Confidentiality Basics
+2. Department expectations review
+3. Confidentiality basics review
 4. Imaging Overview
 5. Escalation Rules
 6. Scenario Practice
@@ -221,6 +223,7 @@ The student should be able to:
 - Complete required onboarding
 - Explain beginner-safe task boundaries
 - Write clear draft notes and mentor summaries
+- Complete knowledge checks for assigned modules
 - Ask for help when local workflow is unclear
 - Complete scenario practice successfully
 
@@ -233,12 +236,10 @@ Use the pre-assessment results to recommend extra modules.
 | Weak Area | Recommended Modules |
 |---|---|
 | IT Vocabulary | Common IT Words, Domain Basics, Imaging Overview, Configuration Manager Overview |
-| Hardware Basics | Hardware Basics, Cables and Peripherals, Beginner Troubleshooting Workflow |
-| Imaging Concepts | Imaging Overview, Imaging Terms, Escalation Rules |
-| Ticket Notes | Ticket Basics, Ticket Notes Basics, Help Me Write This practice |
-| Workflow and Escalation | How to Ask for Help, Escalation Rules, Report I'm Stuck practice |
-| Low Confidence | Extra Shadowing, Mentor Check-In, How to Read a Procedure |
-| No Prior IT Experience | Full IT Foundations path |
+| Beginner Troubleshooting | Hardware Basics, How to Ask for Help, Escalation Rules |
+| Workflow and Escalation | How to Ask for Help, Escalation Rules, Ticket Basics |
+| Confidence | How to Ask for Help, Escalation Rules |
+| No Prior IT Experience | What Does IT Do?, Common IT Words, Hardware Basics, Ticket Basics |
 
 ---
 
@@ -247,11 +248,12 @@ Use the pre-assessment results to recommend extra modules.
 Regardless of starting level, every student should complete:
 
 - Day 1 Checklist
-- Department Expectations
-- Confidentiality Basics
-- How to Ask for Help
+- Department expectations review
+- Confidentiality basics review
+- Assigned module knowledge checks
 - Escalation Rules
 - Imaging Overview
+- Scenario practice when assigned
 - Post-Assessment
 
 This ensures every student gets the same safety foundation.
@@ -264,7 +266,8 @@ Week 1 readiness may be approved by any authorized supervisor.
 
 Before approval, the student should have:
 
-- Completed required modules
+- Completed required items
+- Completed assigned module knowledge checks
 - Completed Day 1 checklist
 - Completed Week 1 checklist items assigned to their path
 - Completed scenario practice

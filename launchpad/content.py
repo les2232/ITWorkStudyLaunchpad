@@ -61,7 +61,7 @@ def extract_checklist_items(markdown: str) -> list[str]:
     return items
 
 
-def render_markdown(markdown: str) -> str:
+def render_markdown(markdown: str, checklist_progress: dict[str, bool] | None = None) -> str:
     """Render enough Markdown for the prototype without adding another dependency."""
 
     html_lines: list[str] = []
@@ -69,6 +69,7 @@ def render_markdown(markdown: str) -> str:
     in_ol = False
     in_code = False
     code_lines: list[str] = []
+    checklist_index = 0
 
     def close_lists() -> None:
         nonlocal in_ul, in_ol
@@ -127,7 +128,14 @@ def render_markdown(markdown: str) -> str:
                 html_lines.append('<ul class="checklist-rendered">')
                 in_ul = True
             item = _inline_markup(checklist.group(1))
-            html_lines.append(f'<li><label><input type="checkbox"> <span>{item}</span></label></li>')
+            checked = ""
+            form_attrs = ""
+            if checklist_progress is not None:
+                item_id = str(checklist_index)
+                checked = " checked" if checklist_progress.get(item_id) else ""
+                form_attrs = f' name="completed_items" value="{html.escape(item_id)}"'
+            html_lines.append(f'<li><label><input type="checkbox"{form_attrs}{checked}> <span>{item}</span></label></li>')
+            checklist_index += 1
             continue
 
         unordered = re.match(r"^-\s+(.*)$", stripped)

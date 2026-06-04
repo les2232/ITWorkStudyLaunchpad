@@ -111,7 +111,7 @@ For Version 1, the chatbot should answer from approved project content only:
 
 - `content/modules/`
 - `content/checklists/`
-- `content/glossary/`
+- `content/data/`
 - `content/assessments/`
 - `docs/`
 
