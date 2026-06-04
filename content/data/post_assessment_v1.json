@@ -2,7 +2,7 @@
   "id": "post_assessment_v1",
   "title": "Post-Assessment",
   "purpose": "Measure what a new IT work-study student learned after completing assigned Launchpad modules, checklists, and shadowing.",
-  "student_intro": "This is not proof that you are fully trained. It helps you and your mentor decide what to review and whether you are ready for beginner-safe tasks with appropriate supervision.",
+  "student_intro": "This is not proof that you are fully trained. Auto-scored questions show progress; written answers are saved for mentor review before readiness decisions.",
   "total_points": 100,
   "readiness_levels": [
     {

@@ -29,6 +29,8 @@ Answer honestly. If you are unsure, say so. Good IT work includes knowing when t
 
 Total: 100 points
 
+The app auto-scores multiple-choice and rating questions. Free-response answers are mentor-review items and are not auto-scored. The percentage shown in the app reflects only auto-scorable points.
+
 | Category | Points |
 |---|---:|
 | Confidence Reflection | 10 |
@@ -91,9 +93,9 @@ Use this scale:
 **Category:** Confidence Reflection  
 **Points:** 5
 
-**Scoring Guide:**
+**Mentor Review Guide:**
 
-Award full credit for a thoughtful response. Use the answer to guide the mentor check-in.
+This question is not auto-scored. Use the answer to guide the mentor check-in.
 
 ---
 
@@ -251,6 +253,10 @@ Using the wrong image can configure the computer incorrectly. Do not guess.
 - Whether the process stopped or continued
 - Confirmation that the student stopped and asked for help
 
+**Mentor Review Guide:**
+
+This question is not auto-scored. Review whether the answer captures context, exact error details, stopping point, and escalation.
+
 ---
 
 ## Section 5: Draft Documentation
@@ -265,9 +271,9 @@ Using the wrong image can configure the computer incorrectly. Do not guess.
 
 > Checked monitor issue at front desk workstation. Monitor had power and DisplayPort cable was connected. Monitor still showed "No Signal." Stopped and asked mentor for next approved step.
 
-**Scoring Guide:**
+**Mentor Review Guide:**
 
-Award points for clear issue, location/device context, checks performed, result, and next step.
+This question is not auto-scored. Review for clear issue, location/device context, checks performed, result, and next step.
 
 ---
 
@@ -281,9 +287,9 @@ Award points for clear issue, location/device context, checks performed, result,
 
 > Observed imaging error on workbench computer. Error code shown: 0x00000000. I was not sure what it meant, so I stopped before continuing and notified my mentor for next steps.
 
-**Scoring Guide:**
+**Mentor Review Guide:**
 
-Award points for exact error, device context, honest uncertainty, stopping point, and escalation.
+This question is not auto-scored. Review for exact error, device context, honest uncertainty, stopping point, and escalation.
 
 ---
 

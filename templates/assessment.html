@@ -9,8 +9,12 @@
 
 {% if result %}
 <section class="result-panel">
-  <p class="eyebrow">Result</p>
-  <h2>{{ result.score }}%</h2>
+  <p class="eyebrow">Auto-scored result</p>
+  <h2>Auto-scored readiness: {{ result.score }}%</h2>
+  <p>
+    This score reflects {{ result.earned }} / {{ result.possible }} auto-scorable points.
+    Free-response answers are saved for mentor review and are not auto-scored.
+  </p>
   {% if readiness %}
     <p><strong>{{ readiness.label }}</strong>: {{ readiness.mentor_action }}</p>
   {% endif %}
@@ -18,11 +22,34 @@
     {% for category in result.categories %}
       <div>
         <strong>{{ category.name }}</strong>
-        <span>{{ category.earned }} / {{ category.possible }} points</span>
+        <span>{{ category.earned }} / {{ category.possible }} auto-scored points</span>
+        {% if category.review_possible %}
+          <span>{{ category.review_possible }} mentor-review points not auto-scored</span>
+        {% endif %}
       </div>
     {% endfor %}
   </div>
 </section>
+{% if result.mentor_review_items %}
+<section class="result-panel">
+  <p class="eyebrow">Mentor review needed</p>
+  <h2>Free-Response Review Items</h2>
+  <p>
+    These answers should be reviewed separately by a mentor or supervisor.
+    A high auto-score does not mean the full assessment is complete from a mentoring perspective.
+  </p>
+  <ul>
+    {% for item in result.mentor_review_items %}
+      <li>
+        <strong>{{ item.category }}</strong>: {{ item.prompt }}
+        {% if item.response %}
+          <span class="meta">Response saved for review.</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
 {% endif %}
 
 <form class="assessment-form" method="post" action="{{ action }}">
@@ -33,7 +60,11 @@
       {% for question in section.questions %}
         <fieldset class="question">
           <legend>{{ question.prompt }}</legend>
-          <p class="meta">{{ question.category }} · {{ question.points }} points</p>
+          {% if question.score_scope == "role_alignment" or section.score_scope == "role_alignment" %}
+            <p class="meta">{{ question.category }} · separate role-alignment signal</p>
+          {% else %}
+            <p class="meta">{{ question.category }} · {{ question.points }} points</p>
+          {% endif %}
           {% if question.type == "multiple_choice" %}
             {% for option in question.options %}
               <label class="choice">

@@ -23,12 +23,17 @@ Answer honestly. It is completely okay if some of these topics are new to you.
 3. IT Vocabulary
 4. Beginner Troubleshooting
 5. Workflow and Escalation
+6. Work Style and Role Alignment
 
 ---
 
 ## Scoring
 
 Total: 100 points
+
+The app auto-scores multiple-choice, select-all, and rating questions. Free-response answers are mentor-review items and are not auto-scored. The percentage shown in the app reflects only auto-scorable points.
+
+Work Style and Role Alignment is reported separately from the 100-point technical readiness score. It is not a pass/fail fit test and should be used as a planning signal for support and placement conversations.
 
 | Category | Points |
 |---|---:|
@@ -37,6 +42,7 @@ Total: 100 points
 | IT Vocabulary | 25 |
 | Beginner Troubleshooting | 25 |
 | Workflow and Escalation | 30 |
+| Work Style and Role Alignment | Separate signal |
 
 ---
 
@@ -109,9 +115,9 @@ Award up to 4 points based on relevant prior exposure.
 **Category:** Background / Experience  
 **Points:** 3
 
-**Scoring Guide:**
+**Mentor Review Guide:**
 
-This question is not graded for correctness. Award full credit for a thoughtful response.
+This question is not auto-scored. Review the answer separately for honesty, support needs, and useful first-check-in context.
 
 **Mentor Use:**
 
@@ -425,6 +431,126 @@ D. Nothing unless the issue is serious
 **Explanation:**
 
 Good ticket notes or mentor summaries should explain the issue, what was checked, what happened, and what still needs to be done. New students may draft this information for a mentor instead of updating the ticket/work-order system directly.
+
+---
+
+## Section 6: Work Style and Role Alignment
+
+These questions are separate from technical readiness scoring. They help a supervisor answer: Which environment would help this student succeed fastest?
+
+Role alignment signals:
+
+- Technical troubleshooting interest
+- User-facing support interest
+- Process/documentation strength
+- Ambiguity readiness
+- Help-seeking readiness
+- Structured shadowing need
+
+### RA1. You are given a task, but one step is unclear. What would you most likely do?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. Guess and keep going so I do not slow anyone down
+B. Stop and ask a specific clarification question
+C. Wait silently until someone checks on me
+D. Skip the unclear step
+
+---
+
+### RA2. A user is frustrated and says, "IT never fixes anything." What is the best beginner-safe response?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. Tell them another IT person probably forgot
+B. Promise the issue will be fixed today
+C. Stay calm, avoid blame, and tell them you will check with your mentor
+D. Ignore the comment
+
+---
+
+### RA3. Which type of work sounds most interesting to you?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. Figuring out why a computer, monitor, printer, or account is not working
+B. Helping students or users understand a process, form, appointment, or next step
+C. Organizing information, checking records, and making sure details are correct
+D. I am not sure yet
+
+---
+
+### RA4. Which task would you feel most comfortable learning first?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. Checking cables, asset tags, device names, and error messages
+B. Greeting students or users and helping direct them to the right person
+C. Reviewing a checklist and making sure each step is complete
+D. Watching someone else first before choosing
+
+---
+
+### RA5. A mentor asks you to document what happened during a task. What would you include?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. Only "done"
+B. What I checked, what happened, and what I still need help with
+C. My opinion about who caused the problem
+D. Private information, just in case it helps
+
+---
+
+### RA6. Which situation sounds most stressful to you?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. A computer problem where I do not know the answer yet
+B. A frustrated person asking for help
+C. A task with many small details that must be accurate
+D. A quiet task where I have to work independently
+
+---
+
+### RA7. Which statement best describes you right now?
+
+**Type:** Multiple choice
+**Category:** Work Style and Role Alignment
+**Points:** Separate role-alignment signal
+
+A. I want to learn technical troubleshooting, even if it feels challenging
+B. I mostly want to help people navigate processes and get answers
+C. I like organized tasks with clear steps and records
+D. I am still exploring what kind of work fits me
+
+---
+
+## Recommended Alignment Outputs
+
+Recommended Alignment: IT Launchpad
+Student appears interested in technical troubleshooting and shows safe beginner habits. Begin with IT foundations, hardware basics, escalation rules, and mentor-supervised tasks.
+
+Recommended Alignment: Hybrid IT/User Support
+Student may benefit from supervised IT exposure while also using communication strengths in user-facing support. Begin with shadowing, documentation practice, and structured beginner-safe IT tasks.
+
+Recommended Alignment: Student Services Exploration
+Student shows stronger current alignment with user-facing process support than technical troubleshooting. Admissions, Advising, front desk support, or another structured student services role may match the student's current strengths.
+
+Recommended Alignment: Structured Shadowing
+Student may benefit from observing IT, Admissions, and Advising workflows before final placement. Focus on confidence, communication, and task preference discovery.
 
 ---
 

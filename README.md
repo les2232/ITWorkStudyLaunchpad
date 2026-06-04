@@ -5,11 +5,13 @@ IT Work Study Launchpad is an onboarding and training assistant for new IT work-
 The system helps new student workers:
 - Complete a pre-assessment
 - Receive an adaptive training path
+- Review work style and role-alignment signals
 - Learn beginner IT concepts
 - Complete Day 1 and Week 1 onboarding checklists
 - Practice workflow and escalation scenarios
 - Complete a post-assessment
 - Generate mentor/supervisor summaries when stuck
+- Save MVP progress locally across browser refreshes
 
 ## Product Philosophy
 
@@ -40,6 +42,7 @@ Completed pieces:
 
 - Project plan and chatbot behavior requirements
 - Pre-assessment v1 and post-assessment v1
+- Separate role-alignment signal for work style and support needs
 - Adaptive training paths
 - Day 1 and Week 1 onboarding checklists
 - Beginner IT foundation modules
@@ -48,12 +51,13 @@ Completed pieces:
 - Safe rule-based "Ask a Question" guidance
 - "Report I'm Stuck" mentor-summary flow
 - Basic supervisor overview
+- Local SQLite progress persistence for demo student records
 - Content validation and unit tests
 
 Not included in this MVP:
 
 - Full authentication or SSO
-- Real student records
+- Production student records
 - Production database
 - Teams or SharePoint integration
 - Full chatbot or LLM integration
@@ -93,7 +97,9 @@ The check command validates Markdown and JSON content, then runs the unit tests.
 
 The tests cover:
 
-- Assessment scoring
+- Assessment auto-scoring and mentor-review separation
+- Role alignment scoring and recommendations
+- SQLite progress persistence
 - Training path routing
 - Content/checklist loading
 - Safe guidance behavior
@@ -106,6 +112,7 @@ app.py                         Flask entrypoint
 launchpad/                     App logic, content loading, scoring, guidance
 templates/                     Jinja screens for the MVP prototype
 static/                        CSS and lightweight client behavior
+instance/                      Ignored local SQLite database location
 content/modules/               Human-readable training modules
 content/checklists/            Day 1 and Week 1 checklist Markdown
 content/assessments/           Human-readable assessment drafts
@@ -131,11 +138,12 @@ tests/                         Unit tests
 - `/mentor-summary`
 - `/post-assessment`
 - `/supervisor`
+- `/student`
 
 ## Known Next Steps
 
-- Add a lightweight progress model if student progress needs to persist beyond browser-local checklist state.
+- Add authentication or SSO before using saved progress with real student records.
 - Add mentor review prompts and scenario practice pages.
-- Improve free-response assessment review so mentors can score quality instead of relying on placeholder auto-credit.
+- Add a mentor workflow for reviewing free-response assessment answers.
 - Add app route smoke tests once Flask is expected in every development environment.
 - Separate glossary content into dedicated app-readable terms when the module list grows.

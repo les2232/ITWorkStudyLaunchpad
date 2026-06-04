@@ -22,7 +22,7 @@
     <div class="category-grid">
       <div>
         <strong>{{ pre_result.score }}%</strong>
-        <span>Technical readiness · {{ pre_result.recommended_path }}</span>
+        <span>Auto-scored readiness · {{ pre_result.recommended_path }}</span>
       </div>
       {% if pre_result.role_alignment %}
         <div>
@@ -54,7 +54,7 @@
         <div>
           <strong>{{ item.student.display_name }}</strong>
           {% if item.latest_pre_assessment %}
-            <span>Last assessment: {{ item.latest_pre_assessment.technical_score }}% technical readiness</span>
+            <span>Last assessment: {{ item.latest_pre_assessment.technical_score }}% auto-scored readiness</span>
             <span>Training path: {{ item.latest_pre_assessment.recommended_training_path or "Review with mentor" }}</span>
             <span>Role alignment: {{ item.latest_pre_assessment.role_alignment_recommendation or "Not recorded" }}</span>
           {% else %}

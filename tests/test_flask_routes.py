@@ -3,6 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from launchpad.assessment import get_training_path, knowledge_gaps, load_assessment, score_assessment
+
 
 def load_flask_app(config=None):
     import app as app_module
@@ -69,6 +71,47 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Work Style and Role Alignment", response.data)
         self.assertIn(b"separate role-alignment signal", response.data)
+
+    def test_pre_assessment_results_explain_mentor_review_items(self):
+        assessment = load_assessment("pre_assessment_v1")
+        result = score_assessment(assessment, {"q3": "I want help learning imaging safely."})
+        path = get_training_path(result["score"])
+        result["path_slug"] = path["slug"]
+        result["path_label"] = path["label"]
+        result["recommended_path"] = path["recommended_path"]
+        result["knowledge_gaps"] = knowledge_gaps(result)
+        result.pop("questions", None)
+        result.pop("role_alignment", None)
+
+        with self.client.session_transaction() as session:
+            session["pre_assessment_result"] = result
+
+        response = self.client.get("/assessment-results")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Auto-scored readiness", response.data)
+        self.assertIn(b"Free-Response Review Items", response.data)
+        self.assertIn(b"not auto-scored", response.data)
+        self.assertIn(b"A high auto-score does not mean the full assessment is complete", response.data)
+        self.assertNotIn(b"automatically scored", response.data)
+
+    def test_post_assessment_result_explains_mentor_review_items(self):
+        response = self.client.post(
+            "/post-assessment",
+            data={
+                "q2": "I understand tickets better.",
+                "q10": "I would record the exact error and stop.",
+                "q11": "Monitor had power and still showed No Signal.",
+                "q12": "Imaging error 0x00000000 appeared; I stopped.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Auto-scored readiness", response.data)
+        self.assertIn(b"Free-Response Review Items", response.data)
+        self.assertIn(b"not auto-scored", response.data)
+        self.assertIn(b"A high auto-score does not mean the full assessment is complete", response.data)
+        self.assertNotIn(b"automatically scored", response.data)
 
     def test_training_path_links_existing_required_items(self):
         response = self.client.get("/training-path/beginner")

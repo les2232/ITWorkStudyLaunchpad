@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Training paths define what each new IT work-study student should complete after the pre-assessment.
+Training paths define what each new IT work-study student should complete after the auto-scored part of the pre-assessment.
 
 The goal is to give each student the right level of support based on their starting knowledge, confidence, and readiness.
 
@@ -19,7 +19,7 @@ The training paths should help students:
 
 ## Placement Levels
 
-| Pre-Assessment Score | Level | Recommended Path |
+| Auto-Scored Pre-Assessment Score | Level | Recommended Path |
 |---:|---|---|
 | 0-39 | Beginner | Full IT Foundations path |
 | 40-69 | Developing | Foundations + Day 1 checklist |
@@ -27,6 +27,25 @@ The training paths should help students:
 | 85-100 | Advanced Beginner | Faster path, still complete required modules |
 
 These levels are not pass/fail labels. They are used to recommend the right starting point.
+
+Free-response answers should still be reviewed by a mentor or supervisor. A high auto-scored result does not mean all written answers have been reviewed.
+
+---
+
+## Work Style and Role Alignment
+
+The pre-assessment also includes a separate Work Style and Role Alignment section. This does not change the technical readiness score or training path.
+
+Use it as a supervisor planning signal for the question: Which environment would help this student succeed fastest?
+
+Possible outputs:
+
+- IT Launchpad
+- Hybrid IT/User Support
+- Student Services Exploration
+- Structured Shadowing
+
+Admissions, Advising, front desk support, and other student services environments should be presented as positive alignments with communication, process guidance, and structured support strengths, not as fallback options.
 
 ---
 

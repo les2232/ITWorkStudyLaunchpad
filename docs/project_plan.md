@@ -156,7 +156,7 @@ Create a pre-assessment and post-assessment that measure student knowledge, conf
 
 ### Status
 
-In progress. The pre-assessment and post-assessment drafts exist, and app-readable JSON data now supports prototype scoring, category breakdowns, readiness levels, and training path recommendations.
+In progress. The pre-assessment and post-assessment drafts exist, and app-readable JSON data now supports auto-scored category breakdowns, readiness levels, and training path recommendations. Free-response answers remain separate mentor-review items.
 
 ### Pre-Assessment Categories
 

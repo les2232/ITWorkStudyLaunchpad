@@ -51,6 +51,34 @@ class AssessmentScoringTests(unittest.TestCase):
         self.assertEqual(knowledge_gaps(result), [])
         self.assertEqual(result["role_alignment"]["recommended_alignment"]["slug"], "it_launchpad")
 
+    def test_free_response_items_are_excluded_from_auto_score_denominator(self):
+        pre_assessment = load_assessment("pre_assessment_v1")
+        pre_result = score_assessment(pre_assessment, {"q3": "I want help learning imaging safely."})
+
+        post_assessment = load_assessment("post_assessment_v1")
+        post_result = score_assessment(
+            post_assessment,
+            {
+                "q2": "I understand tickets better.",
+                "q10": "I would record the exact error and stop.",
+                "q11": "Monitor had power and still showed No Signal.",
+                "q12": "Imaging error 0x00000000 appeared; I stopped.",
+            },
+        )
+
+        self.assertEqual(pre_result["possible"], 97)
+        self.assertEqual(pre_result["mentor_review_points_possible"], 3)
+        self.assertEqual(pre_result["mentor_review_items"][0]["id"], "q3")
+        self.assertIsNone(pre_result["mentor_review_items"][0]["earned"])
+
+        self.assertEqual(post_result["possible"], 65)
+        self.assertEqual(post_result["mentor_review_points_possible"], 35)
+        self.assertEqual(
+            {item["id"] for item in post_result["mentor_review_items"]},
+            {"q2", "q10", "q11", "q12"},
+        )
+        self.assertTrue(all(item["earned"] is None for item in post_result["mentor_review_items"]))
+
     def test_pre_assessment_low_answers_routes_to_beginner_and_gaps(self):
         assessment = load_assessment("pre_assessment_v1")
         responses = {question_id: "" for question_id in [f"q{number}" for number in range(1, 21)]}

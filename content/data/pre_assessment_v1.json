@@ -2,7 +2,7 @@
   "id": "pre_assessment_v1",
   "title": "Pre-Assessment",
   "purpose": "Determine a new IT work-study student's starting knowledge, confidence level, and recommended training path.",
-  "student_intro": "This is not pass/fail. Answer honestly so the Launchpad can recommend the right training path and help your mentor support you.",
+  "student_intro": "This is not pass/fail. Auto-scored questions recommend a training path; written answers are saved for mentor review so your mentor can support you.",
   "role_alignment": {
     "title": "Work Style and Role Alignment",
     "purpose": "Help supervisors understand which environment may help the student succeed fastest. This signal is separate from technical readiness scoring.",

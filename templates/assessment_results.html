@@ -4,21 +4,44 @@
 <section class="content-header">
   <p class="eyebrow">Pre-assessment result</p>
   <h1>{{ result.path_label }}</h1>
-  <p class="lede">Technical readiness: {{ result.score }}% · {{ result.recommended_path }}</p>
+  <p class="lede">Auto-scored readiness: {{ result.score }}% · {{ result.recommended_path }}</p>
 </section>
 
 <section class="result-panel">
-  <h2>Technical Readiness Breakdown</h2>
+  <h2>Auto-Scored Readiness Breakdown</h2>
+  <p>
+    This score reflects {{ result.earned }} / {{ result.possible }} auto-scorable points.
+    Free-response answers are saved for mentor review and are not auto-scored.
+  </p>
   <div class="category-grid">
     {% for category in result.categories %}
       <div>
         <strong>{{ category.name }}</strong>
-        <span>{{ category.earned }} / {{ category.possible }} points</span>
+        <span>{{ category.earned }} / {{ category.possible }} auto-scored points</span>
+        {% if category.review_possible %}
+          <span>{{ category.review_possible }} mentor-review points not auto-scored</span>
+        {% endif %}
         <meter min="0" max="100" value="{{ category.percent }}">{{ category.percent }}%</meter>
       </div>
     {% endfor %}
   </div>
 </section>
+
+{% if result.mentor_review_items %}
+<section class="result-panel">
+  <p class="eyebrow">Mentor review needed</p>
+  <h2>Free-Response Review Items</h2>
+  <p>
+    These answers should be reviewed separately by a mentor or supervisor.
+    A high auto-score does not mean the full assessment is complete from a mentoring perspective.
+  </p>
+  <ul>
+    {% for item in result.mentor_review_items %}
+      <li><strong>{{ item.category }}</strong>: {{ item.prompt }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
 
 {% if result.role_alignment %}
 <section class="result-panel">
