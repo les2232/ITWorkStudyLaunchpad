@@ -205,7 +205,7 @@ def score_role_alignment(
     recommendation = _classify_role_alignment(signals, config)
 
     return {
-        "title": config.get("title", "Work Style and Role Alignment"),
+        "title": config.get("title", "Work Style and Support Needs"),
         "answered_questions": answered_count,
         "signals": signals,
         "recommended_alignment": recommendation,

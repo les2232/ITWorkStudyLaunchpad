@@ -421,7 +421,7 @@ def _mentor_review_items(*results: dict[str, Any] | None) -> list[dict[str, Any]
     for result in results:
         if not result:
             continue
-        label = "Post-assessment" if result["assessment_id"].startswith("post") else "Pre-assessment"
+        label = "Progress check" if result["assessment_id"].startswith("post") else "Starting point check"
         for item in result.get("mentor_review_items", []):
             review_item = dict(item)
             review_item["assessment_label"] = label

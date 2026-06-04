@@ -2,7 +2,7 @@
 {% block title %}{{ assessment.title }} | IT Work Study Launchpad{% endblock %}
 {% block content %}
 <section class="content-header">
-  <p class="eyebrow">Assessment</p>
+  <p class="eyebrow">Check-in</p>
   <h1>{{ assessment.title }}</h1>
   <p class="lede">{{ assessment.student_intro }}</p>
 </section>
@@ -10,7 +10,7 @@
 {% if result %}
 <section class="result-panel">
   <p class="eyebrow">Auto-scored result</p>
-  <h2>Auto-scored readiness: {{ result.score }}%</h2>
+  <h2>Auto-scored practice score: {{ result.score }}%</h2>
   <p>
     This score reflects {{ result.earned }} / {{ result.possible }} auto-scorable points.
     Free-response answers are saved for mentor review and are not auto-scored.
@@ -36,7 +36,7 @@
   <h2>Free-Response Review Items</h2>
   <p>
     These answers should be reviewed separately by a mentor or supervisor.
-    A high auto-score does not mean the full assessment is complete from a mentoring perspective.
+    A high auto-score does not mean the whole check-in is complete from a mentoring perspective.
   </p>
   <ul>
     {% for item in result.mentor_review_items %}
@@ -95,6 +95,8 @@
       {% endfor %}
     </section>
   {% endfor %}
-  <button class="button primary" type="submit">Submit Assessment</button>
+  <button class="button primary" type="submit">
+    {% if assessment.id == "pre_assessment_v1" %}See My Recommended Path{% else %}Review My Progress{% endif %}
+  </button>
 </form>
 {% endblock %}

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Assessment Results | IT Work Study Launchpad{% endblock %}
+{% block title %}Starting Point Results | IT Work Study Launchpad{% endblock %}
 {% block content %}
 <section class="content-header">
-  <p class="eyebrow">Pre-assessment result</p>
+  <p class="eyebrow">Starting point result</p>
   <h1>{{ result.path_label }}</h1>
-  <p class="lede">Auto-scored readiness: {{ result.score }}% · {{ result.recommended_path }}</p>
+  <p class="lede">Auto-scored starting point: {{ result.score }}% · {{ result.recommended_path }}</p>
 </section>
 
 <section class="result-panel">
-  <h2>Auto-Scored Readiness Breakdown</h2>
+  <h2>Auto-Scored Starting Point Breakdown</h2>
   <p>
     This score reflects {{ result.earned }} / {{ result.possible }} auto-scorable points.
     Free-response answers are saved for mentor review and are not auto-scored.
@@ -33,7 +33,7 @@
   <h2>Free-Response Review Items</h2>
   <p>
     These answers should be reviewed separately by a mentor or supervisor.
-    A high auto-score does not mean the full assessment is complete from a mentoring perspective.
+    A high auto-score does not mean the whole check-in is complete from a mentoring perspective.
   </p>
   <ul>
     {% for item in result.mentor_review_items %}
@@ -59,7 +59,7 @@
     {% endfor %}
   </div>
   {% if result.role_alignment.recommended_alignment.next_steps %}
-    <h3>Supervisor Focus</h3>
+    <h3>Mentor Check-In Ideas</h3>
     <ul>
       {% for step in result.role_alignment.recommended_alignment.next_steps %}
         <li>{{ step }}</li>
@@ -76,7 +76,7 @@
     <a class="button primary" href="{{ url_for('training_path', slug=path.slug) }}">Open {{ path.label }} Path</a>
   </div>
   <div>
-    <h2>Review Areas</h2>
+    <h2>Practice Areas</h2>
     {% if result.knowledge_gaps %}
       <ul>
         {% for gap in result.knowledge_gaps %}
@@ -92,7 +92,7 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p>No category fell below the review threshold. Still complete required safety modules and mentor check-ins.</p>
+      <p>No category fell below the review threshold. Still work through required safety modules and mentor check-ins.</p>
     {% endif %}
   </div>
 </section>

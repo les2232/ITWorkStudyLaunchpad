@@ -1,11 +1,11 @@
 {
   "id": "pre_assessment_v1",
-  "title": "Pre-Assessment",
-  "purpose": "Determine a new IT work-study student's starting knowledge, confidence level, and recommended training path.",
-  "student_intro": "This is not pass/fail. Auto-scored questions recommend a training path; written answers are saved for mentor review so your mentor can support you.",
+  "title": "Starting Point Check",
+  "purpose": "Understand a new IT work-study student's starting knowledge, confidence level, and recommended training path.",
+  "student_intro": "This is not pass/fail. Auto-scored questions help recommend a starting path; written answers are saved for mentor review so your mentor can support you.",
   "role_alignment": {
-    "title": "Work Style and Role Alignment",
-    "purpose": "Help supervisors understand which environment may help the student succeed fastest. This signal is separate from technical readiness scoring.",
+    "title": "Work Style and Support Needs",
+    "purpose": "Help mentors understand which environment may help the student succeed fastest. This signal is separate from technical scoring.",
     "signals": [
       {
         "slug": "technical_troubleshooting_interest",
@@ -27,19 +27,19 @@
       },
       {
         "slug": "ambiguity_readiness",
-        "label": "Ambiguity readiness",
+        "label": "Handling unclear tasks",
         "direction": "readiness",
         "description": "Comfort stopping, clarifying, and continuing safely when a task is unclear."
       },
       {
         "slug": "help_seeking_readiness",
-        "label": "Help-seeking readiness",
+        "label": "Asking for help",
         "direction": "readiness",
         "description": "Willingness to ask specific questions instead of guessing or waiting silently."
       },
       {
         "slug": "structured_shadowing_need",
-        "label": "Structured shadowing need",
+        "label": "Structured shadowing support",
         "direction": "need",
         "description": "Signal that the student may benefit from observation, closer check-ins, or more role exploration before placement."
       }
@@ -392,15 +392,15 @@
       ]
     },
     {
-      "title": "Work Style and Role Alignment",
-      "intro": "These questions are separate from technical readiness scoring. They help your supervisor understand which environment may help you succeed fastest.",
+      "title": "Work Style and Support Needs",
+      "intro": "These questions are separate from technical scoring. They help your mentor understand which environment may help you learn and contribute safely.",
       "score_scope": "role_alignment",
       "questions": [
         {
           "id": "ra1",
           "prompt": "You are given a task, but one step is unclear. What would you most likely do?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["ambiguity_readiness", "help_seeking_readiness", "structured_shadowing_need"],
           "options": [
@@ -434,7 +434,7 @@
           "id": "ra2",
           "prompt": "A user is frustrated and says, \"IT never fixes anything.\" What is the best beginner-safe response?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["user_facing_support_interest", "ambiguity_readiness", "help_seeking_readiness", "structured_shadowing_need"],
           "options": [
@@ -468,7 +468,7 @@
           "id": "ra3",
           "prompt": "Which type of work sounds most interesting to you?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "structured_shadowing_need"],
           "options": [
@@ -502,7 +502,7 @@
           "id": "ra4",
           "prompt": "Which task would you feel most comfortable learning first?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "structured_shadowing_need"],
           "options": [
@@ -536,7 +536,7 @@
           "id": "ra5",
           "prompt": "A mentor asks you to document what happened during a task. What would you include?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["process_documentation_strength", "help_seeking_readiness", "structured_shadowing_need"],
           "options": [
@@ -570,7 +570,7 @@
           "id": "ra6",
           "prompt": "Which situation sounds most stressful to you?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["structured_shadowing_need"],
           "options": [
@@ -604,7 +604,7 @@
           "id": "ra7",
           "prompt": "Which statement best describes you right now?",
           "type": "multiple_choice",
-          "category": "Work Style and Role Alignment",
+          "category": "Work Style and Support Needs",
           "points": 0,
           "alignment_traits": ["technical_troubleshooting_interest", "user_facing_support_interest", "process_documentation_strength", "ambiguity_readiness", "structured_shadowing_need"],
           "options": [

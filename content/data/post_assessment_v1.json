@@ -1,37 +1,37 @@
 {
   "id": "post_assessment_v1",
-  "title": "Post-Assessment",
-  "purpose": "Measure what a new IT work-study student learned after completing assigned Launchpad modules, checklists, and shadowing.",
-  "student_intro": "This is not proof that you are fully trained. Auto-scored questions show progress; written answers are saved for mentor review before readiness decisions.",
+  "title": "Progress Check",
+  "purpose": "Review what a new IT work-study student learned after completing assigned Launchpad modules, checklists, and shadowing.",
+  "student_intro": "This is not proof that you are fully trained. Auto-scored questions show progress; written answers are saved for mentor review before next-step decisions.",
   "total_points": 100,
   "readiness_levels": [
     {
       "slug": "needs_more_foundation_review",
-      "label": "Needs More Foundation Review",
+      "label": "Keep Building Foundations",
       "min_score": 0,
       "max_score": 59,
-      "mentor_action": "Repeat key modules and shadow closely."
+      "mentor_action": "Review key modules again and shadow closely."
     },
     {
       "slug": "developing_readiness",
-      "label": "Developing Readiness",
+      "label": "Developing Confidence",
       "min_score": 60,
       "max_score": 74,
-      "mentor_action": "Allow limited beginner-safe tasks with close guidance."
+      "mentor_action": "Use limited beginner-safe tasks with close guidance."
     },
     {
       "slug": "ready_for_beginner_safe_tasks",
-      "label": "Ready for Beginner-Safe Tasks",
+      "label": "Ready for More Beginner-Safe Practice",
       "min_score": 75,
       "max_score": 89,
-      "mentor_action": "Approve supervised beginner-safe work if local expectations are met."
+      "mentor_action": "Use supervised beginner-safe work if local expectations are met."
     },
     {
       "slug": "strong_beginner_readiness",
-      "label": "Strong Beginner Readiness",
+      "label": "Strong Beginner Progress",
       "min_score": 90,
       "max_score": 100,
-      "mentor_action": "Approve supervised work and add next-step practice."
+      "mentor_action": "Continue supervised work and add next-step practice."
     }
   ],
   "sections": [

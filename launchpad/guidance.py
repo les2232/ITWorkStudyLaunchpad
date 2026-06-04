@@ -9,7 +9,7 @@ def answer_question(question: str) -> dict[str, object]:
             "Ask a beginner IT question",
             [
                 "Type the term, workflow, or situation you want help understanding.",
-                "If you are actively stuck, use Report I'm Stuck so you can generate a mentor-ready summary.",
+                "If you are actively stuck, use I'm Stuck so you can create a mentor-ready summary.",
             ],
         )
 
@@ -107,7 +107,7 @@ def answer_question(question: str) -> dict[str, object]:
 
     if "escalate" in text or "stuck" in text or "unsure" in text:
         return _escalate(
-            "Escalation is appropriate",
+            "Asking for help is appropriate",
             "If you are unsure, stop and ask. Write down the issue, what you checked, the result, and what help you need."
         )
 
@@ -131,7 +131,7 @@ def _escalate(title: str, detail: str) -> dict[str, object]:
         "title": title,
         "paragraphs": [
             detail,
-            "I can help you turn this into a mentor summary. Use Report I'm Stuck if you want a clean message to share.",
+            "I can help you turn this into a mentor summary. Use I'm Stuck if you want a clean message to share.",
         ],
         "should_escalate": True,
         "related_module": "escalation_rules",

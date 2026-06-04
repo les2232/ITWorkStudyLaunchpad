@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Report I'm Stuck | IT Work Study Launchpad{% endblock %}
+{% block title %}I'm Stuck | IT Work Study Launchpad{% endblock %}
 {% block content %}
 <section class="content-header">
-  <p class="eyebrow">Escalation</p>
-  <h1>Report I'm Stuck</h1>
+  <p class="eyebrow">Ask for help</p>
+  <h1>I'm Stuck</h1>
   <p class="lede">Turn uncertainty into a clear mentor summary. Stopping to ask is expected when the next step is unclear.</p>
 </section>
 
 <form class="stuck-form" method="post" action="{{ url_for('stuck') }}">
-  <label>Student name <input type="text" name="student" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}"></label>
+  <label>Demo display name <input type="text" name="student" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}"></label>
   <label>Topic <input type="text" name="topic" placeholder="Example: imaging, monitor issue, asset tag"></label>
   <label>What were you trying to do? <textarea name="trying_to_do" rows="3" required></textarea></label>
   <label>What happened? <textarea name="what_happened" rows="3" required></textarea></label>
   <label>What did you already check? <textarea name="already_checked" rows="3" required></textarea></label>
   <label>What do you need help with? <textarea name="current_blocker" rows="3" required></textarea></label>
   <label>Related module or checklist item <input type="text" name="related_item"></label>
-  <button class="button primary" type="submit">Generate Summary</button>
+  <button class="button primary" type="submit">Create Mentor Summary</button>
 </form>
 
 {% if summary %}

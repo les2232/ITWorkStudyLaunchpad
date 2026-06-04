@@ -20,7 +20,7 @@
 <section class="result-panel">
   <p class="eyebrow">Saved local progress</p>
   <h2>Low-stakes knowledge check: {{ result.earned }} / {{ result.possible }} correct ({{ result.score }}%)</h2>
-  <p>Use this result to decide what to review next. It is not a final readiness decision.</p>
+  <p>Use this result to decide what to review next. It is not a final judgment about what you can do.</p>
   <ol class="quiz-result-list">
     {% for answer in result.answers %}
       <li class="{{ 'correct' if answer.is_correct else 'needs-review' }}">
@@ -52,6 +52,6 @@
       </fieldset>
     {% endfor %}
   </section>
-  <button class="button primary" type="submit">Submit Knowledge Check</button>
+  <button class="button primary" type="submit">Check My Answers</button>
 </form>
 {% endblock %}

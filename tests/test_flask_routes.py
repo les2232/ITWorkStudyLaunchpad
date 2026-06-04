@@ -70,7 +70,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/pre-assessment")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Work Style and Role Alignment", response.data)
+        self.assertIn(b"Work Style and Support Needs", response.data)
         self.assertIn(b"separate role-alignment signal", response.data)
 
     def test_pre_assessment_results_explain_mentor_review_items(self):
@@ -90,10 +90,10 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/assessment-results")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Auto-scored readiness", response.data)
+        self.assertIn(b"Auto-scored starting point", response.data)
         self.assertIn(b"Free-Response Review Items", response.data)
         self.assertIn(b"not auto-scored", response.data)
-        self.assertIn(b"A high auto-score does not mean the full assessment is complete", response.data)
+        self.assertIn(b"A high auto-score does not mean the whole check-in is complete", response.data)
         self.assertNotIn(b"automatically scored", response.data)
 
     def test_post_assessment_result_explains_mentor_review_items(self):
@@ -108,10 +108,10 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Auto-scored readiness", response.data)
+        self.assertIn(b"Auto-scored practice score", response.data)
         self.assertIn(b"Free-Response Review Items", response.data)
         self.assertIn(b"not auto-scored", response.data)
-        self.assertIn(b"A high auto-score does not mean the full assessment is complete", response.data)
+        self.assertIn(b"A high auto-score does not mean the whole check-in is complete", response.data)
         self.assertNotIn(b"automatically scored", response.data)
 
     def test_training_path_links_existing_required_items(self):
@@ -136,9 +136,11 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/")
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Welcome to the team", response.data)
+        self.assertIn(b"Starting Point Check", response.data)
         self.assertIn(b"Practice Scenarios", response.data)
         self.assertIn(b'href="/scenarios"', response.data)
-        self.assertIn(b"Post-Assessment", response.data)
+        self.assertIn(b"Progress Check", response.data)
         self.assertIn(b'href="/post-assessment"', response.data)
 
     def test_module_page_links_to_quiz_when_content_exists(self):
@@ -147,7 +149,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Knowledge check", response.data)
         self.assertIn(b'href="/modules/hardware_basics/quiz"', response.data)
-        self.assertIn(b"Take Module Quiz", response.data)
+        self.assertIn(b"Check Your Understanding", response.data)
 
     def test_module_quiz_renders_and_scores_submission(self):
         response = self.client.get("/modules/hardware_basics/quiz")
@@ -155,6 +157,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Hardware Basics Knowledge Check", response.data)
         self.assertIn(b"not a high-stakes pass/fail decision", response.data)
+        self.assertIn(b"Check My Answers", response.data)
 
         quiz = get_module_quiz("hardware_basics")
         responses = {question["id"]: question["answer"] for question in quiz["questions"]}
@@ -188,7 +191,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Mentor Review Items", response.data)
         self.assertIn(b"Saved progress counts come from local demo SQLite", response.data)
-        self.assertIn(b"Free-response assessment answers need mentor or supervisor review", response.data)
+        self.assertIn(b"Free-response check-in answers need mentor or supervisor review", response.data)
         self.assertIn(b"not auto-scored", response.data)
         self.assertIn(b"I want help understanding imaging safely.", response.data)
         self.assertNotIn(b"automatically scored", response.data)
@@ -213,7 +216,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/supervisor")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Recent Stuck Reports", response.data)
+        self.assertIn(b"Recent Help Requests", response.data)
         self.assertIn(b"Taylor Demo", response.data)
         self.assertIn(b"monitor issue", response.data)
         self.assertIn(b"Work-study student needs help.", response.data)
@@ -235,7 +238,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Scenario Practice", response.data)
         self.assertIn(b"A Ticket Uses a Word You Do Not Know", response.data)
         self.assertIn(b"I would pause and ask my mentor about the term.", response.data)
-        self.assertIn(b"not scored readiness decisions", response.data)
+        self.assertIn(b"coaching material, not a score", response.data)
 
 
 if __name__ == "__main__":

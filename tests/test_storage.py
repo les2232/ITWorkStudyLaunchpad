@@ -131,7 +131,7 @@ class StorageTests(unittest.TestCase):
         response = client.get("/supervisor")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Recent Student Progress", response.data)
+        self.assertIn(b"Recent Demo Progress", response.data)
         self.assertIn(b"Morgan", response.data)
         self.assertIn(b"Modules complete: 1", response.data)
         self.assertIn(b"Module quizzes complete: 0", response.data)

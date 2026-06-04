@@ -9,7 +9,7 @@
 
 <section class="split-layout">
   <div>
-    <h2>Required Items</h2>
+    <h2>Recommended Steps</h2>
     <p class="meta">After each module, use its short knowledge check to review what stuck.</p>
     <ol class="path-list">
       {% for item in path.required_items %}
@@ -24,7 +24,7 @@
           {% elif item.type == "activity" and item_label|lower == "scenario practice" %}
             <a href="{{ url_for('scenario_index') }}">Scenario practice</a>
           {% elif item.type == "assessment" and item_label|lower == "post-assessment" %}
-            <a href="{{ url_for('post_assessment') }}">Post-assessment</a>
+            <a href="{{ url_for('post_assessment') }}">Progress check</a>
           {% else %}
             {{ item_label }}
           {% endif %}
@@ -33,13 +33,13 @@
     </ol>
   </div>
   <div>
-    <h2>Mentor Focus</h2>
+    <h2>Mentor Check-In Ideas</h2>
     <ul>
       {% for focus in path.mentor_focus %}
         <li>{{ focus }}</li>
       {% endfor %}
     </ul>
-    <h2>Completion Criteria</h2>
+    <h2>What to Feel Comfortable With</h2>
     <ul>
       {% for item in path.completion_criteria %}
         <li>{{ item }}</li>
@@ -52,7 +52,7 @@
 <section class="result-panel">
   <p class="eyebrow">Practice</p>
   <h2>Recommended Scenarios</h2>
-  <p>Practice safe judgment, documentation, and escalation before moving into supervised tasks.</p>
+  <p>Practice safe judgment, clear notes, and asking for help before moving into supervised tasks.</p>
   <div class="card-grid">
     {% for scenario in recommended_scenarios %}
       <a class="resource-card" href="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
@@ -67,7 +67,7 @@
 <section class="result-panel">
   <p class="eyebrow">Progress check</p>
   <h2>Ready to check your progress?</h2>
-  <p>After you finish your required items and scenario practice, complete the post-assessment.</p>
-  <a class="button primary" href="{{ url_for('post_assessment') }}">Open Post-Assessment</a>
+  <p>After you finish your recommended steps and scenario practice, use the progress check to see what feels clearer.</p>
+  <a class="button primary" href="{{ url_for('post_assessment') }}">Open Progress Check</a>
 </section>
 {% endblock %}

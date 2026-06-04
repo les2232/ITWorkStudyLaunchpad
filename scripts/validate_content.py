@@ -53,7 +53,7 @@ REQUIRED_DATA_FILES = [
 ]
 
 ROLE_ALIGNMENT_SCOPE = "role_alignment"
-ROLE_ALIGNMENT_SECTION_TITLE = "Work Style and Role Alignment"
+ROLE_ALIGNMENT_SECTION_LABEL = "role alignment"
 ROLE_ALIGNMENT_SIGNALS = {
     "technical_troubleshooting_interest",
     "user_facing_support_interest",
@@ -406,15 +406,13 @@ def validate_role_alignment_data(data: dict, file_name: str) -> list[str]:
         if all(part in role_text for part in phrase_parts):
             errors.append(f"{path}: role alignment wording contains discouraged phrasing: {' / '.join(phrase_parts)}")
 
-    sections = [section for section in data.get("sections", []) if section.get("title") == ROLE_ALIGNMENT_SECTION_TITLE]
+    sections = [section for section in data.get("sections", []) if section.get("score_scope") == ROLE_ALIGNMENT_SCOPE]
     if len(sections) != 1:
-        errors.append(f"{path}: expected exactly one {ROLE_ALIGNMENT_SECTION_TITLE} section")
+        errors.append(f"{path}: expected exactly one {ROLE_ALIGNMENT_SECTION_LABEL} section")
         return errors
 
     section = sections[0]
-    if section.get("score_scope") != ROLE_ALIGNMENT_SCOPE:
-        errors.append(f"{path}: {ROLE_ALIGNMENT_SECTION_TITLE} section must use score_scope={ROLE_ALIGNMENT_SCOPE}")
-
+    role_category = section.get("title", ROLE_ALIGNMENT_SECTION_LABEL)
     questions = section.get("questions", [])
     if len(questions) < 7:
         errors.append(f"{path}: expected at least 7 role alignment questions")
@@ -434,8 +432,8 @@ def validate_role_alignment_data(data: dict, file_name: str) -> list[str]:
             errors.append(f"{path}: {question_id} role alignment question must be multiple_choice")
         if float(question.get("points", 0)) != 0:
             errors.append(f"{path}: {question_id} role alignment question must use 0 points")
-        if question.get("category") != ROLE_ALIGNMENT_SECTION_TITLE:
-            errors.append(f"{path}: {question_id} role alignment category must be {ROLE_ALIGNMENT_SECTION_TITLE}")
+        if question.get("category") != role_category:
+            errors.append(f"{path}: {question_id} role alignment category must be {role_category}")
 
         traits = set(question.get("alignment_traits", []))
         unknown_traits = traits - ROLE_ALIGNMENT_SIGNALS

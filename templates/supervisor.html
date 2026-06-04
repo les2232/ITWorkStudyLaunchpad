@@ -4,8 +4,8 @@
 <section class="content-header">
   <p class="eyebrow">Supervisor view</p>
   <h1>Launchpad Overview</h1>
-  <p class="lede">Prototype overview for reviewing saved local demo progress, required safety content, and mentor check-in focus. This is not a final hiring or placement decision tool.</p>
-  <p class="meta">Saved progress counts come from local demo SQLite. Assessment signals, mentor-review details, and scenario practice may come from the current browser session; this is not production student tracking.</p>
+  <p class="lede">Prototype overview for reviewing saved local demo progress, required safety content, and mentor check-in ideas. This is not a final hiring or placement decision tool.</p>
+  <p class="meta">Saved progress counts come from local demo SQLite. Check-in signals, mentor-review details, and scenario practice may come from the current browser session; this is not production student tracking.</p>
 </section>
 
 <section class="result-panel">
@@ -18,12 +18,12 @@
 </section>
 
 <section class="result-panel">
-  <h2>Current Session Assessment Signals</h2>
+  <h2>Current Session Check-In Signals</h2>
   {% if pre_result %}
     <div class="category-grid">
       <div>
         <strong>{{ pre_result.score }}%</strong>
-        <span>Auto-scored readiness · {{ pre_result.recommended_path }}</span>
+        <span>Auto-scored starting point · {{ pre_result.recommended_path }}</span>
       </div>
       {% if pre_result.role_alignment %}
         <div>
@@ -37,46 +37,46 @@
       {% else %}
         <div>
           <strong>Role alignment not recorded</strong>
-          <span>Complete the current pre-assessment to view work style and support needs.</span>
+          <span>Complete the current starting point check to view work style and support needs.</span>
         </div>
       {% endif %}
     </div>
   {% else %}
-    <p>No pre-assessment result is stored in this browser session yet.</p>
+    <p>No starting point check result is stored in this browser session yet.</p>
   {% endif %}
 </section>
 
 <section class="progress-section">
   <p class="eyebrow">Saved progress</p>
-  <h2>Recent Student Progress</h2>
+  <h2>Recent Demo Progress</h2>
   {% if recent_progress %}
     <div class="category-grid">
       {% for item in recent_progress %}
         <div>
           <strong>{{ item.student.display_name }}</strong>
           {% if item.latest_pre_assessment %}
-            <span>Last assessment: {{ item.latest_pre_assessment.technical_score }}% auto-scored readiness</span>
+            <span>Last check-in: {{ item.latest_pre_assessment.technical_score }}% auto-scored starting point</span>
             <span>Training path: {{ item.latest_pre_assessment.recommended_training_path or "Review with mentor" }}</span>
             <span>Role alignment: {{ item.latest_pre_assessment.role_alignment_recommendation or "Not recorded" }}</span>
           {% else %}
-            <span>Last assessment: not recorded yet</span>
+            <span>Last check-in: not recorded yet</span>
           {% endif %}
           <span>Modules complete: {{ item.module_completed_count }}</span>
           <span>Module quizzes complete: {{ item.module_quiz_completed_count }}</span>
           <span>Checklist items complete: {{ item.checklist_completed_count }}</span>
-          <span>Stuck reports: {{ item.stuck_report_count }}</span>
+          <span>Help requests: {{ item.stuck_report_count }}</span>
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <p>No saved student progress yet. Students can choose a demo display name from Saved Progress before completing activities.</p>
+    <p>No saved demo progress yet. Students can choose a demo display name from Saved Progress before completing activities.</p>
   {% endif %}
 </section>
 
 <section class="result-panel">
-  <p class="eyebrow">Assessment review</p>
+  <p class="eyebrow">Mentor review</p>
   <h2>Mentor Review Items</h2>
-  <p>Free-response assessment answers need mentor or supervisor review. They are not auto-scored and are separate from readiness percentages.</p>
+  <p>Free-response check-in answers need mentor or supervisor review. They are not auto-scored and are separate from auto-scored percentages.</p>
   {% if mentor_review_items %}
     <ul>
       {% for item in mentor_review_items %}
@@ -97,8 +97,8 @@
 
 <section class="result-panel">
   <p class="eyebrow">Local demo handoffs</p>
-  <h2>Recent Stuck Reports</h2>
-  <p>These summaries come from the local demo Report I'm Stuck flow. They are not production student records.</p>
+  <h2>Recent Help Requests</h2>
+  <p>These summaries come from the local demo I'm Stuck flow. They are not production student records.</p>
   {% if stuck_reports %}
     {% for report in stuck_reports %}
       <div class="summary-output">
@@ -108,14 +108,14 @@
       </div>
     {% endfor %}
   {% else %}
-    <p>No stuck reports are stored in this browser session yet.</p>
+    <p>No help requests are stored in this browser session yet.</p>
   {% endif %}
 </section>
 
 <section class="result-panel">
   <p class="eyebrow">Practice review</p>
   <h2>Scenario Practice</h2>
-  <p>Scenario attempts are practice responses for mentor discussion, not scored readiness decisions.</p>
+  <p>Scenario attempts are practice responses and coaching material, not a score.</p>
   {% if scenario_attempts %}
     <ul>
       {% for attempt in scenario_attempts %}
@@ -126,7 +126,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p>No scenario practice attempts are stored in this browser session yet.</p>
+    <p>No scenario practice drafts are stored in this browser session yet.</p>
   {% endif %}
 </section>
 

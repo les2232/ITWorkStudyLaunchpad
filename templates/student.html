@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Saved Progress | IT Work Study Launchpad{% endblock %}
+{% block title %}My Demo Progress | IT Work Study Launchpad{% endblock %}
 {% block content %}
 <section class="content-header">
   <p class="eyebrow">Saved progress</p>
-  <h1>Student Progress</h1>
-  <p class="lede">Use a demo display name so this local prototype can keep assessment results, training progress, and mentor summaries together. Do not enter real student records.</p>
+  <h1>My Demo Progress</h1>
+  <p class="lede">Use a demo display name so this local prototype can keep your learning progress and mentor summaries together. Do not enter real student records.</p>
 </section>
 
 <form class="question-form" method="post" action="{{ url_for('student_identity', next=next_url) }}">
   <label>Display name
     <input type="text" name="display_name" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}" required>
   </label>
-  <button class="button primary" type="submit">Use This Name</button>
+  <button class="button primary" type="submit">Save Demo Name</button>
 </form>
 
 {% if progress %}
 <section class="progress-section">
-  <h2>Local Progress Summary</h2>
+  <h2>Local Demo Progress Summary</h2>
   <span>Modules complete: {{ progress.module_completed_count }}</span>
   <span>Module quizzes complete: {{ progress.module_quiz_completed_count }}</span>
   <span>Checklist items complete: {{ progress.checklist_completed_count }}</span>
-  <span>Stuck reports: {{ progress.stuck_report_count }}</span>
+  <span>Help requests: {{ progress.stuck_report_count }}</span>
 </section>
 {% endif %}
 {% endblock %}
