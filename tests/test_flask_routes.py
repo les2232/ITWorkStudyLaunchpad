@@ -70,6 +70,33 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Work Style and Role Alignment", response.data)
         self.assertIn(b"separate role-alignment signal", response.data)
 
+    def test_training_path_links_existing_required_items(self):
+        response = self.client.get("/training-path/beginner")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'href="/modules/what_does_it_do"', response.data)
+        self.assertIn(b'href="/modules/escalation_rules"', response.data)
+        self.assertIn(b'href="/checklists/day_1"', response.data)
+
+    def test_training_path_shows_scenarios_and_post_assessment(self):
+        response = self.client.get("/training-path/developing")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'href="/scenarios"', response.data)
+        self.assertIn(b"Recommended Scenarios", response.data)
+        self.assertIn(b'href="/scenarios/ticket_term_unknown"', response.data)
+        self.assertIn(b"Ready to check your progress?", response.data)
+        self.assertIn(b'href="/post-assessment"', response.data)
+
+    def test_home_discovers_scenarios_and_post_assessment(self):
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Practice Scenarios", response.data)
+        self.assertIn(b'href="/scenarios"', response.data)
+        self.assertIn(b"Post-Assessment", response.data)
+        self.assertIn(b'href="/post-assessment"', response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

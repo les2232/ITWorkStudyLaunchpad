@@ -14,9 +14,14 @@
         <a href="{{ url_for('module_index') }}">Modules</a>
         <a href="{{ url_for('day_1_checklist') }}">Day 1</a>
         <a href="{{ url_for('week_1_checklist') }}">Week 1</a>
+        <a href="{{ url_for('scenario_index') }}">Scenarios</a>
+        <a href="{{ url_for('post_assessment') }}">Post-Assessment</a>
         <a href="{{ url_for('ask') }}">Ask</a>
         <a href="{{ url_for('stuck') }}">Stuck</a>
         <a href="{{ url_for('supervisor') }}">Supervisor</a>
+        <a href="{{ url_for('student_identity') }}">
+          {% if current_student %}Saved: {{ current_student.display_name }}{% else %}Save Progress{% endif %}
+        </a>
       </nav>
     </header>
     <main class="page">

@@ -10,6 +10,7 @@
   <div class="status-panel">
     <span>{{ module_count }} modules</span>
     <span>{{ checklist_count }} checklists</span>
+    <span>{{ scenario_count }} scenarios</span>
     <span>{{ paths|length }} paths</span>
   </div>
 </section>
@@ -44,6 +45,16 @@
     <span>Escalate</span>
     <strong>Report I'm Stuck</strong>
     <small>Generate a mentor-ready summary.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('scenario_index') }}">
+    <span>Practice</span>
+    <strong>Practice Scenarios</strong>
+    <small>Try safe judgment exercises.</small>
+  </a>
+  <a class="action-card" href="{{ url_for('post_assessment') }}">
+    <span>Review</span>
+    <strong>Post-Assessment</strong>
+    <small>Check progress after training.</small>
   </a>
 </section>
 

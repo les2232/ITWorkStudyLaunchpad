@@ -12,15 +12,20 @@
     <h2>Required Items</h2>
     <ol class="path-list">
       {% for item in path.required_items %}
+        {% set item_label = item.label|default("") %}
         <li>
-          {% if item.type == "module" %}
+          {% if item.slug and item.slug in modules_by_slug %}
             {% set module = modules_by_slug[item.slug] %}
             <a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a>
-          {% elif item.type == "checklist" %}
+          {% elif item.slug and item.slug in checklists_by_slug %}
             {% set checklist = checklists_by_slug[item.slug] %}
             <a href="{{ url_for('checklist_reader', slug=checklist.slug) }}">{{ checklist.title }}</a>
+          {% elif item.type == "activity" and item_label|lower == "scenario practice" %}
+            <a href="{{ url_for('scenario_index') }}">Scenario practice</a>
+          {% elif item.type == "assessment" and item_label|lower == "post-assessment" %}
+            <a href="{{ url_for('post_assessment') }}">Post-assessment</a>
           {% else %}
-            {{ item.label }}
+            {{ item_label }}
           {% endif %}
         </li>
       {% endfor %}
@@ -40,5 +45,28 @@
       {% endfor %}
     </ul>
   </div>
+</section>
+
+{% if recommended_scenarios %}
+<section class="result-panel">
+  <p class="eyebrow">Practice</p>
+  <h2>Recommended Scenarios</h2>
+  <p>Practice safe judgment, documentation, and escalation before moving into supervised tasks.</p>
+  <div class="card-grid">
+    {% for scenario in recommended_scenarios %}
+      <a class="resource-card" href="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
+        <strong>{{ scenario.title }}</strong>
+        <span>{{ scenario.summary }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="result-panel">
+  <p class="eyebrow">Progress check</p>
+  <h2>Ready to check your progress?</h2>
+  <p>After you finish your required items and scenario practice, complete the post-assessment.</p>
+  <a class="button primary" href="{{ url_for('post_assessment') }}">Open Post-Assessment</a>
 </section>
 {% endblock %}
