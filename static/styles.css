@@ -368,6 +368,30 @@ pre {
   margin-bottom: 18px;
 }
 
+.progress-panel,
+.progress-section {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
+.progress-panel {
+  align-items: center;
+  background: var(--soft-green);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.progress-panel span,
+.progress-section span {
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+
 .answer-panel.needs-escalation {
   border-color: #dca28f;
   background: #fff5f1;
@@ -385,6 +409,32 @@ pre {
   border-radius: 6px;
   padding: 4px 8px;
   text-decoration: none;
+}
+
+.quiz-result-list {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  padding-left: 0;
+}
+
+.quiz-result-list li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.quiz-result-list li.correct {
+  background: var(--soft-green);
+}
+
+.quiz-result-list li.needs-review {
+  background: var(--soft-amber);
+}
+
+.quiz-result-list span {
+  display: block;
+  margin-top: 6px;
 }
 
 meter {

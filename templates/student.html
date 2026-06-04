@@ -13,4 +13,14 @@
   </label>
   <button class="button primary" type="submit">Use This Name</button>
 </form>
+
+{% if progress %}
+<section class="progress-section">
+  <h2>Local Progress Summary</h2>
+  <span>Modules complete: {{ progress.module_completed_count }}</span>
+  <span>Module quizzes complete: {{ progress.module_quiz_completed_count }}</span>
+  <span>Checklist items complete: {{ progress.checklist_completed_count }}</span>
+  <span>Stuck reports: {{ progress.stuck_report_count }}</span>
+</section>
+{% endif %}
 {% endblock %}

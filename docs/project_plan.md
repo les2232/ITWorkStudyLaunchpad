@@ -9,6 +9,7 @@ The system helps new student workers:
 - Complete a pre-assessment
 - Receive an adaptive training path
 - Learn beginner IT concepts
+- Complete short module knowledge checks
 - Complete Day 1 and Week 1 onboarding checklists
 - Ask beginner questions privately through a helpful chatbot
 - Practice workflow and escalation scenarios
@@ -226,10 +227,11 @@ Create beginner-friendly modules for students with little or no IT background.
 - `content/modules/hardware_basics.md`
 - `content/modules/how_to_ask_for_help.md`
 - `content/modules/escalation_rules.md`
+- `content/data/module_quizzes.json`
 
 ### Status
 
-Initial module set complete. Module manifest data now allows the web prototype to load modules programmatically. Next refinement should focus on scenario practice, mentor review prompts, and consistency passes.
+Initial module set complete. Module manifest data now allows the web prototype to load modules programmatically. Each module now has a short, low-stakes knowledge check in app-readable JSON. Next refinement should focus on mentor review prompts and consistency passes.
 
 ### Module Format
 
@@ -242,6 +244,7 @@ Each module should include:
 - Common beginner mistakes
 - When to ask for help
 - Quick check
+- Short low-stakes knowledge check
 
 ---
 
@@ -359,7 +362,7 @@ Build a simple web prototype after the content structure is stable.
 
 ### Status
 
-In progress. A Flask prototype now includes the initial MVP screens, structured content loading, pre/post assessment scoring, training path recommendation, safe guidance, stuck summary generation, and a basic supervisor overview. It does not store real student records or provide authentication.
+In progress. A Flask prototype now includes the initial MVP screens, structured content loading, pre/post assessment scoring, training path recommendation, module knowledge checks, safe guidance, stuck summary generation, and a basic supervisor overview. It does not store real student records or provide authentication.
 
 ---
 

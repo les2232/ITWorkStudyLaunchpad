@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from launchpad.assessment import get_training_path, knowledge_gaps, load_assessment, score_assessment
+from launchpad.quizzes import get_module_quiz
 
 
 def load_flask_app(config=None):
@@ -139,6 +140,35 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b'href="/scenarios"', response.data)
         self.assertIn(b"Post-Assessment", response.data)
         self.assertIn(b'href="/post-assessment"', response.data)
+
+    def test_module_page_links_to_quiz_when_content_exists(self):
+        response = self.client.get("/modules/hardware_basics")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Knowledge check", response.data)
+        self.assertIn(b'href="/modules/hardware_basics/quiz"', response.data)
+        self.assertIn(b"Take Module Quiz", response.data)
+
+    def test_module_quiz_renders_and_scores_submission(self):
+        response = self.client.get("/modules/hardware_basics/quiz")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Hardware Basics Knowledge Check", response.data)
+        self.assertIn(b"not a high-stakes pass/fail decision", response.data)
+
+        quiz = get_module_quiz("hardware_basics")
+        responses = {question["id"]: question["answer"] for question in quiz["questions"]}
+        first_question = quiz["questions"][0]
+        responses[first_question["id"]] = next(
+            choice["value"] for choice in first_question["choices"] if choice["value"] != first_question["answer"]
+        )
+
+        submitted = self.client.post("/modules/hardware_basics/quiz", data=responses)
+
+        self.assertEqual(submitted.status_code, 200)
+        self.assertIn(b"Low-stakes knowledge check: 2 / 3 correct (67%)", submitted.data)
+        self.assertIn(b"Correct answer:", submitted.data)
+        self.assertIn(b"Use this result to decide what to review next", submitted.data)
 
 
 if __name__ == "__main__":

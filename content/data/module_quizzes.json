@@ -1,0 +1,432 @@
+{
+  "common_it_words": {
+    "title": "Common IT Words Knowledge Check",
+    "summary": "A short, low-stakes check on beginner IT vocabulary.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "What is the best beginner-friendly meaning of a domain?",
+        "choices": [
+          {"value": "A", "label": "A public website address"},
+          {"value": "B", "label": "A managed environment for accounts, computers, and access"},
+          {"value": "C", "label": "A type of monitor cable"},
+          {"value": "D", "label": "A ticket priority label"}
+        ],
+        "answer": "B",
+        "feedback": "A domain helps IT manage accounts, computers, and access in an organized way."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "An asset tag helps identify a specific piece of equipment.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Asset tags help avoid mix-ups when tracking, moving, or documenting equipment."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What should you do when you hear an IT term you do not know?",
+        "choices": [
+          {"value": "A", "label": "Pretend you understand and keep going"},
+          {"value": "B", "label": "Ask for the password connected to the term"},
+          {"value": "C", "label": "Write it down and ask a mentor to explain it"},
+          {"value": "D", "label": "Change the setting so you can learn faster"}
+        ],
+        "answer": "C",
+        "feedback": "Writing down unfamiliar terms and asking clear questions is expected beginner behavior."
+      }
+    ]
+  },
+  "what_does_it_do": {
+    "title": "What Does IT Do? Knowledge Check",
+    "summary": "A short, low-stakes check on the role of an IT department.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "Which answer best describes IT support work?",
+        "choices": [
+          {"value": "A", "label": "Only fixing broken computers"},
+          {"value": "B", "label": "Helping people, systems, devices, and workflows work safely"},
+          {"value": "C", "label": "Making every decision without asking anyone"},
+          {"value": "D", "label": "Replacing all written documentation"}
+        ],
+        "answer": "B",
+        "feedback": "IT work includes people, systems, equipment, documentation, safety, and escalation."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "A new work-study student should know their escalation path before trying unfamiliar tasks.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Knowing when and who to ask keeps the student, department, and users safer."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What is a good first response when a user reports a problem you have not seen before?",
+        "choices": [
+          {"value": "A", "label": "Document what they reported and ask a mentor for the next step"},
+          {"value": "B", "label": "Guess which admin tool might fix it"},
+          {"value": "C", "label": "Tell the user the issue is solved"},
+          {"value": "D", "label": "Ignore the details and wait"}
+        ],
+        "answer": "A",
+        "feedback": "Clear documentation plus mentor escalation is a safe beginner response."
+      }
+    ]
+  },
+  "domain_basics": {
+    "title": "Domain Basics Knowledge Check",
+    "summary": "A short, low-stakes check on domain concepts and safe boundaries.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "In a managed IT environment, what can a domain help organize?",
+        "choices": [
+          {"value": "A", "label": "User accounts, computers, and access rules"},
+          {"value": "B", "label": "Only web browser bookmarks"},
+          {"value": "C", "label": "Only printer ink levels"},
+          {"value": "D", "label": "Only classroom seating charts"}
+        ],
+        "answer": "A",
+        "feedback": "Domains commonly help manage accounts, computers, policies, and access."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "A new student should change domain settings if they think a login problem is domain-related.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "false",
+        "feedback": "Domain changes are not beginner-safe. Document the issue and ask a mentor."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What information is useful to document for a possible domain login issue?",
+        "choices": [
+          {"value": "A", "label": "The user's password"},
+          {"value": "B", "label": "The exact message, device, user, and time reported"},
+          {"value": "C", "label": "A guess about who caused it"},
+          {"value": "D", "label": "Only the room number"}
+        ],
+        "answer": "B",
+        "feedback": "Useful notes include observable details, not passwords or guesses."
+      }
+    ]
+  },
+  "configuration_manager_overview": {
+    "title": "Configuration Manager Knowledge Check",
+    "summary": "A short, low-stakes check on Configuration Manager concepts.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "What is the safest beginner-level understanding of Configuration Manager?",
+        "choices": [
+          {"value": "A", "label": "A tool mentors may use to manage computers and software"},
+          {"value": "B", "label": "A tool students should use to bypass approval"},
+          {"value": "C", "label": "A public search engine"},
+          {"value": "D", "label": "A replacement for tickets and notes"}
+        ],
+        "answer": "A",
+        "feedback": "The module gives a mental model of the tool without authorizing unsupervised use."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "Understanding what Configuration Manager is can help a student follow mentor explanations.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Knowing the terms makes shadowing and documentation easier."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What should a student do before taking action in a management tool?",
+        "choices": [
+          {"value": "A", "label": "Try the action first, then tell someone"},
+          {"value": "B", "label": "Make changes only if a user is waiting"},
+          {"value": "C", "label": "Confirm they are trained, approved, and supervised for that action"},
+          {"value": "D", "label": "Use the most powerful option available"}
+        ],
+        "answer": "C",
+        "feedback": "Training, approval, and supervision matter before using administrative tools."
+      }
+    ]
+  },
+  "imaging_overview": {
+    "title": "Computer Imaging Knowledge Check",
+    "summary": "A short, low-stakes check on imaging concepts and escalation.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "What is computer imaging, at a beginner level?",
+        "choices": [
+          {"value": "A", "label": "Taking a photo of a computer"},
+          {"value": "B", "label": "Preparing a computer with an approved standard setup"},
+          {"value": "C", "label": "Guessing which software a user wants"},
+          {"value": "D", "label": "Deleting tickets after setup"}
+        ],
+        "answer": "B",
+        "feedback": "Imaging is about applying an approved setup, not improvising."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "If an imaging process shows an error, a beginner-safe response is to stop and ask a mentor.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Imaging errors can affect data, devices, or deployment steps, so escalation is appropriate."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "Which note is most useful after an imaging issue?",
+        "choices": [
+          {"value": "A", "label": "It broke"},
+          {"value": "B", "label": "The screen looked weird"},
+          {"value": "C", "label": "At 10:15, device ABC123 showed error text during the imaging step"},
+          {"value": "D", "label": "I think the computer is bad"}
+        ],
+        "answer": "C",
+        "feedback": "Specific time, device, and observed message help a mentor troubleshoot safely."
+      }
+    ]
+  },
+  "ticket_basics": {
+    "title": "Ticket Basics Knowledge Check",
+    "summary": "A short, low-stakes check on tickets and documentation habits.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "What is a ticket mainly used for?",
+        "choices": [
+          {"value": "A", "label": "Tracking a request or issue and the work done on it"},
+          {"value": "B", "label": "Replacing mentor approval"},
+          {"value": "C", "label": "Sharing private passwords"},
+          {"value": "D", "label": "Avoiding documentation"}
+        ],
+        "answer": "A",
+        "feedback": "Tickets help IT track context, progress, ownership, and history."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "A beginner can practice drafting ticket notes even before they are approved to update real tickets.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Drafting notes is useful practice. Updating real tickets still depends on training and approval."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "Which draft note is strongest?",
+        "choices": [
+          {"value": "A", "label": "Fixed it"},
+          {"value": "B", "label": "User said monitor shows No Signal. Checked power and cable. Escalating to mentor."},
+          {"value": "C", "label": "Probably a bad user issue"},
+          {"value": "D", "label": "Done maybe"}
+        ],
+        "answer": "B",
+        "feedback": "Strong notes are factual, specific, and clear about escalation."
+      }
+    ]
+  },
+  "asset_tag_basics": {
+    "title": "Asset Tag Basics Knowledge Check",
+    "summary": "A short, low-stakes check on asset tags and equipment tracking.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "Why do asset tags matter?",
+        "choices": [
+          {"value": "A", "label": "They help identify and track specific equipment"},
+          {"value": "B", "label": "They are passwords for devices"},
+          {"value": "C", "label": "They replace all tickets"},
+          {"value": "D", "label": "They show which student owns the equipment"}
+        ],
+        "answer": "A",
+        "feedback": "Asset tags make equipment tracking and documentation more reliable."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "If an asset tag is missing or unreadable, you should document it and ask what to do next.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "A missing or unclear tag should be documented instead of guessed."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "Which detail is safest to include in an equipment note?",
+        "choices": [
+          {"value": "A", "label": "The asset tag, room, device type, and observable condition"},
+          {"value": "B", "label": "A user's password"},
+          {"value": "C", "label": "An unapproved new asset number"},
+          {"value": "D", "label": "A guess about where the device belongs"}
+        ],
+        "answer": "A",
+        "feedback": "Use observable equipment details and avoid private or guessed information."
+      }
+    ]
+  },
+  "hardware_basics": {
+    "title": "Hardware Basics Knowledge Check",
+    "summary": "A short, low-stakes check on safe hardware observations.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "Which action is beginner-safe for a monitor showing No Signal?",
+        "choices": [
+          {"value": "A", "label": "Open the computer case and remove parts"},
+          {"value": "B", "label": "Check whether the monitor has power and the cable appears connected"},
+          {"value": "C", "label": "Delete display drivers"},
+          {"value": "D", "label": "Change BIOS settings"}
+        ],
+        "answer": "B",
+        "feedback": "Observable power and cable checks are beginner-safe; deeper changes need mentor guidance."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "If a device smells burned or appears damaged, stop and escalate.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Possible damage or safety concerns should be handled by trained staff."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What should you document before asking for help with a hardware issue?",
+        "choices": [
+          {"value": "A", "label": "Only that the equipment is broken"},
+          {"value": "B", "label": "The device, location, what the user reported, and safe checks already done"},
+          {"value": "C", "label": "The private login details for the device"},
+          {"value": "D", "label": "A guess about which part failed"}
+        ],
+        "answer": "B",
+        "feedback": "Mentors need clear observed details and the safe checks already attempted."
+      }
+    ]
+  },
+  "how_to_ask_for_help": {
+    "title": "How to Ask for Help Knowledge Check",
+    "summary": "A short, low-stakes check on mentor-ready questions.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "Which help request is easiest for a mentor to act on?",
+        "choices": [
+          {"value": "A", "label": "It does not work"},
+          {"value": "B", "label": "I checked power and cable on monitor ABC123; it still says No Signal. What should I try next?"},
+          {"value": "C", "label": "Can you fix this?"},
+          {"value": "D", "label": "Never mind"}
+        ],
+        "answer": "B",
+        "feedback": "A strong request includes context, safe checks tried, and a clear next-step question."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "Asking for help is part of safe beginner IT work.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Good escalation protects users, systems, and the student."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What should you include when you are stuck?",
+        "choices": [
+          {"value": "A", "label": "What you were trying to do, what happened, what you checked, and your question"},
+          {"value": "B", "label": "Only the word stuck"},
+          {"value": "C", "label": "A list of passwords"},
+          {"value": "D", "label": "A made-up solution"}
+        ],
+        "answer": "A",
+        "feedback": "A complete stuck summary helps a mentor respond quickly."
+      }
+    ]
+  },
+  "escalation_rules": {
+    "title": "Escalation Rules Knowledge Check",
+    "summary": "A short, low-stakes check on when to stop and ask for help.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "When should a student escalate?",
+        "choices": [
+          {"value": "A", "label": "When a task touches access, data, safety, unfamiliar tools, or unclear approval"},
+          {"value": "B", "label": "Only after trying every possible fix"},
+          {"value": "C", "label": "Never, because asking slows work down"},
+          {"value": "D", "label": "Only when the user is upset"}
+        ],
+        "answer": "A",
+        "feedback": "Escalation is expected when safety, access, data, authority, or unfamiliar steps are involved."
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "prompt": "Stopping to ask a mentor can be the correct action.",
+        "choices": [
+          {"value": "true", "label": "True"},
+          {"value": "false", "label": "False"}
+        ],
+        "answer": "true",
+        "feedback": "Safe IT work values good judgment, not guessing."
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "prompt": "What is the best next step if you are unsure whether you are allowed to do something?",
+        "choices": [
+          {"value": "A", "label": "Do it quickly before anyone notices"},
+          {"value": "B", "label": "Ask a mentor or supervisor for approval before proceeding"},
+          {"value": "C", "label": "Ask the user to approve it"},
+          {"value": "D", "label": "Skip documentation"}
+        ],
+        "answer": "B",
+        "feedback": "Approval and supervision should be clear before taking unfamiliar or sensitive actions."
+      }
+    ]
+  }
+}

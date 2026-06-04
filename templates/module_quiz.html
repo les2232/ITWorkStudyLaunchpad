@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="content-header">
+  <p class="eyebrow">Module knowledge check</p>
+  <h1>{{ quiz.title }}</h1>
+  <p class="lede">{{ quiz.summary }} This is practice feedback, not a high-stakes pass/fail decision.</p>
+  <a href="{{ url_for('module_reader', slug=item.slug) }}">Back to {{ item.title }}</a>
+</section>
+
+{% if latest_quiz_result and not result %}
+<section class="result-panel">
+  <p class="eyebrow">Saved local progress</p>
+  <h2>Latest Knowledge Check</h2>
+  <p>{{ latest_quiz_result.earned }} / {{ latest_quiz_result.possible }} correct ({{ latest_quiz_result.score }}%) is saved for {{ current_student.display_name }}.</p>
+</section>
+{% endif %}
+
+{% if result %}
+<section class="result-panel">
+  <p class="eyebrow">Saved local progress</p>
+  <h2>Low-stakes knowledge check: {{ result.earned }} / {{ result.possible }} correct ({{ result.score }}%)</h2>
+  <p>Use this result to decide what to review next. It is not a final readiness decision.</p>
+  <ol class="quiz-result-list">
+    {% for answer in result.answers %}
+      <li class="{{ 'correct' if answer.is_correct else 'needs-review' }}">
+        <strong>{{ answer.prompt }}</strong>
+        <span>Your answer: {{ answer.selected_label or "No answer selected" }}</span>
+        {% if not answer.is_correct %}
+          <span>Correct answer: {{ answer.correct_label }}</span>
+        {% endif %}
+        <span>{{ answer.feedback }}</span>
+      </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+<form class="assessment-form" method="post" action="{{ url_for('module_quiz', slug=item.slug) }}">
+  <section class="form-section">
+    <h2>Questions</h2>
+    {% for question in quiz.questions %}
+      <fieldset class="question">
+        <legend>{{ question.prompt }}</legend>
+        <p class="meta">{{ "True/false" if question.type == "true_false" else "Multiple choice" }}</p>
+        {% for choice in question.choices %}
+          <label class="choice">
+            <input type="radio" name="{{ question.id }}" value="{{ choice.value }}" required>
+            <span>{{ choice.label }}</span>
+          </label>
+        {% endfor %}
+      </fieldset>
+    {% endfor %}
+  </section>
+  <button class="button primary" type="submit">Submit Knowledge Check</button>
+</form>
+{% endblock %}

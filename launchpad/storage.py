@@ -56,6 +56,18 @@ def init_db(db_path: str | Path = DEFAULT_DB_PATH) -> None:
                 FOREIGN KEY (student_id) REFERENCES students(id)
             );
 
+            CREATE TABLE IF NOT EXISTS module_quiz_results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                module_id TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                earned INTEGER NOT NULL,
+                possible INTEGER NOT NULL,
+                answers_json TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (student_id) REFERENCES students(id)
+            );
+
             CREATE TABLE IF NOT EXISTS checklist_progress (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 student_id INTEGER NOT NULL,
@@ -209,6 +221,59 @@ def module_is_complete(student_id: int, module_id: str, db_path: str | Path = DE
         return bool(row and row["completed"])
 
 
+def save_module_quiz_result(
+    student_id: int,
+    module_id: str,
+    result: Mapping[str, Any],
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> int:
+    with connect(db_path) as db:
+        cursor = db.execute(
+            """
+            INSERT INTO module_quiz_results (
+                student_id,
+                module_id,
+                score,
+                earned,
+                possible,
+                answers_json,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                student_id,
+                module_id,
+                int(result.get("score", 0)),
+                int(result.get("earned", 0)),
+                int(result.get("possible", 0)),
+                to_json(result.get("answers", [])),
+                utc_now(),
+            ),
+        )
+        touch_student(db, student_id)
+        return int(cursor.lastrowid)
+
+
+def latest_module_quiz_result(
+    student_id: int,
+    module_id: str,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> dict[str, Any] | None:
+    with connect(db_path) as db:
+        row = db.execute(
+            """
+            SELECT *
+            FROM module_quiz_results
+            WHERE student_id = ? AND module_id = ?
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+            """,
+            (student_id, module_id),
+        ).fetchone()
+        return module_quiz_row(row) if row else None
+
+
 def save_checklist_progress(
     student_id: int,
     checklist_id: str,
@@ -312,6 +377,10 @@ def student_summary(db: sqlite3.Connection, student: sqlite3.Row) -> dict[str, A
         "SELECT COUNT(*) AS count FROM module_progress WHERE student_id = ? AND completed = 1",
         (student["id"],),
     ).fetchone()["count"]
+    module_quiz_count = db.execute(
+        "SELECT COUNT(DISTINCT module_id) AS count FROM module_quiz_results WHERE student_id = ?",
+        (student["id"],),
+    ).fetchone()["count"]
     checklist_count = db.execute(
         "SELECT COUNT(*) AS count FROM checklist_progress WHERE student_id = ? AND completed = 1",
         (student["id"],),
@@ -326,6 +395,7 @@ def student_summary(db: sqlite3.Connection, student: sqlite3.Row) -> dict[str, A
         "latest_pre_assessment": assessment_row(pre) if pre else None,
         "latest_post_assessment": assessment_row(post) if post else None,
         "module_completed_count": module_count,
+        "module_quiz_completed_count": module_quiz_count,
         "checklist_completed_count": checklist_count,
         "stuck_report_count": stuck_count,
     }
@@ -347,6 +417,12 @@ def assessment_row(row: sqlite3.Row) -> dict[str, Any]:
     item = row_to_dict(row)
     item["role_alignment_summary"] = from_json(item.pop("role_alignment_summary_json", ""))
     item["answers"] = from_json(item.pop("answers_json", ""))
+    return item
+
+
+def module_quiz_row(row: sqlite3.Row) -> dict[str, Any]:
+    item = row_to_dict(row)
+    item["answers"] = from_json(item.pop("answers_json", "")) or []
     return item
 
 

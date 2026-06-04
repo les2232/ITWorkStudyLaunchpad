@@ -26,6 +26,7 @@ from .content import (
     render_markdown,
 )
 from .guidance import answer_question
+from .quizzes import collect_quiz_responses, get_module_quiz, score_module_quiz
 from .scenarios import build_feedback, get_scenario, list_scenarios, scenarios_for_path
 from .storage import (
     DEFAULT_DB_PATH,
@@ -34,10 +35,12 @@ from .storage import (
     get_student,
     init_db,
     latest_assessment_result,
+    latest_module_quiz_result,
     mark_module_complete,
     module_is_complete,
     save_assessment_result,
     save_checklist_progress,
+    save_module_quiz_result,
     save_stuck_report,
     student_progress_summary,
 )
@@ -80,7 +83,9 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             session["student_id"] = student["id"]
             session["student_display_name"] = student["display_name"]
             return redirect(next_url)
-        return render_template("student.html", next_url=_safe_next_url(request.args.get("next")))
+        student = _current_student()
+        progress = _student_progress(student["id"]) if student else None
+        return render_template("student.html", next_url=_safe_next_url(request.args.get("next")), progress=progress)
 
     @app.route("/pre-assessment", methods=["GET", "POST"])
     def pre_assessment():
@@ -147,7 +152,43 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
         markdown = read_module_markdown(slug)
         student = _current_student()
         completed = module_is_complete(student["id"], slug, _db_path()) if student else False
-        return render_template("module.html", item=module, body=render_markdown(markdown), kind="module", completed=completed)
+        quiz = get_module_quiz(slug)
+        latest_quiz_result = latest_module_quiz_result(student["id"], slug, _db_path()) if student and quiz else None
+        return render_template(
+            "module.html",
+            item=module,
+            body=render_markdown(markdown),
+            kind="module",
+            completed=completed,
+            quiz=quiz,
+            latest_quiz_result=latest_quiz_result,
+        )
+
+    @app.route("/modules/<slug>/quiz", methods=["GET", "POST"])
+    def module_quiz(slug: str):
+        module = get_module(slug)
+        if module is None:
+            abort(404)
+        quiz = get_module_quiz(slug)
+        if quiz is None:
+            abort(404)
+
+        result = None
+        if request.method == "POST":
+            responses = collect_quiz_responses(quiz, request.form)
+            result = score_module_quiz(quiz, responses)
+            student = _ensure_student()
+            save_module_quiz_result(student["id"], slug, result, _db_path())
+
+        student = _current_student()
+        latest_quiz_result = latest_module_quiz_result(student["id"], slug, _db_path()) if student else None
+        return render_template(
+            "module_quiz.html",
+            item=module,
+            quiz=quiz,
+            result=result,
+            latest_quiz_result=latest_quiz_result,
+        )
 
     @app.route("/checklists/<slug>", methods=["GET", "POST"])
     def checklist_reader(slug: str):
@@ -366,6 +407,13 @@ def _checklist_counts() -> dict[str, int]:
         checklist["slug"]: len(extract_checklist_items(read_checklist_markdown(checklist["slug"])))
         for checklist in list_checklists()
     }
+
+
+def _student_progress(student_id: int) -> dict[str, Any] | None:
+    for item in student_progress_summary(_db_path()):
+        if item["student"]["id"] == student_id:
+            return item
+    return None
 
 
 def _mentor_review_items(*results: dict[str, Any] | None) -> list[dict[str, Any]]:

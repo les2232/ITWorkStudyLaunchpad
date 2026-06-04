@@ -7,6 +7,7 @@ The system helps new student workers:
 - Receive an adaptive training path
 - Review work style and role-alignment signals
 - Learn beginner IT concepts
+- Complete short module knowledge checks
 - Complete Day 1 and Week 1 onboarding checklists
 - Practice workflow and escalation scenarios
 - Complete a post-assessment
@@ -29,10 +30,11 @@ The first version focuses on:
 1. Pre-assessment
 2. Training path recommendation
 3. IT Foundations content
-4. Day 1 checklist
-5. Week 1 checklist
-6. Post-assessment
-7. Supervisor summary output
+4. Module knowledge checks
+5. Day 1 checklist
+6. Week 1 checklist
+7. Post-assessment
+8. Supervisor summary output
 
 ## Current Status
 
@@ -46,7 +48,8 @@ Completed pieces:
 - Adaptive training paths
 - Day 1 and Week 1 onboarding checklists
 - Beginner IT foundation modules
-- App-readable JSON manifests for modules, checklists, assessments, and training paths
+- Low-stakes module knowledge checks
+- App-readable JSON manifests for modules, module quizzes, checklists, assessments, and training paths
 - Flask web prototype
 - Safe rule-based "Ask a Question" guidance
 - "Report I'm Stuck" mentor-summary flow
@@ -99,6 +102,7 @@ The tests cover:
 
 - Assessment auto-scoring and mentor-review separation
 - Role alignment scoring and recommendations
+- Module quiz content, scoring, and local completion progress
 - SQLite progress persistence
 - Training path routing
 - Content/checklist loading
@@ -131,6 +135,7 @@ tests/                         Unit tests
 - `/training-path/<level>`
 - `/modules`
 - `/modules/<module>`
+- `/modules/<module>/quiz`
 - `/day-1-checklist`
 - `/week-1-checklist`
 - `/ask`

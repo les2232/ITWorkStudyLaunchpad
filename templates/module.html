@@ -24,6 +24,19 @@
       {% endif %}
     </form>
   </section>
+  {% if quiz %}
+  <section class="progress-panel knowledge-check-panel">
+    <div>
+      <p class="eyebrow">Knowledge check</p>
+      <h2>{{ quiz.title }}</h2>
+      <p>Take a short, low-stakes quiz after reviewing this module.</p>
+      {% if latest_quiz_result %}
+        <span>Last saved result: {{ latest_quiz_result.earned }} / {{ latest_quiz_result.possible }} correct ({{ latest_quiz_result.score }}%).</span>
+      {% endif %}
+    </div>
+    <a class="button primary" href="{{ url_for('module_quiz', slug=item.slug) }}">Take Module Quiz</a>
+  </section>
+  {% endif %}
   <div class="markdown-body">
     {{ body|safe }}
   </div>

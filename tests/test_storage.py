@@ -4,16 +4,19 @@ from pathlib import Path
 
 from launchpad import create_app
 from launchpad.assessment import get_training_path, load_assessment, score_assessment
+from launchpad.quizzes import get_module_quiz
 from launchpad.storage import (
     checklist_progress,
     connect,
     create_or_find_student,
     init_db,
     latest_assessment_result,
+    latest_module_quiz_result,
     mark_module_complete,
     module_is_complete,
     save_assessment_result,
     save_checklist_progress,
+    save_module_quiz_result,
     save_stuck_report,
     student_progress_summary,
 )
@@ -40,6 +43,7 @@ class StorageTests(unittest.TestCase):
         self.assertIn("students", tables)
         self.assertIn("assessment_results", tables)
         self.assertIn("module_progress", tables)
+        self.assertIn("module_quiz_results", tables)
         self.assertIn("checklist_progress", tables)
         self.assertIn("stuck_reports", tables)
 
@@ -79,6 +83,17 @@ class StorageTests(unittest.TestCase):
         student = create_or_find_student("Riley", self.db_path)
 
         mark_module_complete(student["id"], "hardware_basics", True, self.db_path)
+        save_module_quiz_result(
+            student["id"],
+            "hardware_basics",
+            {
+                "score": 67,
+                "earned": 2,
+                "possible": 3,
+                "answers": [{"id": "q1", "selected": "A", "is_correct": False}],
+            },
+            self.db_path,
+        )
         save_checklist_progress(student["id"], "day_1", "0", True, self.db_path)
         save_stuck_report(
             student["id"],
@@ -95,10 +110,14 @@ class StorageTests(unittest.TestCase):
         )
 
         summary = student_progress_summary(self.db_path)[0]
+        saved_quiz = latest_module_quiz_result(student["id"], "hardware_basics", self.db_path)
 
         self.assertTrue(module_is_complete(student["id"], "hardware_basics", self.db_path))
+        self.assertEqual(saved_quiz["score"], 67)
+        self.assertEqual(saved_quiz["answers"][0]["id"], "q1")
         self.assertTrue(checklist_progress(student["id"], "day_1", self.db_path)["0"])
         self.assertEqual(summary["module_completed_count"], 1)
+        self.assertEqual(summary["module_quiz_completed_count"], 1)
         self.assertEqual(summary["checklist_completed_count"], 1)
         self.assertEqual(summary["stuck_report_count"], 1)
 
@@ -115,12 +134,16 @@ class StorageTests(unittest.TestCase):
         self.assertIn(b"Recent Student Progress", response.data)
         self.assertIn(b"Morgan", response.data)
         self.assertIn(b"Modules complete: 1", response.data)
+        self.assertIn(b"Module quizzes complete: 0", response.data)
 
     def test_web_progress_forms_create_demo_student_and_summary_counts(self):
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
         client = app.test_client()
+        quiz = get_module_quiz("hardware_basics")
+        quiz_answers = {question["id"]: question["answer"] for question in quiz["questions"]}
 
         module_response = client.post("/modules/hardware_basics", data={"completed": "1"})
+        quiz_response = client.post("/modules/hardware_basics/quiz", data=quiz_answers)
         checklist_response = client.post(
             "/checklists/day_1",
             data={"completed_items": ["0", "1"]},
@@ -138,15 +161,20 @@ class StorageTests(unittest.TestCase):
         )
 
         summary = student_progress_summary(self.db_path)
+        student_response = client.get("/student")
 
         self.assertEqual(module_response.status_code, 302)
+        self.assertEqual(quiz_response.status_code, 200)
         self.assertEqual(checklist_response.status_code, 302)
         self.assertEqual(stuck_response.status_code, 200)
+        self.assertEqual(student_response.status_code, 200)
         self.assertEqual(len(summary), 1)
         self.assertTrue(summary[0]["student"]["display_name"].startswith("Demo Student "))
         self.assertEqual(summary[0]["module_completed_count"], 1)
+        self.assertEqual(summary[0]["module_quiz_completed_count"], 1)
         self.assertEqual(summary[0]["checklist_completed_count"], 2)
         self.assertEqual(summary[0]["stuck_report_count"], 1)
+        self.assertIn(b"Module quizzes complete: 1", student_response.data)
 
 
 if __name__ == "__main__":

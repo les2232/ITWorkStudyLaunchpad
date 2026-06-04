@@ -45,6 +45,7 @@ REQUIRED_CHECKLIST_MARKERS = [
 
 REQUIRED_DATA_FILES = [
     "modules.json",
+    "module_quizzes.json",
     "checklists.json",
     "training_paths.json",
     "pre_assessment_v1.json",
@@ -188,6 +189,7 @@ def validate_data_files() -> list[str]:
         return errors
 
     errors.extend(validate_module_manifest())
+    errors.extend(validate_module_quizzes())
     errors.extend(validate_checklist_manifest())
     errors.extend(validate_training_paths())
     errors.extend(validate_assessment_data("pre_assessment_v1.json"))
@@ -213,6 +215,80 @@ def validate_module_manifest() -> list[str]:
         path = PROJECT_ROOT / module.get("path", "")
         if not path.exists():
             errors.append(f"{DATA_DIR / 'modules.json'}: module path does not exist: {path}")
+
+    return errors
+
+
+def validate_module_quizzes() -> list[str]:
+    errors = []
+    path = DATA_DIR / "module_quizzes.json"
+    quizzes = read_json("module_quizzes.json")
+    module_slugs = {module["slug"] for module in read_json("modules.json")}
+
+    if not isinstance(quizzes, dict) or not quizzes:
+        return [f"{path}: expected a non-empty object keyed by module slug"]
+
+    quiz_slugs = set(quizzes)
+    missing_quizzes = module_slugs - quiz_slugs
+    if missing_quizzes:
+        errors.append(f"{path}: missing quizzes for modules: {sorted(missing_quizzes)}")
+
+    for module_slug, quiz in quizzes.items():
+        if module_slug not in module_slugs:
+            errors.append(f"{path}: quiz for unknown module slug: {module_slug}")
+        if not isinstance(quiz, dict):
+            errors.append(f"{path}: quiz for {module_slug} must be an object")
+            continue
+
+        errors.extend(require_fields(quiz, ["title", "summary", "questions"], "module_quizzes.json"))
+        questions = quiz.get("questions", [])
+        if not isinstance(questions, list):
+            errors.append(f"{path}: {module_slug} questions must be a list")
+            continue
+        if not 3 <= len(questions) <= 5:
+            errors.append(f"{path}: {module_slug} must have 3 to 5 questions")
+
+        question_ids = set()
+        for question in questions:
+            if not isinstance(question, dict):
+                errors.append(f"{path}: {module_slug} question must be an object")
+                continue
+            errors.extend(
+                require_fields(
+                    question,
+                    ["id", "type", "prompt", "choices", "answer", "feedback"],
+                    "module_quizzes.json",
+                )
+            )
+            question_id = question.get("id")
+            if question_id in question_ids:
+                errors.append(f"{path}: {module_slug} duplicate question id: {question_id}")
+            question_ids.add(question_id)
+
+            question_type = question.get("type")
+            if question_type not in {"multiple_choice", "true_false"}:
+                errors.append(f"{path}: {module_slug} {question_id} unsupported type: {question_type}")
+
+            choices = question.get("choices", [])
+            if not isinstance(choices, list) or len(choices) < 2:
+                errors.append(f"{path}: {module_slug} {question_id} must have at least two choices")
+                continue
+
+            choice_values = set()
+            for choice in choices:
+                if not isinstance(choice, dict):
+                    errors.append(f"{path}: {module_slug} {question_id} choice must be an object")
+                    continue
+                errors.extend(require_fields(choice, ["value", "label"], "module_quizzes.json"))
+                value = choice.get("value")
+                if value in choice_values:
+                    errors.append(f"{path}: {module_slug} {question_id} duplicate choice value: {value}")
+                choice_values.add(value)
+
+            if question.get("answer") not in choice_values:
+                errors.append(f"{path}: {module_slug} {question_id} answer is not one of the choices")
+            if question_type == "true_false" and choice_values != {"true", "false"}:
+                errors.append(f"{path}: {module_slug} {question_id} true_false choices must be true and false")
 
     return errors
 
