@@ -40,5 +40,15 @@
   <div class="markdown-body">
     {{ body|safe }}
   </div>
+  {% if quiz %}
+  <section class="progress-panel knowledge-check-panel">
+    <div>
+      <p class="eyebrow">Next step</p>
+      <h2>Ready to check your understanding?</h2>
+      <p>Read through the module first, then use the short knowledge check when you are ready.</p>
+    </div>
+    <a class="button primary" href="{{ url_for('module_quiz', slug=item.slug) }}">Check Your Understanding</a>
+  </section>
+  {% endif %}
 </article>
 {% endblock %}

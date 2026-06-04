@@ -150,6 +150,16 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Knowledge check", response.data)
         self.assertIn(b'href="/modules/hardware_basics/quiz"', response.data)
         self.assertIn(b"Check Your Understanding", response.data)
+        self.assertIn(b"Ready to check your understanding?", response.data)
+        self.assertIn(b"Read through the module first", response.data)
+        self.assertGreaterEqual(response.data.count(b"Check Your Understanding"), 2)
+
+    def test_checklist_repeats_save_action_after_items(self):
+        response = self.client.get("/checklists/day_1")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Check off what you have practiced", response.data)
+        self.assertGreaterEqual(response.data.count(b"Save Checklist Progress"), 2)
 
     def test_module_quiz_renders_and_scores_submission(self):
         response = self.client.get("/modules/hardware_basics/quiz")
