@@ -7,6 +7,23 @@
     <h1>{{ item.title }}</h1>
     <p>{{ item.summary }}</p>
   </div>
+  <section class="progress-panel">
+    <h2>Saved Progress</h2>
+    {% if current_student %}
+      <p>{{ "Completed" if completed else "Not completed yet" }} for {{ current_student.display_name }}.</p>
+    {% else %}
+      <p>Choose a demo display name to save module progress locally.</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('module_reader', slug=item.slug) }}">
+      {% if completed %}
+        <input type="hidden" name="completed" value="0">
+        <button class="button" type="submit">Mark Not Complete</button>
+      {% else %}
+        <input type="hidden" name="completed" value="1">
+        <button class="button primary" type="submit">Mark Module Complete</button>
+      {% endif %}
+    </form>
+  </section>
   <div class="markdown-body">
     {{ body|safe }}
   </div>

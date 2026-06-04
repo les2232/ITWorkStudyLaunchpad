@@ -7,31 +7,23 @@
     <h1>{{ item.title }}</h1>
     <p>{{ item.summary }}</p>
   </div>
-  <div class="toolbar">
-    <button class="button" type="button" data-reset-checklist>Reset Checks</button>
-  </div>
-  <div class="markdown-body checklist-body" data-checklist="{{ item.slug }}">
-    {{ body|safe }}
-  </div>
+  <form method="post" action="{{ url_for('checklist_reader', slug=item.slug) }}">
+    <div class="toolbar progress-panel">
+      <div>
+        <strong>Saved Progress</strong>
+        <span>
+          {% if current_student %}
+            {{ checked_count }} / {{ items|length }} items complete for {{ current_student.display_name }}
+          {% else %}
+            Choose a demo display name to save checklist progress locally.
+          {% endif %}
+        </span>
+      </div>
+      <button class="button primary" type="submit">Save Checklist Progress</button>
+    </div>
+    <div class="markdown-body checklist-body">
+      {{ body|safe }}
+    </div>
+  </form>
 </article>
-<script>
-  const scope = document.querySelector("[data-checklist]");
-  if (scope) {
-    const key = "launchpad-checklist-" + scope.dataset.checklist;
-    const saved = JSON.parse(localStorage.getItem(key) || "{}");
-    const boxes = Array.from(scope.querySelectorAll("input[type='checkbox']"));
-    boxes.forEach((box, index) => {
-      box.checked = Boolean(saved[index]);
-      box.addEventListener("change", () => {
-        const state = {};
-        boxes.forEach((item, itemIndex) => state[itemIndex] = item.checked);
-        localStorage.setItem(key, JSON.stringify(state));
-      });
-    });
-    document.querySelector("[data-reset-checklist]").addEventListener("click", () => {
-      localStorage.removeItem(key);
-      boxes.forEach((box) => box.checked = false);
-    });
-  }
-</script>
 {% endblock %}

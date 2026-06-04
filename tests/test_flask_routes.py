@@ -1,11 +1,14 @@
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
 
-def load_flask_app():
+def load_flask_app(config=None):
     import app as app_module
 
     if hasattr(app_module, "create_app"):
-        return app_module.create_app()
+        return app_module.create_app(config)
 
     if hasattr(app_module, "app"):
         return app_module.app
@@ -16,9 +19,20 @@ def load_flask_app():
 class FlaskRouteSmokeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = load_flask_app()
-        cls.app.config.update(TESTING=True)
+        cls.tmpdir = tempfile.TemporaryDirectory()
+        cls.db_path = Path(cls.tmpdir.name) / "launchpad-routes.sqlite"
+        cls.old_db_path = os.environ.get("LAUNCHPAD_DB_PATH")
+        os.environ["LAUNCHPAD_DB_PATH"] = str(cls.db_path)
+        cls.app = load_flask_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(cls.db_path)})
         cls.client = cls.app.test_client()
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.old_db_path is None:
+            os.environ.pop("LAUNCHPAD_DB_PATH", None)
+        else:
+            os.environ["LAUNCHPAD_DB_PATH"] = cls.old_db_path
+        cls.tmpdir.cleanup()
 
     def test_simple_get_routes_do_not_crash(self):
         simple_get_routes = []

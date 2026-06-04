@@ -4,7 +4,7 @@
 <section class="content-header">
   <p class="eyebrow">Supervisor view</p>
   <h1>Launchpad Overview</h1>
-  <p class="lede">Prototype overview for reviewing paths, required safety content, and mentor check-in focus. No real student records are stored.</p>
+  <p class="lede">Prototype overview for reviewing saved local demo progress, required safety content, and mentor check-in focus. This is not a final hiring or placement decision tool.</p>
 </section>
 
 <section class="result-panel">
@@ -42,6 +42,32 @@
     </div>
   {% else %}
     <p>No pre-assessment result is stored in this browser session yet.</p>
+  {% endif %}
+</section>
+
+<section class="progress-section">
+  <p class="eyebrow">Saved progress</p>
+  <h2>Recent Student Progress</h2>
+  {% if recent_progress %}
+    <div class="category-grid">
+      {% for item in recent_progress %}
+        <div>
+          <strong>{{ item.student.display_name }}</strong>
+          {% if item.latest_pre_assessment %}
+            <span>Last assessment: {{ item.latest_pre_assessment.technical_score }}% technical readiness</span>
+            <span>Training path: {{ item.latest_pre_assessment.recommended_training_path or "Review with mentor" }}</span>
+            <span>Role alignment: {{ item.latest_pre_assessment.role_alignment_recommendation or "Not recorded" }}</span>
+          {% else %}
+            <span>Last assessment: not recorded yet</span>
+          {% endif %}
+          <span>Modules complete: {{ item.module_completed_count }}</span>
+          <span>Checklist items complete: {{ item.checklist_completed_count }}</span>
+          <span>Stuck reports: {{ item.stuck_report_count }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No saved student progress yet. Students can choose a demo display name from Saved Progress before completing activities.</p>
   {% endif %}
 </section>
 
