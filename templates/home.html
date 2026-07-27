@@ -16,11 +16,31 @@
 </section>
 
 <section class="action-grid" aria-label="Launchpad actions">
-  <a class="action-card primary" href="{{ url_for('pre_assessment') }}">
-    <span>Start</span>
-    <strong>Starting Point Check</strong>
-    <small>Find a recommended starting path.</small>
-  </a>
+  {% if not current_student %}
+    <a class="action-card primary" href="{{ url_for('student_identity', next=url_for('pre_assessment')) }}">
+      <span>Start onboarding</span>
+      <strong>Save a Demo Name</strong>
+      <small>Keep your starting point and progress together.</small>
+    </a>
+  {% elif recommended_path and continuation and continuation.complete %}
+    <a class="action-card primary" href="{{ url_for('student_identity') }}">
+      <span>Review onboarding</span>
+      <strong>{{ recommended_path.label }} Path Complete</strong>
+      <small>Review your saved progress with your mentor.</small>
+    </a>
+  {% elif recommended_path and continuation %}
+    <a class="action-card primary" href="{{ continuation.url }}">
+      <span>Continue onboarding</span>
+      <strong>{{ continuation.title }}</strong>
+      <small>Open your first unfinished recommended step.</small>
+    </a>
+  {% else %}
+    <a class="action-card primary" href="{{ url_for('pre_assessment') }}">
+      <span>Start onboarding</span>
+      <strong>Starting Point Check</strong>
+      <small>Find a recommended starting path.</small>
+    </a>
+  {% endif %}
   <a class="action-card" href="{{ url_for('module_index') }}">
     <span>Learn</span>
     <strong>IT Foundations</strong>

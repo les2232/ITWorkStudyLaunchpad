@@ -209,6 +209,11 @@ class ProgressAwareContinuationTests(unittest.TestCase):
         self.assertIn(b"Your Beginner Path Is Complete", response.data)
         self.assertNotIn(b"Continue with", response.data)
 
+        home = self.client.get("/")
+        self.assertIn(b"Review onboarding", home.data)
+        self.assertIn(b"Beginner Path Complete", home.data)
+        self.assertIn(b'href="/student"', home.data)
+
     def test_unknown_and_stale_activity_progress_cannot_skip_required_activity(self):
         student = self._student_with_score("Stale Path Student", 75)
         self._complete_checklist(student["id"])
