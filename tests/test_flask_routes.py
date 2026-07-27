@@ -73,6 +73,20 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Work Style and Support Needs", response.data)
         self.assertIn(b"separate role-alignment signal", response.data)
 
+    def test_invalid_saved_student_session_recovers_to_anonymous_view(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+            session["student_id"] = "invalid"
+            session["student_display_name"] = "Stale Demo"
+
+        response = self.client.get("/student")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Save Demo Name", response.data)
+        with self.client.session_transaction() as session:
+            self.assertNotIn("student_id", session)
+            self.assertNotIn("student_display_name", session)
+
     def test_pre_assessment_results_explain_mentor_review_items(self):
         assessment = load_assessment("pre_assessment_v1")
         result = score_assessment(assessment, {"q3": "I want help learning imaging safely."})
@@ -205,6 +219,23 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"not auto-scored", response.data)
         self.assertIn(b"I want help understanding imaging safely.", response.data)
         self.assertNotIn(b"automatically scored", response.data)
+
+    def test_supervisor_renders_current_session_post_assessment(self):
+        response = self.client.post(
+            "/post-assessment",
+            data={
+                "q2": "I understand tickets better.",
+                "q10": "I would record the exact error and stop.",
+                "q11": "Monitor had power and still showed No Signal.",
+                "q12": "Imaging error appeared; I stopped.",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+        supervisor = self.client.get("/supervisor")
+
+        self.assertEqual(supervisor.status_code, 200)
+        self.assertIn(b"Auto-scored progress check", supervisor.data)
 
     def test_supervisor_renders_stuck_report_details(self):
         with self.client.session_transaction() as session:

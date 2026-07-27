@@ -377,7 +377,12 @@ def _current_student() -> dict[str, Any] | None:
     student_id = session.get("student_id")
     if not student_id:
         return None
-    student = get_student(int(student_id), _db_path())
+    try:
+        normalized_student_id = int(student_id)
+    except (TypeError, ValueError):
+        student = None
+    else:
+        student = get_student(normalized_student_id, _db_path())
     if student is None:
         session.pop("student_id", None)
         session.pop("student_display_name", None)

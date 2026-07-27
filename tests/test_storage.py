@@ -124,6 +124,14 @@ class StorageTests(unittest.TestCase):
     def test_supervisor_overview_loads_persisted_progress(self):
         student = create_or_find_student("Morgan", self.db_path)
         mark_module_complete(student["id"], "hardware_basics", True, self.db_path)
+        save_assessment_result(
+            student["id"],
+            "post_assessment_v1",
+            "post",
+            {"score": 80, "readiness_label": "Ready for Supervised Beginner Tasks"},
+            {},
+            self.db_path,
+        )
 
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
         client = app.test_client()
@@ -135,6 +143,8 @@ class StorageTests(unittest.TestCase):
         self.assertIn(b"Morgan", response.data)
         self.assertIn(b"Modules complete: 1", response.data)
         self.assertIn(b"Module quizzes complete: 0", response.data)
+        self.assertIn(b"Latest progress check: 80% auto-scored", response.data)
+        self.assertIn(b"Ready for Supervised Beginner Tasks", response.data)
 
     def test_web_progress_forms_create_demo_student_and_summary_counts(self):
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})

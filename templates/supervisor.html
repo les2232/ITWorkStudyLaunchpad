@@ -44,6 +44,16 @@
   {% else %}
     <p>No starting point check result is stored in this browser session yet.</p>
   {% endif %}
+  {% if post_result %}
+    <div class="category-grid">
+      <div>
+        <strong>{{ post_result.score }}%</strong>
+        <span>Auto-scored progress check · {{ post_result.readiness_label or "Review with mentor" }}</span>
+      </div>
+    </div>
+  {% else %}
+    <p>No progress check result is stored in this browser session yet.</p>
+  {% endif %}
 </section>
 
 <section class="progress-section">
@@ -60,6 +70,11 @@
             <span>Role alignment: {{ item.latest_pre_assessment.role_alignment_recommendation or "Not recorded" }}</span>
           {% else %}
             <span>Last check-in: not recorded yet</span>
+          {% endif %}
+          {% if item.latest_post_assessment %}
+            <span>Latest progress check: {{ item.latest_post_assessment.technical_score }}% auto-scored · {{ item.latest_post_assessment.readiness_level or "Review with mentor" }}</span>
+          {% else %}
+            <span>Latest progress check: not recorded yet</span>
           {% endif %}
           <span>Modules complete: {{ item.module_completed_count }}</span>
           <span>Module quizzes complete: {{ item.module_quiz_completed_count }}</span>
