@@ -85,7 +85,12 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             return redirect(next_url)
         student = _current_student()
         progress = _student_progress(student["id"]) if student else None
-        return render_template("student.html", next_url=_safe_next_url(request.args.get("next")), progress=progress)
+        return render_template(
+            "student.html",
+            next_url=_safe_next_url(request.args.get("next")),
+            progress=progress,
+            recommended_path=_saved_training_path(progress),
+        )
 
     @app.route("/pre-assessment", methods=["GET", "POST"])
     def pre_assessment():
@@ -414,6 +419,15 @@ def _student_progress(student_id: int) -> dict[str, Any] | None:
         if item["student"]["id"] == student_id:
             return item
     return None
+
+
+def _saved_training_path(progress: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not progress or not progress.get("latest_pre_assessment"):
+        return None
+    score = progress["latest_pre_assessment"].get("technical_score")
+    if isinstance(score, bool) or not isinstance(score, (int, float)):
+        return None
+    return get_training_path(int(score))
 
 
 def _mentor_review_items(*results: dict[str, Any] | None) -> list[dict[str, Any]]:
