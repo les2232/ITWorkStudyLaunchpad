@@ -151,7 +151,8 @@ class FlaskRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Welcome to the team", response.data)
-        self.assertIn(b"Starting Point Check", response.data)
+        self.assertIn(b"Save a Demo Name", response.data)
+        self.assertIn(b'href="/student?next=/pre-assessment"', response.data)
         self.assertIn(b"Practice Scenarios", response.data)
         self.assertIn(b'href="/scenarios"', response.data)
         self.assertIn(b"Progress Check", response.data)

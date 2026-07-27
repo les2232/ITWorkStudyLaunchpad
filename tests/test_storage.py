@@ -217,6 +217,54 @@ class StorageTests(unittest.TestCase):
         self.assertIn(b"not a pass/fail test", response.data)
         self.assertIn(b'href="/pre-assessment"', response.data)
 
+    def test_home_requires_demo_name_before_anonymous_starting_check(self):
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Save a Demo Name", response.data)
+        self.assertIn(b'href="/student?next=/pre-assessment"', response.data)
+
+        started = client.post(
+            "/student?next=/pre-assessment",
+            data={"display_name": "Home Start Demo"},
+        )
+        self.assertEqual(started.status_code, 302)
+        self.assertEqual(started.headers["Location"], "/pre-assessment")
+
+    def test_home_links_named_student_without_path_to_starting_check(self):
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Home New Demo"})
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Starting Point Check", response.data)
+        self.assertIn(b'href="/pre-assessment"', response.data)
+        self.assertNotIn(b"Save a Demo Name", response.data)
+
+    def test_home_links_returning_student_to_first_unfinished_step(self):
+        student = create_or_find_student("Home Returning Demo", self.db_path)
+        assessment = load_assessment("pre_assessment_v1")
+        result = score_assessment(assessment, {})
+        path = get_training_path(result["score"])
+        result["path_label"] = path["label"]
+        result["recommended_path"] = path["recommended_path"]
+        save_assessment_result(student["id"], assessment["id"], "pre", result, {}, self.db_path)
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Home Returning Demo"})
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Continue onboarding", response.data)
+        self.assertIn(b"What Does IT Do?", response.data)
+        self.assertIn(b'href="/modules/what_does_it_do"', response.data)
+
     def test_student_progress_with_incomplete_saved_result_falls_back_safely(self):
         student = create_or_find_student("Jordan Demo", self.db_path)
         save_assessment_result(

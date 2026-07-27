@@ -68,6 +68,10 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
 
     @app.get("/")
     def home():
+        student = _current_student()
+        progress = _student_progress(student["id"]) if student else None
+        recommended_path = _saved_training_path(progress)
+        continuation = _path_continuation(student["id"], recommended_path) if student and recommended_path else None
         return render_template(
             "home.html",
             module_count=len(list_modules()),
@@ -75,6 +79,8 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             scenario_count=len(list_scenarios()),
             checklist_counts=_checklist_counts(),
             paths=load_json("training_paths.json")["levels"],
+            recommended_path=recommended_path,
+            continuation=continuation,
         )
 
     @app.route("/student", methods=["GET", "POST"])
