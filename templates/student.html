@@ -25,11 +25,15 @@
 
 <section class="result-panel">
   <p class="eyebrow">Continue onboarding</p>
-  {% if recommended_path %}
-    <h2>Return to Your {{ recommended_path.label }} Path</h2>
-    <p>Your saved starting point recommends {{ recommended_path.recommended_path|lower }}.</p>
-    <p class="meta">Open your path to choose the next learning or mentor-guided step. Ask your mentor when a step depends on local procedures or approval.</p>
-    <a class="button primary" href="{{ url_for('training_path', slug=recommended_path.slug) }}">Continue My Training Path</a>
+  {% if recommended_path and continuation and continuation.complete %}
+    <h2>Your {{ recommended_path.label }} Path Is Complete</h2>
+    <p>You have finished every recorded step in this recommended path. Review your progress with your mentor before moving into new or independent work.</p>
+    <a class="button" href="{{ url_for('training_path', slug=recommended_path.slug) }}">Review My Training Path</a>
+  {% elif recommended_path and continuation %}
+    <h2>Your Next Step: {{ continuation.title }}</h2>
+    <p>Your saved starting point recommends {{ recommended_path.recommended_path|lower }}. You can continue with the first unfinished step below.</p>
+    <p class="meta">Ask your mentor when a step depends on local procedures or approval. It is always okay to pause when you are unsure.</p>
+    <a class="button primary" href="{{ continuation.url }}">Continue with {{ continuation.title }}</a>
   {% else %}
     <h2>Find Your Starting Path</h2>
     <p>Complete the Starting Point Check to get a supportive recommended learning path. This is not a pass/fail test.</p>

@@ -191,9 +191,9 @@ class StorageTests(unittest.TestCase):
         response = client.get("/student")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Return to Your Beginner Path", response.data)
-        self.assertIn(b"Continue My Training Path", response.data)
-        self.assertIn(b'href="/training-path/beginner"', response.data)
+        self.assertIn(b"Your Next Step: What Does IT Do?", response.data)
+        self.assertIn(b"Continue with What Does IT Do?", response.data)
+        self.assertIn(b'href="/modules/what_does_it_do"', response.data)
 
     def test_student_progress_without_saved_path_links_to_starting_check(self):
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})

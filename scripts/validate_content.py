@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -314,12 +315,14 @@ def validate_checklist_manifest() -> list[str]:
     return errors
 
 
-def validate_training_paths() -> list[str]:
+def validate_training_paths(data: dict | None = None) -> list[str]:
     errors = []
-    data = read_json("training_paths.json")
+    if data is None:
+        data = read_json("training_paths.json")
     module_slugs = {module["slug"] for module in read_json("modules.json")}
     checklist_slugs = {checklist["slug"] for checklist in read_json("checklists.json")}
     seen_slugs = set()
+    seen_activity_ids = set()
 
     levels = data.get("levels", [])
     if not levels:
@@ -339,6 +342,15 @@ def validate_training_paths() -> list[str]:
                 errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown module slug: {item_slug}")
             if item_type == "checklist" and item_slug not in checklist_slugs:
                 errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown checklist slug: {item_slug}")
+            if item_type == "activity":
+                errors.extend(require_fields(item, ["id", "label"], "training_paths.json"))
+                activity_id = item.get("id")
+                if isinstance(activity_id, str) and not re.fullmatch(r"[a-z][a-z0-9_]*", activity_id):
+                    errors.append(f"{DATA_DIR / 'training_paths.json'}: invalid activity id: {activity_id}")
+                if activity_id in seen_activity_ids:
+                    errors.append(f"{DATA_DIR / 'training_paths.json'}: duplicate activity id: {activity_id}")
+                if isinstance(activity_id, str) and activity_id:
+                    seen_activity_ids.add(activity_id)
             if item_type not in {"module", "checklist", "activity", "assessment"}:
                 errors.append(f"{DATA_DIR / 'training_paths.json'}: unknown required item type: {item_type}")
 

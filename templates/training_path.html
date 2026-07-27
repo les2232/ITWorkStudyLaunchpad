@@ -14,7 +14,7 @@
     <ol class="path-list">
       {% for item in path.required_items %}
         {% set item_label = item.label|default("") %}
-        <li>
+        <li{% if item.type == "activity" and item.id %} id="activity-{{ item.id }}"{% endif %}>
           {% if item.slug and item.slug in modules_by_slug %}
             {% set module = modules_by_slug[item.slug] %}
             <a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a>
@@ -27,6 +27,19 @@
             <a href="{{ url_for('post_assessment') }}">Progress check</a>
           {% else %}
             {{ item_label }}
+          {% endif %}
+          {% if item.type == "activity" and item.id %}
+            <form method="post" action="{{ url_for('update_path_activity', slug=path.slug, activity_id=item.id) }}">
+              {% if activity_states.get(item.id) %}
+                <span class="meta">Saved as complete. Reopen it if you need more practice or mentor review.</span>
+                <input type="hidden" name="completed" value="0">
+                <button class="button" type="submit">Reopen Activity</button>
+              {% else %}
+                <span class="meta">Mark this complete only after you finish it with any required mentor guidance.</span>
+                <input type="hidden" name="completed" value="1">
+                <button class="button" type="submit">Mark Activity Complete</button>
+              {% endif %}
+            </form>
           {% endif %}
         </li>
       {% endfor %}

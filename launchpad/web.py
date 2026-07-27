@@ -30,6 +30,7 @@ from .quizzes import collect_quiz_responses, get_module_quiz, score_module_quiz
 from .scenarios import build_feedback, get_scenario, list_scenarios, scenarios_for_path
 from .storage import (
     DEFAULT_DB_PATH,
+    activity_progress,
     checklist_progress,
     create_or_find_student,
     get_student,
@@ -42,6 +43,7 @@ from .storage import (
     save_checklist_progress,
     save_module_quiz_result,
     save_stuck_report,
+    set_activity_complete,
     student_progress_summary,
 )
 from .stuck import generate_stuck_summary
@@ -85,11 +87,14 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             return redirect(next_url)
         student = _current_student()
         progress = _student_progress(student["id"]) if student else None
+        recommended_path = _saved_training_path(progress)
+        continuation = _path_continuation(student["id"], recommended_path) if student and recommended_path else None
         return render_template(
             "student.html",
             next_url=_safe_next_url(request.args.get("next")),
             progress=progress,
-            recommended_path=_saved_training_path(progress),
+            recommended_path=recommended_path,
+            continuation=continuation,
         )
 
     @app.route("/pre-assessment", methods=["GET", "POST"])
@@ -128,10 +133,10 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
 
     @app.get("/training-path/<slug>")
     def training_path(slug: str):
-        paths = load_json("training_paths.json")["levels"]
-        path = next((item for item in paths if item["slug"] == slug), None)
+        path = _training_path_by_slug(slug)
         if path is None:
             abort(404)
+        student = _current_student()
         return render_template(
             "training_path.html",
             path=path,
@@ -139,7 +144,28 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             checklists_by_slug=_checklists_by_slug(),
             recommended_scenarios=scenarios_for_path(slug),
             checklist_counts=_checklist_counts(),
+            activity_states=activity_progress(student["id"], _db_path()) if student else {},
         )
+
+    @app.post("/training-path/<slug>/activities/<activity_id>")
+    def update_path_activity(slug: str, activity_id: str):
+        path = _training_path_by_slug(slug)
+        if path is None:
+            abort(404)
+        configured_ids = {
+            item.get("id")
+            for item in path.get("required_items", [])
+            if isinstance(item, dict) and item.get("type") == "activity"
+        }
+        if activity_id not in configured_ids:
+            abort(404)
+        completed_value = request.form.get("completed")
+        if completed_value not in {"0", "1"}:
+            abort(400)
+        student = _ensure_student()
+        if not set_activity_complete(student["id"], activity_id, completed_value == "1", _db_path()):
+            abort(400)
+        return redirect(url_for("training_path", slug=slug, _anchor=f"activity-{activity_id}"))
 
     @app.get("/modules")
     def module_index():
@@ -422,12 +448,94 @@ def _student_progress(student_id: int) -> dict[str, Any] | None:
 
 
 def _saved_training_path(progress: dict[str, Any] | None) -> dict[str, Any] | None:
-    if not progress or not progress.get("latest_pre_assessment"):
+    if not progress or not isinstance(progress.get("latest_pre_assessment"), dict):
         return None
     score = progress["latest_pre_assessment"].get("technical_score")
-    if isinstance(score, bool) or not isinstance(score, (int, float)):
+    if isinstance(score, bool) or not isinstance(score, int) or not 0 <= score <= 100:
         return None
-    return get_training_path(int(score))
+    return get_training_path(score)
+
+
+def _training_path_by_slug(slug: str) -> dict[str, Any] | None:
+    if not isinstance(slug, str):
+        return None
+    return next(
+        (path for path in load_json("training_paths.json").get("levels", []) if path.get("slug") == slug),
+        None,
+    )
+
+
+def _path_continuation(student_id: int, path: dict[str, Any]) -> dict[str, Any]:
+    modules_by_slug = _modules_by_slug()
+    checklists_by_slug = _checklists_by_slug()
+    saved_activities = activity_progress(student_id, _db_path())
+
+    for item in path.get("required_items", []):
+        if not isinstance(item, dict):
+            return _path_review_step(path)
+        item_type = item.get("type")
+        item_slug = item.get("slug")
+
+        if item_type == "module":
+            module = modules_by_slug.get(item_slug)
+            if module is None:
+                return _path_review_step(path)
+            if not module_is_complete(student_id, item_slug, _db_path()):
+                return {
+                    "complete": False,
+                    "title": module["title"],
+                    "url": url_for("module_reader", slug=item_slug),
+                }
+            continue
+
+        if item_type == "checklist":
+            checklist = checklists_by_slug.get(item_slug)
+            if checklist is None:
+                return _path_review_step(path)
+            items = extract_checklist_items(read_checklist_markdown(item_slug))
+            checked = checklist_progress(student_id, item_slug, _db_path())
+            if not items or not all(checked.get(str(index), False) for index in range(len(items))):
+                return {
+                    "complete": False,
+                    "title": checklist["title"],
+                    "url": url_for("checklist_reader", slug=item_slug),
+                }
+            continue
+
+        if item_type == "activity":
+            activity_id = item.get("id")
+            label = item.get("label")
+            if not isinstance(activity_id, str) or not isinstance(label, str) or not label:
+                return _path_review_step(path)
+            if not saved_activities.get(activity_id, False):
+                return {
+                    "complete": False,
+                    "title": label,
+                    "url": url_for("training_path", slug=path["slug"], _anchor=f"activity-{activity_id}"),
+                }
+            continue
+
+        if item_type == "assessment" and str(item.get("label", "")).lower() == "post-assessment":
+            if latest_assessment_result(student_id, "post", _db_path()) is None:
+                return {
+                    "complete": False,
+                    "title": "Progress Check",
+                    "url": url_for("post_assessment"),
+                }
+            continue
+
+        return _path_review_step(path)
+
+    return {"complete": True, "title": path.get("label", "Training path"), "url": None}
+
+
+def _path_review_step(path: dict[str, Any]) -> dict[str, Any]:
+    slug = path.get("slug")
+    return {
+        "complete": False,
+        "title": "Review your training path with a mentor",
+        "url": url_for("training_path", slug=slug) if isinstance(slug, str) else url_for("pre_assessment"),
+    }
 
 
 def _mentor_review_items(*results: dict[str, Any] | None) -> list[dict[str, Any]]:

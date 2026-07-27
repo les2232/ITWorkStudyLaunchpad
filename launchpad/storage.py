@@ -12,6 +12,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Mapping
 
+from .content import configured_activity_ids
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DB_PATH = PROJECT_ROOT / "instance" / "launchpad.sqlite"
@@ -77,6 +79,17 @@ def init_db(db_path: str | Path = DEFAULT_DB_PATH) -> None:
                 completed_at TEXT,
                 updated_at TEXT NOT NULL,
                 UNIQUE (student_id, checklist_id, item_id),
+                FOREIGN KEY (student_id) REFERENCES students(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS activity_progress (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                activity_id TEXT NOT NULL,
+                completed INTEGER NOT NULL DEFAULT 0 CHECK (completed IN (0, 1)),
+                completed_at TEXT,
+                updated_at TEXT NOT NULL,
+                UNIQUE (student_id, activity_id),
                 FOREIGN KEY (student_id) REFERENCES students(id)
             );
 
@@ -309,6 +322,59 @@ def checklist_progress(
             (student_id, checklist_id),
         ).fetchall()
         return {row["item_id"]: bool(row["completed"]) for row in rows}
+
+
+def set_activity_complete(
+    student_id: int,
+    activity_id: str,
+    completed: bool,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> bool:
+    if not isinstance(student_id, int) or isinstance(student_id, bool):
+        return False
+    if not isinstance(completed, bool):
+        return False
+    if activity_id not in configured_activity_ids():
+        return False
+
+    now = utc_now()
+    completed_at = now if completed else None
+    with connect(db_path) as db:
+        student = db.execute("SELECT id FROM students WHERE id = ?", (student_id,)).fetchone()
+        if student is None:
+            return False
+        db.execute(
+            """
+            INSERT INTO activity_progress (student_id, activity_id, completed, completed_at, updated_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(student_id, activity_id)
+            DO UPDATE SET completed = excluded.completed,
+                          completed_at = excluded.completed_at,
+                          updated_at = excluded.updated_at
+            """,
+            (student_id, activity_id, int(bool(completed)), completed_at, now),
+        )
+        touch_student(db, student_id, now)
+    return True
+
+
+def activity_progress(
+    student_id: int,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> dict[str, bool]:
+    if not isinstance(student_id, int) or isinstance(student_id, bool):
+        return {}
+    allowed_ids = configured_activity_ids()
+    with connect(db_path) as db:
+        rows = db.execute(
+            "SELECT activity_id, completed FROM activity_progress WHERE student_id = ?",
+            (student_id,),
+        ).fetchall()
+    return {
+        row["activity_id"]: bool(row["completed"])
+        for row in rows
+        if row["activity_id"] in allowed_ids
+    }
 
 
 def save_stuck_report(
