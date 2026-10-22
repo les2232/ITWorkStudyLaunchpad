@@ -5,27 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}IT Work Study Launchpad{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cca-polish.css') }}">
+    <script src="{{ url_for('static', filename='disclosures.js') }}" defer></script>
   </head>
-  <body>
+  <body class="focused-ux">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+
     <header class="site-header">
-      <a class="brand" href="{{ url_for('home') }}">IT Work Study Launchpad</a>
-      <nav class="nav" aria-label="Primary">
-        <a href="{{ url_for('pre_assessment') }}">Starting Point</a>
-        <a href="{{ url_for('module_index') }}">Modules</a>
-        <a href="{{ url_for('day_1_checklist') }}">Day 1</a>
-        <a href="{{ url_for('week_1_checklist') }}">Week 1</a>
-        <a href="{{ url_for('scenario_index') }}">Scenarios</a>
-        <a href="{{ url_for('post_assessment') }}">Progress Check</a>
-        <a href="{{ url_for('ask') }}">Ask</a>
-        <a href="{{ url_for('stuck') }}">Stuck</a>
-        <a href="{{ url_for('supervisor') }}">Supervisor</a>
-        <a href="{{ url_for('student_identity') }}">
-          {% if current_student %}Saved: {{ current_student.display_name }}{% else %}Save Progress{% endif %}
-        </a>
-      </nav>
+      <div class="site-header__inner">
+        <div class="brand-lockup">
+          <a class="brand" href="{{ url_for('home') }}"{% if request.endpoint == "home" %} aria-current="page"{% endif %}>
+            <span class="brand__institution">Community College of Aurora</span>
+            <span class="brand__product">IT Work Study Launchpad</span>
+          </a>
+          <span class="brand__prototype">{% if real_mode %}Training workspace{% else %}Internal prototype{% endif %}</span>
+        </div>
+
+        <nav class="nav nav--primary" aria-label="Primary navigation">
+          {% if real_mode and current_account and current_account.role in ['mentor', 'admin'] %}
+          <a class="nav__link" href="{{ url_for('supervisor') }}"{% if request.endpoint in ['supervisor', 'supervisor_learner'] %} aria-current="page"{% endif %}>Mentor View</a>
+          <a class="nav__link" href="{{ url_for('module_index') }}"{% if request.endpoint in ['module_index', 'module_reader', 'module_quiz'] %} aria-current="page"{% endif %}>Training modules</a>
+          {% elif not real_mode or current_account %}
+          <a class="nav__link" href="{{ url_for('learn') }}"{% if request.endpoint in ["learn", "pre_assessment", "assessment_results", "training_path", "module_index", "module_reader", "module_quiz", "checklist_reader", "day_1_checklist", "week_1_checklist"] %} aria-current="page"{% endif %}>Learn</a>
+          <a class="nav__link" href="{{ url_for('scenario_index') }}"{% if request.endpoint in ["scenario_index", "scenario_detail"] %} aria-current="page"{% endif %}>Practice</a>
+          <a class="nav__link" href="{{ url_for('student_identity') }}"{% if request.endpoint in ["student_identity", "post_assessment"] %} aria-current="page"{% endif %}>Progress</a>
+          <a class="nav__link" href="{{ url_for('help') }}"{% if request.endpoint in ["help", "ask", "stuck", "mentor_summary", "help_requests"] %} aria-current="page"{% endif %}>Help</a>
+          {% else %}
+          <a class="nav__link" href="{{ url_for('auth_login') }}" aria-current="page">Sign in</a>
+          {% endif %}
+        </nav>
+        {% if real_mode and current_account %}
+        <form method="post" action="{{ url_for('auth_logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="button" type="submit">Sign out</button>
+        </form>
+        {% endif %}
+      </div>
     </header>
-    <main class="page">
+
+    {% if config.get('LAUNCHPAD_AD_SESSION_POLICY') == 'controlled_test' %}
+      <aside class="demo-banner" aria-label="Controlled test limits">
+        <div class="demo-banner__inner"><p>Controlled test · use invented training answers only. Sessions end 15 minutes after sign-in, even while you work. Submit answers before expiry; unsaved work is not saved automatically. Finish guided practice before expiry or restart its unfinished steps.</p></div>
+      </aside>
+    {% endif %}
+
+    {% if real_mode and current_account and current_account.role in ['mentor', 'admin'] %}
+      <aside class="demo-banner" aria-label="Review access">
+        <div class="demo-banner__inner"><p>Read-only mentor access. You can review assigned learners and training content. Learners record their own progress.</p></div>
+      </aside>
+    {% endif %}
+
+    {% if demo_mode %}
+      <aside class="demo-banner" aria-label="Demonstration status">
+        <div class="demo-banner__inner">
+          <p>Demonstration mode — synthetic learner data only{% if current_student %} · Learner: <strong>{{ current_student.display_name }}</strong>{% endif %}</p>
+        </div>
+      </aside>
+    {% endif %}
+
+    <main id="main-content" class="page" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div>
+          <strong>IT Work Study Launchpad</strong>
+          <p>{% if real_mode %}Training for Community College of Aurora IT work-study students.{% else %}An internal prototype aligned with the supplied Community College of Aurora visual brand guidelines.{% endif %}</p>
+        </div>
+        {% if not real_mode %}
+        <nav class="footer-utilities" aria-label="Mentor navigation">
+          <a href="{{ url_for('supervisor') }}"{% if request.endpoint == "supervisor" %} aria-current="page"{% endif %}>Mentor View</a>
+        </nav>
+        {% endif %}
+        <p class="site-footer__disclosure">
+          {% if real_mode %}
+            Training progress supports mentor review. Recorded completion is not permission to work independently.
+            {% if config.get('LAUNCHPAD_AD_SESSION_POLICY') != 'controlled_test' and config.get('LAUNCHPAD_SESSION_SECONDS') %}Progress is saved each time you submit a form or mark a step. You are signed out after 30 minutes without activity or {{ config.LAUNCHPAD_SESSION_SECONDS // 3600 }} hours after sign-in.{% endif %}
+          {% elif demo_mode %}
+            Demonstration only · synthetic learner data · no real student records
+          {% else %}
+            Local prototype · use synthetic information only
+          {% endif %}
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

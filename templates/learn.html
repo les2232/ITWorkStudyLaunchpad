@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Learn | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="focus-panel" aria-labelledby="learn-heading">
+  <p class="eyebrow">Your learning plan</p>
+  <h1 id="learn-heading">Learn</h1>
+  {% if recommended_path and continuation and continuation.complete %}
+    <h2>Current path work is recorded as complete.</h2>
+    <p>Review your saved progress with a mentor. Recorded completion is separate from mentor-confirmed workplace readiness.</p>
+    {% if path_progress and path_progress.follow_up %}{% with follow_up = path_progress.follow_up %}{% include "_follow_up.html" %}{% endwith %}{% endif %}
+    <div class="focus-panel__actions">
+      {% if path_progress and path_progress.follow_up %}
+        <a class="button primary" href="{{ path_progress.follow_up.url }}">{{ path_progress.follow_up.action }}</a>
+      {% else %}
+        <a class="button primary" href="{{ url_for('student_identity') }}">Review progress</a>
+      {% endif %}
+    </div>
+  {% elif recommended_path and continuation %}
+    <p>Your recommended path: <strong>{{ recommended_path.label }}</strong>.</p>
+    {% if path_progress %}
+      <p class="progress-summary">{{ path_progress.completed_count }} of {{ path_progress.total_count }} path steps recorded complete.</p>
+      {% if path_progress.current %}
+        <h2 class="next-step-title">Next: {{ path_progress.current.title }}</h2>
+        {% with step = path_progress.current %}{% include "_step_explainer.html" %}{% endwith %}
+      {% endif %}
+    {% endif %}
+    <div class="focus-panel__actions">
+      <a class="button primary" href="{{ continuation.url }}">Continue: {{ continuation.title }}</a>
+    </div>
+  {% else %}
+    <p>Use the starting assessment to find your learning path. Then work through one step at a time.</p>
+    <div class="focus-panel__actions">
+      <a class="button primary" href="{{ url_for('pre_assessment') if current_student else url_for('student_identity', next=url_for('pre_assessment')) }}">Start assessment</a>
+    </div>
+  {% endif %}
+  <div class="quiet-links">
+    {% if recommended_path %}
+      <a href="{{ url_for('training_path', slug=recommended_path.slug) }}">Full learning path</a>
+    {% else %}
+      <a href="#learning-resources">Browse learning resources</a>
+    {% endif %}
+    <a href="{{ url_for('help') }}">Get help</a>
+  </div>
+</section>
+
+<section id="learning-resources" aria-labelledby="learning-resources-heading">
+  <h2 id="learning-resources-heading">Learning resources</h2>
+  <p>Open a group when you need to find or revisit something.</p>
+  <details class="disclosure">
+    <summary>Module library and knowledge checks</summary>
+    <p>Read a module, then use its knowledge check to review your understanding.</p>
+    <ul class="resource-list">
+      {% for module in modules %}
+        <li><a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a></li>
+      {% endfor %}
+    </ul>
+    <p><a href="{{ url_for('module_index') }}">All modules with descriptions</a></p>
+  </details>
+  <details class="disclosure">
+    <summary>Day 1 and Week 1 checklists</summary>
+    <ul class="resource-list">
+      {% for checklist in checklists %}
+        <li><a href="{{ url_for('checklist_reader', slug=checklist.slug) }}">{{ checklist.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+  <details class="disclosure">
+    <summary>All learning paths</summary>
+    <p>Your assessment recommends a path. Other paths remain available to review.</p>
+    <ul class="resource-list">
+      {% for path in paths %}
+        <li><a href="{{ url_for('training_path', slug=path.slug) }}">{{ path.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+  <details class="disclosure">
+    <summary>Starting assessment{% if recommended_path %} and results{% endif %}</summary>
+    <ul class="resource-list">
+      {% if recommended_path %}
+        <li><a href="{{ url_for('assessment_results') }}">Review starting assessment results</a></li>
+        <li><a href="{{ url_for('pre_assessment') }}">Revisit the starting assessment</a></li>
+      {% else %}
+        <li><a href="{{ url_for('pre_assessment') if current_student else url_for('student_identity', next=url_for('pre_assessment')) }}">Start assessment</a></li>
+      {% endif %}
+    </ul>
+  </details>
+</section>
+{% endblock %}

@@ -1,0 +1,7 @@
+# Dedicated loopback server certificate, signed by the test-only local CA.
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=DNS:launchpad-controlled.invalid
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer

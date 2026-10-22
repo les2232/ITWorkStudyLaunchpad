@@ -1,15 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Supervisor Overview | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% set selected_learner = review_student if real_mode else current_student %}
 <section class="content-header">
   <p class="eyebrow">Supervisor view</p>
-  <h1>Launchpad Overview</h1>
+  <h1>{% if real_mode %}{% if selected_learner %}Learner Review{% else %}Assigned Learners{% endif %}{% else %}Launchpad Overview{% endif %}</h1>
+  {% if real_mode %}
+  <p class="lede">Review progress for learners explicitly assigned to you. This view does not change their records or grant permission to work independently.</p>
+  {% if selected_learner %}<p>Reviewing <strong>{{ selected_learner.display_name }}</strong>. <a href="{{ url_for('supervisor') }}">Return to assigned learners</a></p>{% endif %}
+  {% else %}
   <p class="lede">Prototype overview for reviewing saved local demo progress, required safety content, and mentor check-in ideas. This is not a final hiring or placement decision tool.</p>
-  <p class="meta">Saved progress counts come from local demo SQLite. Check-in signals, mentor-review details, and scenario practice may come from the current browser session; this is not production student tracking.</p>
+  <p class="meta">Saved progress counts come from local demo SQLite. Check-in details, help requests, and scenario drafts are saved with the selected synthetic learner and remain available after reselecting that learner or restarting the app. This is not production student tracking.</p>
+  {% endif %}
+</section>
+
+<section class="result-panel" aria-labelledby="open-help-heading">
+  <p class="eyebrow">Learner help</p>
+  <h2 id="open-help-heading">Open Help Requests ({{ open_help_requests|length }})</h2>
+  <p>Requests the {% if selected_learner %}selected learner{% elif real_mode %}learners assigned to you{% else %}listed synthetic learners{% endif %} still {% if open_help_requests|length == 1 %}needs{% else %}need{% endif %} help with, oldest first. This list is read-only. Learners mark their own requests resolved when they no longer need help; "Resolved" is not mentor approval or demonstrated skill. Saving a request does not notify you, so check here or ask the learner.</p>
+  {% if open_help_requests %}
+    <ul class="help-request-list">
+      {% for report in open_help_requests %}
+        <li class="help-request-item">
+          <p><span class="status-badge status-badge--open">Open</span> <strong>{{ report.topic or "Help request without a topic" }}</strong></p>
+          <p class="meta">{% if real_mode and not selected_learner %}<a href="{{ url_for('supervisor_learner', learner_id=report.student_id) }}">{{ report.student }}</a>{% else %}{{ report.student }}{% endif %} · Saved {{ report.created_at|campus_time }}</p>
+          {% if selected_learner %}<details class="disclosure"><summary>Show the summary</summary><pre>{{ report.summary }}</pre></details>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No open help requests{% if selected_learner %} for this learner{% endif %}.</p>
+  {% endif %}
 </section>
 
 <section class="result-panel">
-  <h2>MVP Content</h2>
+  <h2>{% if real_mode %}Training Content{% else %}MVP Content{% endif %}</h2>
   <div class="category-grid">
     <div><strong>{{ module_count }}</strong><span>Foundation modules</span></div>
     <div><strong>{{ checklist_count }}</strong><span>Onboarding checklists</span></div>
@@ -18,7 +43,17 @@
 </section>
 
 <section class="result-panel">
-  <h2>Current Session Check-In Signals</h2>
+  <h2>Selected Learner Check-In Signals</h2>
+  {% if real_mode %}
+    <p>Saved assessment results are read-only. Scores and recommendations below are the values recorded at submission.</p>
+    {% for assessment_label, saved_result in [("Starting point check", pre_result), ("Progress check", post_result)] %}
+      {% if saved_result %}
+        {% include "_saved_assessment_review.html" %}
+      {% else %}
+        <p>{% if selected_learner %}No {{ assessment_label|lower }} result is saved for the selected learner yet.{% else %}Open an assigned learner below to review {{ assessment_label|lower }} results.{% endif %}</p>
+      {% endif %}
+    {% endfor %}
+  {% else %}
   {% if pre_result %}
     <div class="category-grid">
       <div>
@@ -42,7 +77,7 @@
       {% endif %}
     </div>
   {% else %}
-    <p>No starting point check result is stored in this browser session yet.</p>
+    <p>{% if selected_learner %}No starting point check result is saved for the selected learner yet.{% elif real_mode %}Choose an assigned learner below to review saved check-in details.{% else %}Choose a synthetic learner in Progress to view that learner's saved check-in details.{% endif %}</p>
   {% endif %}
   {% if post_result %}
     <div class="category-grid">
@@ -52,39 +87,64 @@
       </div>
     </div>
   {% else %}
-    <p>No progress check result is stored in this browser session yet.</p>
+    <p>{% if selected_learner %}No progress check result is saved for the selected learner yet.{% elif real_mode %}Progress-check results appear after you open an assigned learner.{% else %}Progress-check results appear after you select a synthetic learner.{% endif %}</p>
+  {% endif %}
   {% endif %}
 </section>
 
+{% macro change_text(value, unit) %}{% if value > 0 %}+{{ value }} {{ unit }}{% elif value < 0 %}{{ value }} {{ unit }}{% else %}No change{% endif %}{% endmacro %}
+{% if selected_learner %}
+<section class="result-panel">
+  <p class="eyebrow">Check-in comparison</p>
+  <h2>Starting Point and Progress Check</h2>
+  {% if not growth %}
+    <p>A comparison appears after the learner has saved both a starting point check and a later progress check.</p>
+  {% elif not growth.comparable %}
+    <p>The latest progress check was saved before the latest starting point check, so no comparison is shown. Ask the learner to complete the progress check again when they are ready.</p>
+  {% else %}
+    <dl>
+      <dt>Auto-scored result (descriptive score difference)</dt>
+      <dd>{% if growth.score_change is not none %}{{ growth.pre_score }}% to {{ growth.post_score }}% ({{ change_text(growth.score_change, "percentage points") }}){% else %}Not available because a recorded score is missing{% endif %}</dd>
+      <dt>Self-reported confidence asking for help when stuck (1-5)</dt>
+      <dd>{% if growth.confidence %}{{ growth.confidence.pre }} to {{ growth.confidence.post }} ({{ change_text(growth.confidence.change, "on the 1-5 scale") }}){% else %}Not available because a recorded rating is missing{% endif %}</dd>
+    </dl>
+    <p class="meta">Saved: starting point {{ growth.pre_saved_at }} · progress check {{ growth.post_saved_at }}. The two checks ask mostly different questions, so the score difference describes two different checks; it is not a validated measure of learning growth. The confidence item is the one question asked the same way in both, and it reflects how the learner rated themselves, not observed skill. Use this as a conversation starter, not as readiness sign-off.</p>
+  {% endif %}
+</section>
+{% endif %}
+
 <section class="progress-section">
   <p class="eyebrow">Saved progress</p>
-  <h2>Recent Demo Progress</h2>
+  <h2>{% if real_mode %}Assigned Learner Progress{% else %}Recent Demo Progress{% endif %}</h2>
   {% if recent_progress %}
     <div class="category-grid">
       {% for item in recent_progress %}
         <div>
-          <strong>{{ item.student.display_name }}</strong>
+          {% if real_mode %}<a href="{{ url_for('supervisor_learner', learner_id=item.student.id) }}"><strong>{{ item.student.display_name }}</strong></a>{% else %}<strong>{{ item.student.display_name }}</strong>{% endif %}
           {% if item.latest_pre_assessment %}
-            <span>Last check-in: {{ item.latest_pre_assessment.technical_score }}% auto-scored starting point</span>
-            <span>Training path: {{ item.latest_pre_assessment.recommended_training_path or "Review with mentor" }}</span>
+            <span>Last check-in: {% if item.latest_pre_assessment.technical_score is not none %}{{ item.latest_pre_assessment.technical_score }}% auto-scored starting point{% else %}Score not recorded{% endif %}</span>
+            <span>Training path: {{ item.latest_pre_assessment.recommended_training_path or "Not recorded" }}</span>
             <span>Role alignment: {{ item.latest_pre_assessment.role_alignment_recommendation or "Not recorded" }}</span>
           {% else %}
             <span>Last check-in: not recorded yet</span>
           {% endif %}
           {% if item.latest_post_assessment %}
-            <span>Latest progress check: {{ item.latest_post_assessment.technical_score }}% auto-scored · {{ item.latest_post_assessment.readiness_level or "Review with mentor" }}</span>
+            <span>Latest progress check: {% if item.latest_post_assessment.technical_score is not none %}{{ item.latest_post_assessment.technical_score }}% auto-scored{% else %}Score not recorded{% endif %} · {{ item.latest_post_assessment.readiness_level or "Readiness not recorded" }}</span>
           {% else %}
             <span>Latest progress check: not recorded yet</span>
+          {% endif %}
+          {% if item.growth and item.growth.comparable and item.growth.score_change is not none %}
+            <span>Score difference from starting point: {{ change_text(item.growth.score_change, "points") }} (different questions; descriptive only)</span>
           {% endif %}
           <span>Modules complete: {{ item.module_completed_count }}</span>
           <span>Module quizzes complete: {{ item.module_quiz_completed_count }}</span>
           <span>Checklist items complete: {{ item.checklist_completed_count }}</span>
-          <span>Help requests: {{ item.stuck_report_count }}</span>
+          <span>Help requests: {{ item.stuck_report_count }} ({{ item.open_stuck_report_count }} open)</span>
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <p>No saved demo progress yet. Students can choose a demo display name from Saved Progress before completing activities.</p>
+    {% if real_mode %}<p>No learners are assigned to you. Contact the service owner if an assignment is missing.</p>{% else %}<p>No saved demo progress yet. Choose one of the fixed synthetic learners from Progress before completing activities.</p>{% endif %}
   {% endif %}
 </section>
 
@@ -92,6 +152,7 @@
   <p class="eyebrow">Mentor review</p>
   <h2>Mentor Review Items</h2>
   <p>Free-response check-in answers need mentor or supervisor review. They are not auto-scored and are separate from auto-scored percentages.</p>
+  {% if real_mode %}<p class="meta">Question labels come from current assessment content. Reviewer feedback and manual scores are not stored by this app.</p>{% endif %}
   {% if mentor_review_items %}
     <ul>
       {% for item in mentor_review_items %}
@@ -100,37 +161,39 @@
           {% if item.response %}
             <span class="meta">Response: {{ item.response }}</span>
           {% else %}
-            <span class="meta">No written response saved in this session.</span>
+            <span class="meta">No written response saved for this assessment.</span>
           {% endif %}
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>No mentor-review assessment items are stored in this browser session yet.</p>
+    <p>{% if real_mode and selected_learner %}No separately identified free-response items are available. Any saved responses appear in the assessment results above.{% elif selected_learner %}No mentor-review assessment items are saved for the selected learner yet.{% elif real_mode %}Open an assigned learner to view saved assessment answers for mentor review.{% else %}Select a synthetic learner in Progress to view saved assessment answers for mentor review.{% endif %}</p>
   {% endif %}
 </section>
 
 <section class="result-panel">
-  <p class="eyebrow">Local demo handoffs</p>
+  <p class="eyebrow">{% if real_mode %}Training handoffs{% else %}Local demo handoffs{% endif %}</p>
   <h2>Recent Help Requests</h2>
-  <p>These summaries come from the local demo I'm Stuck flow. They are not production student records.</p>
+  {% if real_mode %}<p>Showing up to the 10 most recent saved help summaries for the selected assigned learner.</p>{% else %}<p>Showing up to the 10 most recent saved summaries from the selected learner's I'm Stuck flow. They are not production student records.</p>{% endif %}
   {% if stuck_reports %}
     {% for report in stuck_reports %}
       <div class="summary-output">
-        <strong>{{ report.student or "Demo student" }}</strong>
+        <strong>{{ report.student or ("Learner" if real_mode else "Demo student") }}</strong>
+        <span class="status-badge status-badge--{{ report.status }}">{{ report.status_label }}</span>
         {% if report.topic %}<span class="meta">Topic: {{ report.topic }}</span>{% endif %}
+        <span class="meta">Saved {{ report.created_at|campus_time }}{% if report.resolved_at %} · Learner marked resolved {{ report.resolved_at|campus_time }}{% endif %}</span>
         <pre>{{ report.summary }}</pre>
       </div>
     {% endfor %}
   {% else %}
-    <p>No help requests are stored in this browser session yet.</p>
+    <p>{% if selected_learner %}No help requests are saved for the selected learner yet.{% elif real_mode %}Open an assigned learner to view saved help requests.{% else %}Select a synthetic learner in Progress to view that learner's saved help requests.{% endif %}</p>
   {% endif %}
 </section>
 
 <section class="result-panel">
   <p class="eyebrow">Practice review</p>
   <h2>Scenario Practice</h2>
-  <p>Scenario attempts are practice responses and coaching material, not a score.</p>
+  <p>Showing up to the 20 most recent saved drafts for the selected {% if real_mode %}assigned{% else %}synthetic{% endif %} learner. Scenario attempts are practice responses and coaching material, not a score.</p>
   {% if scenario_attempts %}
     <ul>
       {% for attempt in scenario_attempts %}
@@ -141,7 +204,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p>No scenario practice drafts are stored in this browser session yet.</p>
+    <p>{% if selected_learner %}No scenario practice drafts are saved for the selected learner yet.{% elif real_mode %}Open an assigned learner to view saved practice drafts.{% else %}Select a synthetic learner in Progress to view that learner's saved practice drafts.{% endif %}</p>
   {% endif %}
 </section>
 

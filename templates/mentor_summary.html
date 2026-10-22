@@ -4,7 +4,11 @@
 <section class="content-header">
   <p class="eyebrow">Template</p>
   <h1>Mentor Summary</h1>
-  <p class="lede">Use this format when a student needs help and the next step should come from a mentor or IT tech.</p>
+  {% if real_mode %}
+  <p class="lede">Use this format when the next step should come from a mentor or IT tech. Build a Summary saves the generated text with your training record for your assigned mentor to review; it does not send a message. Include only the training details needed for help.</p>
+  {% else %}
+  <p class="lede">Use this format with invented details when the next step should come from a mentor or IT tech. Build a Summary saves the generated text with the selected synthetic learner for review in Mentor View; it does not send a message.</p>
+  {% endif %}
 </section>
 
 <section class="summary-output">
@@ -19,5 +23,5 @@ Relevant module/checklist item:
 Suggested next action: Stop here, share this summary with a mentor or IT tech, and wait for the next approved step.</pre>
 </section>
 
-<a class="button primary" href="{{ url_for('stuck') }}">Build a Summary</a>
+{% if not real_mode or (current_account and current_account.role == 'learner') %}<a class="button primary" href="{{ url_for('stuck') }}">Build a Summary</a>{% endif %}
 {% endblock %}

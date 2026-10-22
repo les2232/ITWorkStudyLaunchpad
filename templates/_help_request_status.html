@@ -1,0 +1,17 @@
+{% if help_overview %}
+<section class="help-request-status" id="help-request-status" aria-labelledby="help-request-status-heading">
+  <h2 id="help-request-status-heading">Your help requests</h2>
+  {% if help_overview.open %}
+    {% set latest = help_overview.open[0] %}
+    <p><span class="status-badge status-badge--open">Open</span> {{ help_overview.open|length }} open {{ "request" if help_overview.open|length == 1 else "requests" }}. Most recent: {% if latest.topic %}<strong>{{ latest.topic }}</strong>, {% endif %}saved {{ latest.created_at|campus_time }}</p>
+    <p>Share the summary with your mentor or IT tech if you have not already. Saving a request does not send it or notify anyone. When you no longer need help, mark it resolved. You can keep working on other steps while you wait.</p>
+    <details class="disclosure">
+      <summary>Show the most recent summary to share</summary>
+      <pre>{{ latest.summary }}</pre>
+    </details>
+  {% else %}
+    <p>No open help requests. You marked {{ help_overview.resolved_total }} earlier {{ "request" if help_overview.resolved_total == 1 else "requests" }} resolved.</p>
+  {% endif %}
+  <p class="quiet-links"><a href="{{ url_for('help_requests') }}">View and update all your help requests</a> <a href="{{ url_for('stuck') }}">Prepare another help request</a></p>
+</section>
+{% endif %}

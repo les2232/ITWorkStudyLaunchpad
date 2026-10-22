@@ -1,0 +1,74 @@
+# REPOSITORY CANDIDATE ONLY. No account, directory or unit has been installed.
+# Separate Launchpad identity, Unix backend, state and environment; do not
+# reuse cca-it-support-assistant.service or its backend on port 8000. Old-service
+# retirement/archive is a separate approved operator step, not done by this unit.
+# Prerequisites require a separately approved operator change:
+# - dedicated non-login launchpad user/private launchpad group and launchpad-proxy group;
+# - nginx worker (www-data here) membership in launchpad-proxy;
+# - root:launchpad releases (directories 0750, files 0640/executables 0750),
+#   root-owned current link, per-release .venv and root:root 0600 env file;
+# - new, explicitly provisioned real database on verified persistent storage.
+# Changing nginx worker groups requires its own approved reload/restart procedure.
+[Unit]
+Description=IT Work Study Launchpad authenticated training service
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/launchpad/current /var/lib/launchpad
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=exec
+User=launchpad
+Group=launchpad-proxy
+SupplementaryGroups=launchpad
+WorkingDirectory=/opt/launchpad/current
+EnvironmentFile=/etc/launchpad/launchpad.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONNOUSERSITE=1
+# This override is mandatory: do not replace the Unix socket with a public port.
+# Gunicorn applies its socket umask temporarily; the process umask stays 0077.
+Environment="GUNICORN_CMD_ARGS=--bind=unix:/run/launchpad/gunicorn.sock --umask=0o117 --worker-tmp-dir=/run/launchpad"
+ExecStart=/opt/launchpad/current/.venv/bin/python -B scripts/start_real.py
+UMask=0077
+RuntimeDirectory=launchpad
+RuntimeDirectoryMode=0750
+StateDirectory=launchpad
+StateDirectoryMode=0700
+# The socket is launchpad:launchpad-proxy 0660. Persistent records are private to
+# the launchpad user (directory 0700, database 0600), never nginx-readable.
+Restart=on-failure
+RestartSec=5s
+RestartPreventExitStatus=2
+TimeoutStopSec=45s
+KillMode=mixed
+KillSignal=SIGTERM
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=launchpad
+
+# Restrict this service, not the VM or its other applications.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# StateDirectory/RuntimeDirectory are writable exceptions to ProtectSystem.
+# AD requires outbound DNS and verified LDAPS 636 to the approved directory host.
+# Outbound HTTPS is needed only if the separate optional OIDC backend is chosen.
+# These address-family allowances do not create or change any firewall rules.
+
+[Install]
+WantedBy=multi-user.target

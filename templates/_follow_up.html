@@ -1,0 +1,7 @@
+{% set level = heading_level|default(3) %}<h{{ level }} class="follow-up__heading">What to do now</h{{ level }}>
+<ul class="follow-up">
+  {% for item in follow_up.tasks %}
+    <li><span class="status-badge status-badge--{{ item.status|replace('_', '-') }}">{{ item.status_label }}</span> <strong>{{ item.title }}</strong> <span class="meta">{{ item.detail }}</span></li>
+  {% endfor %}
+  <li><span class="status-badge status-badge--mentor">With your mentor</span> <strong>Mentor check-in</strong> <span class="meta">Talk through your saved progress and what to practice next. This app does not record mentor sign-off.</span></li>
+</ul>

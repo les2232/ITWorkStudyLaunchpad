@@ -13,6 +13,28 @@ def answer_question(question: str) -> dict[str, object]:
             ],
         )
 
+    # Evaluate stop conditions before vocabulary or reassurance. A familiar
+    # topic must not hide a request involving access, data, or uncertain work.
+    if any(word in text for word in ["password", "mfa", "permission", "admin", "delete", "sensitive", "user files", "bypass", "access issue", "cannot log in"]):
+        return _escalate(
+            "Ask a mentor before continuing",
+            "This sounds like it may involve access, permissions, MFA, admin rights, sensitive data, or user files. Those are not beginner-only tasks."
+        )
+
+    if ("imaging" in text or "image" in text) and any(
+        word in text for word in ["which", "error", "failed", "task sequence", "workflow", "stuck"]
+    ):
+        return _escalate(
+            "Imaging needs mentor confirmation",
+            "Imaging choices and unfamiliar imaging errors should be escalated. Stop, write down the asset tag or device name, the exact message, and what step you were on."
+        )
+
+    if "escalate" in text or "stuck" in text or "unsure" in text:
+        return _escalate(
+            "Asking for help is appropriate",
+            "If you are unsure, stop and ask. Write down the issue, what you checked, the result, and what help you need."
+        )
+
     if any(word in text for word in ["embarrassed", "dumb", "stupid", "basic question"]):
         return _response(
             "It is okay to ask",
@@ -85,11 +107,6 @@ def answer_question(question: str) -> dict[str, object]:
         )
 
     if "imaging" in text or "image" in text:
-        if any(word in text for word in ["which", "error", "failed", "task sequence", "workflow", "stuck"]):
-            return _escalate(
-                "Imaging needs mentor confirmation",
-                "Imaging choices and unfamiliar imaging errors should be escalated. Stop, write down the asset tag or device name, the exact message, and what step you were on."
-            )
         return _response(
             "Computer Imaging",
             [
@@ -97,18 +114,6 @@ def answer_question(question: str) -> dict[str, object]:
                 "The safe beginner mental model is to understand what imaging is for, not to choose images or run internal procedures on your own.",
             ],
             related_module="imaging_overview",
-        )
-
-    if any(word in text for word in ["password", "mfa", "permission", "admin", "delete", "sensitive", "user files", "bypass", "access issue", "cannot log in"]):
-        return _escalate(
-            "Ask a mentor before continuing",
-            "This sounds like it may involve access, permissions, MFA, admin rights, sensitive data, or user files. Those are not beginner-only tasks."
-        )
-
-    if "escalate" in text or "stuck" in text or "unsure" in text:
-        return _escalate(
-            "Asking for help is appropriate",
-            "If you are unsure, stop and ask. Write down the issue, what you checked, the result, and what help you need."
         )
 
     return _escalate(

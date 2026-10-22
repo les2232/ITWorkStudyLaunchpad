@@ -8,19 +8,35 @@
 </section>
 
 <form class="stuck-form" method="post" action="{{ url_for('stuck') }}">
-  <label>Demo display name <input type="text" name="student" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}"></label>
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+  {% if real_mode %}
+    {% if current_student %}<p class="persona-status">Creating this summary for <strong>{{ current_student.display_name }}</strong>.</p>{% endif %}
+    <p class="meta">Describe the training blocker. Do not include passwords, private user information or sensitive incident details.</p>
+  {% elif demo_mode %}
+    {% if current_student %}
+      <p class="persona-status">Creating this synthetic summary as <strong>{{ current_student.display_name }}</strong>. <a href="{{ url_for('student_identity', next=request.path) }}">Switch demo learner</a></p>
+      <input type="hidden" name="student" value="{{ current_student.display_name }}">
+    {% else %}
+      <p id="stuck-demo-identity-required" class="notice-inline">Choose a fixed synthetic learner before creating a mentor summary. <a href="{{ url_for('student_identity', next=request.path) }}">Choose demo learner</a></p>
+    {% endif %}
+  {% else %}
+    <label>Demo display name <input type="text" name="student" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}"></label>
+  {% endif %}
+  {% if real_mode and current_account and current_account.role != 'learner' %}<fieldset disabled><legend>Read-only help-request preview</legend>{% endif %}
   <label>Topic <input type="text" name="topic" placeholder="Example: imaging, monitor issue, asset tag"></label>
   <label>What were you trying to do? <textarea name="trying_to_do" rows="3" required></textarea></label>
   <label>What happened? <textarea name="what_happened" rows="3" required></textarea></label>
   <label>What did you already check? <textarea name="already_checked" rows="3" required></textarea></label>
   <label>What do you need help with? <textarea name="current_blocker" rows="3" required></textarea></label>
   <label>Related module or checklist item <input type="text" name="related_item"></label>
-  <button class="button primary" type="submit">Create Mentor Summary</button>
+  <button class="button primary" type="submit"{% if demo_mode and not current_student %} disabled aria-describedby="stuck-demo-identity-required"{% endif %}>Create Mentor Summary</button>
+  {% if real_mode and current_account and current_account.role != 'learner' %}</fieldset>{% endif %}
 </form>
 
 {% if summary %}
 <section class="summary-output">
   <h2>Mentor Summary</h2>
+  <p>Saved as an <span class="status-badge status-badge--open">Open</span> help request. It was not sent to anyone; share this summary with your mentor or IT tech. <a href="{{ url_for('help_requests') }}">View your help requests</a></p>
   <pre>{{ summary }}</pre>
 </section>
 {% endif %}

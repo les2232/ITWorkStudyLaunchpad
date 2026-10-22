@@ -21,7 +21,10 @@
         {% if category.review_possible %}
           <span>{{ category.review_possible }} mentor-review points not auto-scored</span>
         {% endif %}
-        <meter min="0" max="100" value="{{ category.percent }}">{{ category.percent }}%</meter>
+        <div class="assessment-meter">
+          <meter min="0" max="100" value="{{ category.percent }}" aria-label="{{ category.name }}: {{ category.percent }} percent">{{ category.percent }}%</meter>
+          <span class="assessment-meter__value" aria-hidden="true">{{ category.percent }}%</span>
+        </div>
       </div>
     {% endfor %}
   </div>
@@ -35,9 +38,23 @@
     These answers should be reviewed separately by a mentor or supervisor.
     A high auto-score does not mean the whole check-in is complete from a mentoring perspective.
   </p>
-  <ul>
+  <ul class="mentor-review-list">
     {% for item in result.mentor_review_items %}
-      <li><strong>{{ item.category }}</strong>: {{ item.prompt }}</li>
+      <li class="mentor-review-item">
+        <p class="mentor-review-item__category">{{ item.category }}</p>
+        <dl>
+          <div>
+            <dt>Question</dt>
+            <dd>{{ item.prompt }}</dd>
+          </div>
+          {% if item.response %}
+            <div class="mentor-review-item__response">
+              <dt>{% if demo_mode %}Synthetic response{% else %}Response{% endif %}</dt>
+              <dd>{{ item.response }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+      </li>
     {% endfor %}
   </ul>
 </section>
@@ -54,31 +71,38 @@
       <div>
         <strong>{{ signal.label }}</strong>
         <span>{{ signal.level }} · {{ signal.score }} / {{ signal.possible }}</span>
-        <meter min="0" max="100" value="{{ signal.percent }}">{{ signal.percent }}%</meter>
+        <div class="assessment-meter">
+          <meter min="0" max="100" value="{{ signal.percent }}" aria-label="{{ signal.label }}: {{ signal.percent }} percent">{{ signal.percent }}%</meter>
+          <span class="assessment-meter__value" aria-hidden="true">{{ signal.percent }}%</span>
+        </div>
       </div>
     {% endfor %}
   </div>
   {% if result.role_alignment.recommended_alignment.next_steps %}
-    <h3>Mentor Check-In Ideas</h3>
-    <ul>
-      {% for step in result.role_alignment.recommended_alignment.next_steps %}
-        <li>{{ step }}</li>
-      {% endfor %}
-    </ul>
+    <div class="mentor-check-in">
+      <h3>Mentor Check-In Ideas</h3>
+      <ul>
+        {% for step in result.role_alignment.recommended_alignment.next_steps %}
+          <li>{{ step }}</li>
+        {% endfor %}
+      </ul>
+    </div>
   {% endif %}
 </section>
 {% endif %}
 
-<section class="split-layout">
-  <div>
-    <h2>Recommended Path</h2>
-    <p>{{ path.intro }}</p>
+<div class="assessment-next-steps">
+  <section class="assessment-next-steps__path" aria-labelledby="recommended-path-heading">
+    <div>
+      <h2 id="recommended-path-heading">Recommended Path</h2>
+      <p>{{ path.intro }}</p>
+    </div>
     <a class="button primary" href="{{ url_for('training_path', slug=path.slug) }}">Open {{ path.label }} Path</a>
-  </div>
-  <div>
-    <h2>Practice Areas</h2>
+  </section>
+  <section class="assessment-next-steps__practice" aria-labelledby="practice-areas-heading">
+    <h2 id="practice-areas-heading">Practice Areas</h2>
     {% if result.knowledge_gaps %}
-      <ul>
+      <ul class="practice-area-grid">
         {% for gap in result.knowledge_gaps %}
           <li>
             <strong>{{ gap.area }}</strong>: {{ gap.percent }}%
@@ -94,6 +118,6 @@
     {% else %}
       <p>No category fell below the review threshold. Still work through required safety modules and mentor check-ins.</p>
     {% endif %}
-  </div>
-</section>
+  </section>
+</div>
 {% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}My Help Requests | IT Work Study Launchpad{% endblock %}
+{% macro request_item(item) %}
+  <li class="help-request-item" id="help-request-{{ item.id }}" tabindex="-1">
+    <h3 id="help-request-{{ item.id }}-title"><span class="status-badge status-badge--{{ item.status }}">{{ item.status_label }}</span> {{ item.topic or "Help request without a topic" }}</h3>
+    <p class="meta">Saved {{ item.created_at|campus_time }}{% if item.resolved_at %} · Marked resolved {{ item.resolved_at|campus_time }}{% endif %}</p>
+    <details class="disclosure">
+      <summary>Show the summary to share</summary>
+      <pre>{{ item.summary }}</pre>
+    </details>
+    <form method="post" action="{{ url_for('update_help_request_status', report_id=item.id) }}">
+      {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+      {% if item.status == "open" %}
+        <input type="hidden" name="status" value="resolved">
+        <button class="button" type="submit" aria-describedby="help-request-{{ item.id }}-title">Mark resolved</button>
+      {% else %}
+        <input type="hidden" name="status" value="open">
+        <button class="button" type="submit" aria-describedby="help-request-{{ item.id }}-title">Reopen</button>
+      {% endif %}
+    </form>
+  </li>
+{% endmacro %}
+{% block content %}
+<section class="content-header" aria-labelledby="help-requests-heading">
+  <p class="eyebrow">Ask for help</p>
+  <h1 id="help-requests-heading">My Help Requests</h1>
+  <p class="lede">See which questions you still need help with.</p>
+  <dl class="help-status-key">
+    <dt><span class="status-badge status-badge--open">Open</span></dt>
+    <dd>You still need help with this question.</dd>
+    <dt><span class="status-badge status-badge--resolved">Resolved</span></dt>
+    <dd>You marked that you no longer need help. It does not mean a mentor approved your work or that you have shown the skill.</dd>
+  </dl>
+  <p class="meta">Saving a request does not send it or notify anyone. Share the summary with your mentor or IT tech yourself. Changing the status never changes what you wrote or when it was saved, and you can reopen a request at any time.</p>
+  <div class="quiet-links">
+    <a href="{{ url_for('student_identity', next=url_for('stuck')) if demo_mode and not current_student else url_for('stuck') }}">Prepare a new help request</a>
+    <a href="{{ url_for('help') }}">Back to Help</a>
+  </div>
+</section>
+
+{% if help_list is none %}
+  <p>{% if demo_mode %}Choose a synthetic learner to see that learner's help requests. <a href="{{ url_for('student_identity', next=request.path) }}">Choose demo learner</a>{% else %}Choose a learner name in Progress to see saved help requests. <a href="{{ url_for('student_identity', next=request.path) }}">Go to Progress</a>{% endif %}</p>
+{% else %}
+<section aria-labelledby="open-requests-heading">
+  <h2 id="open-requests-heading">Open ({{ help_list.open|length }})</h2>
+  {% if help_list.open %}
+    <ul class="help-request-list">
+      {% for item in help_list.open %}{{ request_item(item) }}{% endfor %}
+    </ul>
+  {% else %}
+    <p>You have no open help requests.</p>
+  {% endif %}
+</section>
+
+<section aria-labelledby="resolved-requests-heading">
+  <h2 id="resolved-requests-heading">Resolved ({{ help_list.resolved_total }})</h2>
+  {% if help_list.resolved %}
+    {% if help_list.resolved_total > help_list.resolved|length %}<p class="meta">Showing the {{ help_list.resolved|length }} most recently saved resolved requests. Older ones are still saved.</p>{% endif %}
+    <ul class="help-request-list">
+      {% for item in help_list.resolved %}{{ request_item(item) }}{% endfor %}
+    </ul>
+  {% else %}
+    <p>No resolved help requests yet.</p>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,86 +1,130 @@
 {% extends "base.html" %}
 {% block title %}{{ path.label }} Path | IT Work Study Launchpad{% endblock %}
 {% block content %}
-<section class="content-header">
-  <p class="eyebrow">Training path</p>
+{% macro step_row(step) %}
+  <li class="path-step" id="{{ step.anchor }}">
+    <p class="step-meta"><span class="step-kind">{{ step.kind|replace('_', ' ')|title }}</span> <span class="status-badge status-badge--{{ step.status|replace('_', '-') }}">{{ step.status_label }}</span>{% if step.status_detail %} <span class="meta">{{ step.status_detail }}</span>{% endif %}</p>
+    <h3>{% if step.url %}<a href="{{ step.url }}">{{ step.title }}</a>{% else %}{{ step.title }}{% endif %}</h3>
+    {% if step.purpose and not step.completed %}<p class="step-purpose"><strong>Why it matters:</strong> {{ step.purpose }}</p>{% endif %}
+    {% if step.quiz_url %}
+      <p class="meta"><a href="{{ step.quiz_url }}">Knowledge check</a> · {{ 'Recorded' if step.quiz_recorded else 'Not recorded' }}</p>
+    {% endif %}
+    {% if step.item.type == 'activity' and step.item.id and not step.item.scenario_id %}
+      {% if current_student %}
+        <form method="post" action="{{ url_for('update_path_activity', slug=path.slug, activity_id=step.item.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+          <input type="hidden" name="completed" value="{{ '0' if step.completed else '1' }}">
+          <p class="meta">{% if step.completed %}Saved as complete. Reopen it for more practice or mentor review.{% else %}Record this only after finishing it with any required mentor guidance.{% endif %}</p>
+          <button class="button" type="submit">{{ 'Reopen Activity' if step.completed else 'Mark Activity Complete' }}</button>
+        {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+      {% else %}
+        <a href="{{ url_for('student_identity', next=request.path ~ '#' ~ step.anchor) }}">Choose a learner to save progress</a>
+      {% endif %}
+    {% elif step.item.scenario_id %}
+      <p class="meta">{% if step.completed %}Completed through the troubleshooting lab and saved to {{ 'your training' if real_mode else 'demo' }} progress.{% else %}Complete this through the guided lab. It cannot be marked complete from the training path.{% endif %}</p>
+      <a href="{{ step.url }}">{{ 'Review Completed Lab' if step.completed else 'Open Troubleshooting Lab' }}</a>
+    {% endif %}
+  </li>
+{% endmacro %}
+
+<header class="content-header">
+  <a href="{{ url_for('learn') }}">Learn</a>
+  <p class="eyebrow">Your learning path</p>
   <h1>{{ path.label }}</h1>
-  <p class="lede">{{ path.intro }}</p>
+  <div class="progress-summary">
+    <label for="path-progress">{{ path_progress.completed_count }} of {{ path_progress.total_count }} path steps recorded</label>
+    <progress id="path-progress" value="{{ path_progress.completed_count }}" max="{{ path_progress.total_count or 1 }}">{{ path_progress.completed_count }} of {{ path_progress.total_count }}</progress>
+    <p class="meta">Knowledge checks are shown separately from this count. Recorded completion is not mentor-confirmed readiness.</p>
+  </div>
+</header>
+
+<section class="focus-panel path-current" id="current-step" aria-labelledby="current-step-heading">
+  {% if path_progress.current %}
+    {% set step = path_progress.current %}
+    <div id="{{ step.anchor }}">
+      <p class="eyebrow"><span class="step-status">Current step</span> · {{ step.kind|replace('_', ' ')|title }}</p>
+      <h2 id="current-step-heading">{{ step.title }}</h2>
+      {% if current_student %}{% include "_step_explainer.html" %}{% else %}{% if step.summary %}<p>{{ step.summary }}</p>{% endif %}{% if step.purpose %}<p class="step-purpose"><strong>Why it matters:</strong> {{ step.purpose }}</p>{% endif %}{% endif %}
+      {% if not current_student %}
+        <p id="path-learner-required">Choose a synthetic learner to save activity progress. You can explore the full plan below.</p>
+        <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose a learner</a>
+      {% elif step.item.type == 'activity' and step.item.id and not step.item.scenario_id %}
+        <p>Finish this with any required mentor guidance, then record it here.</p>
+        {% if step.url %}<p><a href="{{ step.url }}">Open practice scenarios</a></p>{% endif %}
+        <form method="post" action="{{ url_for('update_path_activity', slug=path.slug, activity_id=step.item.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+          <input type="hidden" name="completed" value="1">
+          <button class="button primary" type="submit">Mark Activity Complete</button>
+        {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+      {% elif step.url %}
+        <p>{% if step.item.scenario_id %}Follow the guided lab, then finish and save your result.{% else %}Work through this step at your own pace. Ask for help whenever you are unsure.{% endif %}</p>
+        <a class="button primary" href="{{ step.url }}">{% if step.item.scenario_id %}Open Troubleshooting Lab{% else %}Continue: {{ step.title }}{% endif %}</a>
+      {% else %}
+        <p>Ask your mentor to review this step with you.</p>
+        <a class="button primary" href="{{ url_for('help') }}">Get help</a>
+      {% endif %}
+      {% if step.quiz_url %}<p class="meta"><a href="{{ step.quiz_url }}">Knowledge check</a> · {{ 'Recorded' if step.quiz_recorded else 'Not recorded' }}. Use it after reading the module.</p>{% endif %}
+    </div>
+  {% else %}
+    <p class="eyebrow">Recorded completion</p>
+    <h2 id="current-step-heading">Required steps recorded</h2>
+    <p>Review your progress and practice with a mentor before moving into new or independent work.</p>
+    {% if path_progress.follow_up %}
+      {% with follow_up = path_progress.follow_up %}{% include "_follow_up.html" %}{% endwith %}
+      <a class="button primary" href="{{ path_progress.follow_up.url }}">{{ path_progress.follow_up.action }}</a>
+    {% else %}
+      <a class="button primary" href="{{ url_for('student_identity') }}">Review progress</a>
+    {% endif %}
+  {% endif %}
 </section>
 
-<section class="split-layout">
-  <div>
-    <h2>Recommended Steps</h2>
-    <p class="meta">After each module, use its short knowledge check to review what stuck.</p>
-    <ol class="path-list">
-      {% for item in path.required_items %}
-        {% set item_label = item.label|default("") %}
-        <li{% if item.type == "activity" and item.id %} id="activity-{{ item.id }}"{% endif %}>
-          {% if item.slug and item.slug in modules_by_slug %}
-            {% set module = modules_by_slug[item.slug] %}
-            <a href="{{ url_for('module_reader', slug=module.slug) }}">{{ module.title }}</a>
-          {% elif item.slug and item.slug in checklists_by_slug %}
-            {% set checklist = checklists_by_slug[item.slug] %}
-            <a href="{{ url_for('checklist_reader', slug=checklist.slug) }}">{{ checklist.title }}</a>
-          {% elif item.type == "activity" and item_label|lower == "scenario practice" %}
-            <a href="{{ url_for('scenario_index') }}">Scenario practice</a>
-          {% elif item.type == "assessment" and item_label|lower == "post-assessment" %}
-            <a href="{{ url_for('post_assessment') }}">Progress check</a>
-          {% else %}
-            {{ item_label }}
-          {% endif %}
-          {% if item.type == "activity" and item.id %}
-            <form method="post" action="{{ url_for('update_path_activity', slug=path.slug, activity_id=item.id) }}">
-              {% if activity_states.get(item.id) %}
-                <span class="meta">Saved as complete. Reopen it if you need more practice or mentor review.</span>
-                <input type="hidden" name="completed" value="0">
-                <button class="button" type="submit">Reopen Activity</button>
-              {% else %}
-                <span class="meta">Mark this complete only after you finish it with any required mentor guidance.</span>
-                <input type="hidden" name="completed" value="1">
-                <button class="button" type="submit">Mark Activity Complete</button>
-              {% endif %}
-            </form>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ol>
-  </div>
-  <div>
-    <h2>Mentor Check-In Ideas</h2>
-    <ul>
-      {% for focus in path.mentor_focus %}
-        <li>{{ focus }}</li>
-      {% endfor %}
-    </ul>
-    <h2>What to Feel Comfortable With</h2>
-    <ul>
-      {% for item in path.completion_criteria %}
-        <li>{{ item }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-
-{% if recommended_scenarios %}
-<section class="result-panel">
-  <p class="eyebrow">Practice</p>
-  <h2>Recommended Scenarios</h2>
-  <p>Practice safe judgment, clear notes, and asking for help before moving into supervised tasks.</p>
-  <div class="card-grid">
-    {% for scenario in recommended_scenarios %}
-      <a class="resource-card" href="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
-        <strong>{{ scenario.title }}</strong>
-        <span>{{ scenario.summary }}</span>
-      </a>
+{% if path_progress.upcoming %}
+<section class="path-upcoming" aria-labelledby="upcoming-heading">
+  <h2 id="upcoming-heading">Up next</h2>
+  <p class="meta">These steps are available now; the suggested order keeps one task in focus.</p>
+  <ol class="path-steps">
+    {% for step in path_progress.upcoming[:2] %}
+      <li><span class="status-badge status-badge--{{ step.status|replace('_', '-') }}">{{ step.status_label }}</span> <a href="#{{ step.anchor }}">{{ step.title }}</a>{% if step.status_detail %} <span class="meta">{{ step.status_detail }}</span>{% endif %}</li>
     {% endfor %}
-  </div>
+  </ol>
 </section>
+<details class="disclosure" id="remaining-steps">
+  <summary>Full remaining plan ({{ path_progress.upcoming|length }} steps)</summary>
+  <ol class="path-steps">{% for step in path_progress.upcoming %}{{ step_row(step) }}{% endfor %}</ol>
+</details>
 {% endif %}
 
-<section class="result-panel">
-  <p class="eyebrow">Progress check</p>
+{% if path_progress.completed %}
+<details class="disclosure" id="completed-steps">
+  <summary>Recorded steps ({{ path_progress.completed_count }})</summary>
+  <ol class="path-steps">{% for step in path_progress.completed %}{{ step_row(step) }}{% endfor %}</ol>
+</details>
+{% endif %}
+
+<details class="disclosure">
+  <summary>Path guidance and mentor review</summary>
+  <p>{{ path.intro }}</p>
+  <h2>Mentor Check-In Ideas</h2>
+  <ul>{% for focus in path.mentor_focus %}<li>{{ focus }}</li>{% endfor %}</ul>
+  <h2>What to Feel Comfortable With</h2>
+  <ul>{% for item in path.completion_criteria %}<li>{{ item }}</li>{% endfor %}</ul>
+</details>
+
+<details class="disclosure">
+  <summary>More practice and your progress check</summary>
+  {% if recommended_scenarios %}
+    <h2>Recommended Scenarios</h2>
+    <p>Additional practice and review do not change the recorded-step count above.</p>
+    <ul class="resource-list">{% for scenario in recommended_scenarios %}<li><a href="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">{{ scenario.title }}</a></li>{% endfor %}</ul>
+  {% endif %}
+  <p><a href="{{ url_for('scenario_index') }}">All practice scenarios</a></p>
   <h2>Ready to check your progress?</h2>
-  <p>After you finish your recommended steps and scenario practice, use the progress check to see what feels clearer.</p>
-  <a class="button primary" href="{{ url_for('post_assessment') }}">Open Progress Check</a>
-</section>
+  <p>After your learning and practice, discuss readiness with a mentor.</p>
+  <a href="{{ url_for('post_assessment') }}">Open Progress Check</a>
+</details>
+<p class="quiet-links"><a href="{{ url_for('help') }}">Get help with this path</a></p>
 {% endblock %}

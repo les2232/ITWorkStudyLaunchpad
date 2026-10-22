@@ -93,6 +93,16 @@ def init_db(db_path: str | Path = DEFAULT_DB_PATH) -> None:
                 FOREIGN KEY (student_id) REFERENCES students(id)
             );
 
+            CREATE TABLE IF NOT EXISTS scenario_attempts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                scenario_id TEXT NOT NULL,
+                scenario_title TEXT NOT NULL,
+                student_response TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (student_id) REFERENCES students(id)
+            );
+
             CREATE TABLE IF NOT EXISTS stuck_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 student_id INTEGER NOT NULL,
@@ -101,10 +111,23 @@ def init_db(db_path: str | Path = DEFAULT_DB_PATH) -> None:
                 question TEXT NOT NULL,
                 mentor_summary TEXT NOT NULL,
                 created_at TEXT NOT NULL,
+                resolved_at TEXT,
                 FOREIGN KEY (student_id) REFERENCES students(id)
             );
             """
         )
+        add_help_request_status_column(db)
+
+
+def add_help_request_status_column(db: sqlite3.Connection) -> None:
+    """Additively record whether the learner still needs help.
+
+    Existing requests keep their text and creation time. A missing value means
+    Open: the app cannot know that an older request was answered.
+    """
+    columns = {row[1] for row in db.execute("PRAGMA table_info(stuck_reports)")}
+    if "resolved_at" not in columns:
+        db.execute("ALTER TABLE stuck_reports ADD COLUMN resolved_at TEXT")
 
 
 def connect(db_path: str | Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
@@ -409,6 +432,157 @@ def save_stuck_report(
         return int(cursor.lastrowid)
 
 
+def recent_stuck_reports(
+    student_id: int,
+    db_path: str | Path = DEFAULT_DB_PATH,
+    limit: int = 10,
+) -> list[dict[str, Any]]:
+    """Return the latest summaries, oldest first, without putting text in cookies."""
+    with connect(db_path) as db:
+        rows = db.execute(
+            """
+            SELECT report.*, student.display_name
+            FROM stuck_reports AS report
+            JOIN students AS student ON student.id = report.student_id
+            WHERE report.student_id = ?
+            ORDER BY report.id DESC LIMIT ?
+            """,
+            (student_id, max(0, limit)),
+        ).fetchall()
+        return [_stuck_report_row(row) for row in reversed(rows)]
+
+
+def help_requests_for_student(
+    student_id: int,
+    db_path: str | Path = DEFAULT_DB_PATH,
+    resolved_limit: int = 20,
+) -> dict[str, Any]:
+    """Return every open request and the latest resolved ones, newest first."""
+    query = """
+        SELECT report.*, student.display_name
+        FROM stuck_reports AS report
+        JOIN students AS student ON student.id = report.student_id
+        WHERE report.student_id = ? AND report.resolved_at IS {} NULL
+        ORDER BY report.id DESC
+    """
+    with connect(db_path) as db:
+        open_rows = db.execute(query.format(""), (student_id,)).fetchall()
+        resolved_rows = db.execute(query.format("NOT") + " LIMIT ?", (student_id, max(0, resolved_limit))).fetchall()
+        resolved_total = db.execute(
+            "SELECT COUNT(*) FROM stuck_reports WHERE student_id = ? AND resolved_at IS NOT NULL",
+            (student_id,),
+        ).fetchone()[0]
+    return {
+        "open": [_stuck_report_row(row) for row in open_rows],
+        "resolved": [_stuck_report_row(row) for row in resolved_rows],
+        "resolved_total": resolved_total,
+    }
+
+
+def open_stuck_reports(
+    student_ids: list[int],
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> list[dict[str, Any]]:
+    """Open requests for the given learners, oldest first so long waits stay visible."""
+    if not student_ids:
+        return []
+    placeholders = ",".join("?" for _ in student_ids)
+    with connect(db_path) as db:
+        rows = db.execute(
+            f"""
+            SELECT report.*, student.display_name
+            FROM stuck_reports AS report
+            JOIN students AS student ON student.id = report.student_id
+            WHERE report.student_id IN ({placeholders}) AND report.resolved_at IS NULL
+            ORDER BY report.id
+            """,
+            [int(value) for value in student_ids],
+        ).fetchall()
+    return [_stuck_report_row(row) for row in rows]
+
+
+def set_stuck_report_resolved(
+    student_id: int,
+    report_id: int,
+    resolved: bool,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> bool:
+    """Change only the learner's own request status; the request text is never rewritten."""
+    with connect(db_path) as db:
+        cursor = db.execute(
+            """
+            UPDATE stuck_reports
+            SET resolved_at = CASE WHEN ? THEN COALESCE(resolved_at, ?) ELSE NULL END
+            WHERE id = ? AND student_id = ?
+            """,
+            (1 if resolved else 0, utc_now(), report_id, student_id),
+        )
+        if cursor.rowcount != 1:
+            return False
+        touch_student(db, student_id)
+        return True
+
+
+def _stuck_report_row(row: sqlite3.Row) -> dict[str, Any]:
+    item = row_to_dict(row)
+    item["status"] = "resolved" if item.get("resolved_at") else "open"
+    item["status_label"] = "Resolved" if item["status"] == "resolved" else "Open"
+    item["student"] = item.pop("display_name")
+    item["summary"] = item["mentor_summary"]
+    # Existing summaries already carry the normalized topic, including records
+    # created before server-side retrieval. No migration of old text is needed.
+    topic = next(
+        (line.removeprefix("Topic: ") for line in item["summary"].splitlines() if line.startswith("Topic: ")),
+        "",
+    )
+    item["topic"] = "" if topic == "Not provided" else topic
+    return item
+
+
+def save_scenario_attempt(
+    student_id: int,
+    scenario_id: str,
+    scenario_title: str,
+    student_response: str,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> int:
+    """Persist the complete practice draft; viewing the latest 20 deletes nothing."""
+    with connect(db_path) as db:
+        cursor = db.execute(
+            """
+            INSERT INTO scenario_attempts
+                (student_id, scenario_id, scenario_title, student_response, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (student_id, scenario_id, scenario_title, student_response, utc_now()),
+        )
+        touch_student(db, student_id)
+        return int(cursor.lastrowid)
+
+
+def recent_scenario_attempts(
+    student_id: int,
+    db_path: str | Path = DEFAULT_DB_PATH,
+    limit: int = 20,
+) -> list[dict[str, Any]]:
+    with connect(db_path) as db:
+        rows = db.execute(
+            "SELECT * FROM scenario_attempts WHERE student_id = ? ORDER BY id DESC LIMIT ?",
+            (student_id, max(0, limit)),
+        ).fetchall()
+        return [{**row_to_dict(row), "needs_mentor_review": True} for row in reversed(rows)]
+
+
+def student_progress(
+    student_id: int,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> dict[str, Any] | None:
+    """Load one learner independently of the recent-learner overview limit."""
+    with connect(db_path) as db:
+        student = db.execute("SELECT * FROM students WHERE id = ?", (student_id,)).fetchone()
+        return student_summary(db, student) if student else None
+
+
 def student_progress_summary(db_path: str | Path = DEFAULT_DB_PATH, limit: int = 20) -> list[dict[str, Any]]:
     with connect(db_path) as db:
         students = db.execute(
@@ -455,6 +629,10 @@ def student_summary(db: sqlite3.Connection, student: sqlite3.Row) -> dict[str, A
         "SELECT COUNT(*) AS count FROM stuck_reports WHERE student_id = ?",
         (student["id"],),
     ).fetchone()["count"]
+    open_stuck_count = db.execute(
+        "SELECT COUNT(*) AS count FROM stuck_reports WHERE student_id = ? AND resolved_at IS NULL",
+        (student["id"],),
+    ).fetchone()["count"]
 
     return {
         "student": row_to_dict(student),
@@ -464,6 +642,7 @@ def student_summary(db: sqlite3.Connection, student: sqlite3.Row) -> dict[str, A
         "module_quiz_completed_count": module_quiz_count,
         "checklist_completed_count": checklist_count,
         "stuck_report_count": stuck_count,
+        "open_stuck_report_count": open_stuck_count,
     }
 
 

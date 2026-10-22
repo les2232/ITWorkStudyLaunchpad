@@ -206,13 +206,18 @@ class ProgressAwareContinuationTests(unittest.TestCase):
 
         response = self.client.get("/student")
 
-        self.assertIn(b"Your Beginner Path Is Complete", response.data)
+        self.assertIn(b"Required steps recorded", response.data)
+        self.assertIn(b"Beginner path", response.data)
+        self.assertIn(b"not mentor-confirmed readiness", response.data)
         self.assertNotIn(b"Continue with", response.data)
 
         home = self.client.get("/")
         self.assertIn(b"Review onboarding", home.data)
-        self.assertIn(b"Beginner Path Complete", home.data)
-        self.assertIn(b'href="/student"', home.data)
+        self.assertIn(b"Required steps recorded", home.data)
+        self.assertIn(b"Beginner path", home.data)
+        # Completion offers a concrete follow-up instead of looping back to Progress.
+        self.assertIn(b'<a class="button primary" href="/post-assessment">Take the Progress Check</a>', home.data)
+        self.assertIn(b"This app does not record mentor sign-off", home.data)
 
     def test_unknown_and_stale_activity_progress_cannot_skip_required_activity(self):
         student = self._student_with_score("Stale Path Student", 75)
@@ -269,7 +274,9 @@ class ProgressAwareContinuationTests(unittest.TestCase):
             self.db_path,
         )
         after = self.client.get("/student")
-        self.assertIn(b"Your Advanced Beginner Path Is Complete", after.data)
+        self.assertIn(b"Required steps recorded", after.data)
+        self.assertIn(b"Advanced Beginner path", after.data)
+        self.assertIn(b"not mentor-confirmed readiness", after.data)
 
     def test_activity_control_requires_explicit_post_and_can_reopen(self):
         student = self._student_with_score("Control Student", 75)

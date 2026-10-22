@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ quiz.title }} | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% set learner_required = demo_mode and not current_student %}
 <section class="content-header">
   <p class="eyebrow">Module knowledge check</p>
   <h1>{{ quiz.title }}</h1>
@@ -10,7 +11,7 @@
 
 {% if latest_quiz_result and not result %}
 <section class="result-panel">
-  <p class="eyebrow">Saved local progress</p>
+  <p class="eyebrow">{{ "Saved progress" if real_mode else "Saved local progress" }}</p>
   <h2>Latest Knowledge Check</h2>
   <p>{{ latest_quiz_result.earned }} / {{ latest_quiz_result.possible }} correct ({{ latest_quiz_result.score }}%) is saved for {{ current_student.display_name }}.</p>
 </section>
@@ -18,7 +19,7 @@
 
 {% if result %}
 <section class="result-panel">
-  <p class="eyebrow">Saved local progress</p>
+  <p class="eyebrow">{{ "Saved progress" if real_mode else "Saved local progress" }}</p>
   <h2>Low-stakes knowledge check: {{ result.earned }} / {{ result.possible }} correct ({{ result.score }}%)</h2>
   <p>Use this result to decide what to review next. It is not a final judgment about what you can do.</p>
   <ol class="quiz-result-list">
@@ -36,7 +37,17 @@
 </section>
 {% endif %}
 
+{% if learner_required %}
+<section class="notice-inline identity-required" id="quiz-learner-required" role="status">
+  <strong>Choose a synthetic learner before starting.</strong>
+  <span>Demo mode saves knowledge-check results only to one of the three fixed synthetic personas.</span>
+  <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
+</section>
+{% endif %}
+
 <form class="assessment-form" method="post" action="{{ url_for('module_quiz', slug=item.slug) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
   <section class="form-section">
     <h2>Questions</h2>
     {% for question in quiz.questions %}
@@ -45,13 +56,14 @@
         <p class="meta">{{ "True/false" if question.type == "true_false" else "Multiple choice" }}</p>
         {% for choice in question.choices %}
           <label class="choice">
-            <input type="radio" name="{{ question.id }}" value="{{ choice.value }}" required>
+            <input type="radio" name="{{ question.id }}" value="{{ choice.value }}" required{% if learner_required %} disabled{% endif %}>
             <span>{{ choice.label }}</span>
           </label>
         {% endfor %}
       </fieldset>
     {% endfor %}
   </section>
-  <button class="button primary" type="submit">Check My Answers</button>
+  <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="quiz-learner-required"{% endif %}>Check My Answers</button>
+{% if real_mode and not current_student %}</fieldset>{% endif %}
 </form>
 {% endblock %}

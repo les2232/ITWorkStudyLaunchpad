@@ -224,7 +224,7 @@ class StorageTests(unittest.TestCase):
         response = client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Save a Demo Name", response.data)
+        self.assertIn(b"Start assessment", response.data)
         self.assertIn(b'href="/student?next=/pre-assessment"', response.data)
 
         started = client.post(
@@ -242,7 +242,7 @@ class StorageTests(unittest.TestCase):
         response = client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Starting Point Check", response.data)
+        self.assertIn(b"Start assessment", response.data)
         self.assertIn(b'href="/pre-assessment"', response.data)
         self.assertNotIn(b"Save a Demo Name", response.data)
 
@@ -261,7 +261,7 @@ class StorageTests(unittest.TestCase):
         response = client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Continue onboarding", response.data)
+        self.assertIn(b"Continue: What Does IT Do?", response.data)
         self.assertIn(b"What Does IT Do?", response.data)
         self.assertIn(b'href="/modules/what_does_it_do"', response.data)
 

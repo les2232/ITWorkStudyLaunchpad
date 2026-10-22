@@ -1,4 +1,5 @@
 import sys
+import os
 import subprocess
 from pathlib import Path
 import importlib.util
@@ -19,14 +20,24 @@ def test_python() -> str:
     return sys.executable
 
 
-if __name__ == "__main__":
+def main() -> int:
     validation_status = validate_content()
     if validation_status != 0:
-        sys.exit(validation_status)
+        return validation_status
 
     test_result = subprocess.run(
         [test_python(), "-m", "unittest", "discover", "-s", "tests"],
         cwd=PROJECT_ROOT,
         check=False,
+        # Hosting config belongs to the running pilot, never the isolated suite.
+        env={
+            key: value for key, value in os.environ.items()
+            if not key.startswith("LAUNCHPAD_")
+            and key not in {"FLASK_APP", "FLASK_DEBUG", "FLASK_ENV"}
+        },
     )
-    sys.exit(test_result.returncode)
+    return test_result.returncode
+
+
+if __name__ == "__main__":
+    sys.exit(main())

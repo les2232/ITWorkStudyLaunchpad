@@ -8,9 +8,13 @@
 </section>
 
 <form class="question-form" method="post" action="{{ url_for('ask') }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+  {% with saved_text = false %}{% include "_written_answer_notice.html" %}{% endwith %}
   <label for="question">Question</label>
   <textarea id="question" name="question" rows="5" required>{{ question }}</textarea>
   <button class="button primary" type="submit">Get Guidance</button>
+{% if real_mode and not current_student %}</fieldset>{% endif %}
 </form>
 
 {% if answer %}

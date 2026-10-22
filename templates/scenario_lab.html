@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario.title }} | IT Work Study Launchpad{% endblock %}
+{% block content %}
+{% set inspected_count = required_inspections|length if completed else required_inspections|length - missing_inspections|length %}
+{% set feedback_tone = state.feedback_tone if state.feedback_tone in ["info", "safe", "success"] else "info" %}
+
+<article class="scenario-lab" aria-labelledby="scenario-lab-title">
+  <header class="content-header scenario-lab__header">
+    <div>
+      <p class="eyebrow">Guided troubleshooting lab</p>
+      <h1 id="scenario-lab-title">{{ scenario.title }}</h1>
+      {% if scenario.summary %}
+        <p class="lede">{{ scenario.summary }}</p>
+      {% endif %}
+    </div>
+
+    {% if current_student %}
+      <p class="scenario-lab__learner">
+        Practicing as <strong>{{ current_student.display_name }}</strong>
+        {% if not real_mode %}<a href="{{ url_for('student_identity', next=request.path) }}">Switch demo learner</a>{% endif %}
+      </p>
+    {% else %}
+      <aside class="scenario-lab__identity" aria-labelledby="scenario-identity-title">
+        <h2 id="scenario-identity-title">Choose a synthetic demo learner first</h2>
+        <p id="scenario-identity-required">Choose one of the fixed synthetic learners before saving progress. Do not enter real student information.</p>
+        <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
+      </aside>
+    {% endif %}
+  </header>
+
+  {% if completed %}
+    <section class="scenario-lab__completion scenario-lab__completion--saved" aria-labelledby="saved-completion-title">
+      <p class="eyebrow">Saved completion</p>
+      <h2 id="saved-completion-title">This troubleshooting lab is complete</h2>
+      <p>Your completion is saved to {% if real_mode %}your training progress{% else %}this demo learner's progress{% endif %}. Reloading the page will not remove it.</p>
+    </section>
+  {% endif %}
+
+  <ol class="scenario-lab__phase-track" aria-label="Troubleshooting lab progress">
+    <li{% if inspected_count == required_inspections|length %} class="is-complete"{% else %} class="is-current" aria-current="step"{% endif %}>
+      <span class="scenario-lab__phase-number" aria-hidden="true">1</span>
+      <span>
+        <strong>Inspect</strong>
+        <small>{% if inspected_count == required_inspections|length %}All observations complete{% else %}{{ inspected_count }} of {{ required_inspections|length }} observations{% endif %}</small>
+      </span>
+    </li>
+    <li{% if completed or state.resolved %} class="is-complete"{% elif not missing_inspections %} class="is-current" aria-current="step"{% endif %}>
+      <span class="scenario-lab__phase-number" aria-hidden="true">2</span>
+      <span>
+        <strong>Resolve</strong>
+        <small>{% if completed or state.resolved %}Display restored{% elif not missing_inspections %}Ready to choose an action{% else %}Gather evidence first{% endif %}</small>
+      </span>
+    </li>
+    <li{% if completed %} class="is-complete"{% elif state.resolved %} class="is-current" aria-current="step"{% endif %}>
+      <span class="scenario-lab__phase-number" aria-hidden="true">3</span>
+      <span>
+        <strong>Save</strong>
+        <small>{% if completed %}Completion saved{% elif state.resolved %}Finish action available{% else %}Not ready to save{% endif %}</small>
+      </span>
+    </li>
+  </ol>
+
+  <section class="scenario-lab__overview" aria-labelledby="scenario-situation-title">
+    <div class="scenario-lab__situation">
+      <p class="eyebrow">Simulated situation</p>
+      <h2 id="scenario-situation-title">What you see</h2>
+      {% if scenario.situation %}
+        <p>{{ scenario.situation }}</p>
+      {% endif %}
+      {% if scenario.student_prompt %}
+        <p><strong>{{ scenario.student_prompt }}</strong></p>
+      {% endif %}
+      <p class="meta">This is a training simulation. It does not connect to or change a real computer.</p>
+    </div>
+
+    <figure class="scenario-lab__workstation">
+      <div class="scenario-lab__scene{% if completed or state.resolved %} scenario-lab__scene--restored{% endif %}" aria-hidden="true">
+        <span class="scenario-lab__component-tag scenario-lab__component-tag--monitor">Monitor</span>
+        <span class="scenario-lab__component-tag scenario-lab__component-tag--computer">Computer · power on</span>
+        <span class="scenario-lab__component-tag scenario-lab__component-tag--cable">DisplayPort connection</span>
+        <div class="scenario-lab__monitor">
+          <span>{% if completed or state.resolved %}Display restored{% else %}No Signal{% endif %}</span>
+        </div>
+        <div class="scenario-lab__stand"></div>
+        <div class="scenario-lab__tower">
+          <span></span>
+        </div>
+        <div class="scenario-lab__cable{% if not completed and not state.resolved %} scenario-lab__cable--loose{% endif %}"></div>
+      </div>
+      <figcaption>
+        {% if completed or state.resolved %}
+          The simulated classroom display is restored after the loose DisplayPort connection is secured.
+        {% else %}
+          A simulated classroom monitor showing “No Signal” beside a powered computer. Use the controls below to inspect each labeled component.
+        {% endif %}
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="scenario-lab__progress" aria-labelledby="inspection-progress-title">
+    <div>
+      <h2 id="inspection-progress-title">Inspection progress</h2>
+      <p id="inspection-progress-description">{{ inspected_count }} of {{ required_inspections|length }} required checks complete.</p>
+      <span class="status-badge{% if inspected_count == required_inspections|length %} status-badge--complete{% endif %}">{% if inspected_count == required_inspections|length %}Observations complete{% else %}Inspections in progress{% endif %}</span>
+    </div>
+    <progress
+      value="{{ inspected_count }}"
+      max="{{ required_inspections|length }}"
+      aria-labelledby="inspection-progress-title"
+      aria-describedby="inspection-progress-description"
+    >{{ inspected_count }} of {{ required_inspections|length }}</progress>
+  </section>
+
+  {% if state.feedback and not completed %}
+    <section
+      id="scenario-feedback"
+      class="scenario-lab__feedback scenario-lab__feedback--{{ feedback_tone }}"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-labelledby="scenario-feedback-title"
+      tabindex="-1"
+    >
+      <h2 id="scenario-feedback-title">Guidance</h2>
+      <p>{{ state.feedback }}</p>
+    </section>
+  {% endif %}
+
+  <div class="scenario-lab__steps">
+    <fieldset class="scenario-lab__step"{% if completed or state.resolved %} disabled{% endif %}>
+      <legend><span>Step 1</span> Inspect before acting</legend>
+      <p>Check every item before choosing a fix. You can inspect an item again to review what you found.</p>
+      <p class="scenario-lab__step-status">
+        <strong>{{ inspected_count }} / {{ required_inspections|length }}</strong> observations recorded
+      </p>
+
+      <div class="scenario-lab__control-list">
+        {% for inspection in required_inspections %}
+          {% set is_inspected = completed or inspection.id in state.inspected %}
+          <section class="scenario-lab__control{% if is_inspected %} scenario-lab__control--checked{% endif %}" aria-labelledby="inspection-{{ inspection.id }}-title">
+            <div class="scenario-lab__control-copy">
+              <div class="scenario-lab__control-heading">
+                <h3 id="inspection-{{ inspection.id }}-title">{{ inspection.label }}</h3>
+                <span class="scenario-lab__state">
+                  {% if is_inspected %}Inspected{% else %}Not inspected{% endif %}
+                </span>
+              </div>
+              {% if is_inspected %}
+                <p>{{ inspection.feedback }}</p>
+              {% endif %}
+            </div>
+            <form method="post" action="{{ url_for('scenario_action', scenario_id=scenario.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+              <input type="hidden" name="action_id" value="{{ inspection.id }}">
+              <button
+                class="button{% if not is_inspected %} primary{% endif %}"
+                type="submit"
+                {% if is_inspected %}aria-label="Review finding: {{ inspection.label }}"{% endif %}
+                {% if not current_student %}disabled aria-describedby="scenario-identity-required"{% endif %}
+              >
+                {% if is_inspected %}Review Finding{% else %}{{ inspection.label }}{% endif %}
+              </button>
+            {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+          </section>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <fieldset class="scenario-lab__step"{% if completed or state.resolved %} disabled{% endif %}>
+      <legend><span>Step 2</span> Choose your next action</legend>
+      <p>Choose the safest next step based on your observations. Premature or unsafe choices will provide coaching and will not complete the lab.</p>
+      <p class="scenario-lab__step-status">
+        {% if missing_inspections %}
+          Actions are available for practice; complete the visible checks before resolving the issue.
+        {% else %}
+          <strong>Evidence gathered.</strong> Choose the safest resolution supported by your observations.
+        {% endif %}
+      </p>
+
+      <div class="scenario-lab__action-list">
+        {% for action in scenario.actions %}
+          <form method="post" action="{{ url_for('scenario_action', scenario_id=scenario.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+            <input type="hidden" name="action_id" value="{{ action.id }}">
+            <button
+              class="button scenario-lab__action"
+              type="submit"
+              {% if not current_student %}disabled aria-describedby="scenario-identity-required"{% endif %}
+            >{{ action.label }}</button>
+          {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <section class="scenario-lab__step scenario-lab__finish" aria-labelledby="scenario-finish-title">
+      <p class="scenario-lab__step-number">Step 3</p>
+      <h2 id="scenario-finish-title">Save completion</h2>
+
+      {% if completed %}
+        <span class="status-badge status-badge--complete">Saved completion</span>
+        <p><strong>Completed and saved.</strong> This result is attached to {{ current_student.display_name if current_student else ("your training record" if real_mode else "the selected demo learner") }}.</p>
+      {% elif state.resolved %}
+        <span class="status-badge status-badge--attention">Display restored · not yet saved</span>
+        <p class="scenario-lab__resolution">{{ scenario.resolution.confirmation }}</p>
+        <p>Confirm completion explicitly to add this lab to your saved progress.</p>
+        <form method="post" action="{{ url_for('complete_scenario', scenario_id=scenario.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+          <button
+            class="button primary"
+            type="submit"
+            {% if not current_student %}disabled aria-describedby="scenario-identity-required"{% endif %}
+          >Finish and save</button>
+        {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+      {% else %}
+        <span class="status-badge">Not ready to save</span>
+        <p id="scenario-finish-help">
+          {% if missing_inspections %}
+            Complete all {{ required_inspections|length }} inspections, then resolve the display issue.
+          {% else %}
+            Use your observations to resolve the display issue.
+          {% endif %}
+        </p>
+      {% endif %}
+    </section>
+  </div>
+</article>
+{% endblock %}

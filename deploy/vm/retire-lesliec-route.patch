@@ -1,0 +1,16 @@
+--- cca-it-support-assistant
++++ cca-it-support-assistant
+@@ -2,5 +2,5 @@
+     listen 80;
+     listen [::]:80;
+-    server_name lesliec.ccaurora.edu itsupport.ccaurora.edu;
++    server_name itsupport.ccaurora.edu;
+ 
+     return 301 https://$host$request_uri;
+@@ -10,5 +10,5 @@
+     listen 443 ssl http2;
+     listen [::]:443 ssl http2;
+-    server_name lesliec.ccaurora.edu itsupport.ccaurora.edu;
++    server_name itsupport.ccaurora.edu;
+ 
+     ssl_certificate /opt/project/certs/fullchain.pem;
