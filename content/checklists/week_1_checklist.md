@@ -8,16 +8,6 @@ By the end of Week 1, the student should understand basic IT vocabulary, know wh
 
 ---
 
-## Student Information
-
-Student:
-Week Of:
-Mentor:
-Supervisor:
-Training Path:
-
----
-
 ## Required Foundations
 
 - [ ] Complete Common IT Words.
@@ -135,9 +125,3 @@ Mentor decision:
 - [ ] Needs more review before task approval.
 - [ ] Needs additional shadowing.
 - [ ] Needs supervisor follow-up.
-
-Mentor Notes:
-
-Next Training Assignments:
-
-Follow-Up Date:
