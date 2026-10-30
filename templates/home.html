@@ -40,7 +40,7 @@
       {% if recommended_path %}
         <a href="{{ url_for('training_path', slug=recommended_path.slug) }}">View full learning plan</a>
       {% else %}
-        <a href="{{ url_for('learn') }}">Explore learning</a>
+        <a href="{{ url_for('day_1_checklist') }}">Day 1 checklist</a>
       {% endif %}
       <a href="{{ url_for('help') }}">Get help</a>
     </div>
@@ -60,6 +60,7 @@
 <section aria-labelledby="journey-heading">
   <h2 id="journey-heading">Your onboarding journey</h2>
   <ol class="journey-list">
+    <li><strong>Get set up</strong><p>Work through your first-day tasks.</p><a href="{{ url_for('day_1_checklist') }}">Day 1 checklist</a></li>
     <li><strong>Assess</strong><p>Find your starting point.</p><a href="{{ url_for('pre_assessment') if current_student else url_for('student_identity', next=url_for('pre_assessment')) }}">Starting Point Check</a></li>
     <li><strong>Follow your learning path</strong><p>Learn one step at a time.</p><a href="{{ url_for('learn') }}">Learn</a></li>
     <li><strong>Practice</strong><p>Try safe decisions and ask for feedback.</p><a href="{{ url_for('scenario_index') }}">Practice scenarios</a></li>
