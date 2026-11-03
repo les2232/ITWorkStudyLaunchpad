@@ -23,6 +23,7 @@ from .content import (
     read_checklist_markdown,
 )
 from .scenarios import list_scenarios
+from .checklist_answers import validate_checklist_answers_table
 from .storage import (
     DEFAULT_DB_PATH,
     connect,
@@ -58,7 +59,7 @@ APPLICATION_TABLES = frozenset(
 )
 # This additive table is optional when reading an earlier v1 synthetic dataset.
 # init_db adds it only after the existing database passes guarded validation.
-OPTIONAL_APPLICATION_TABLES = frozenset({"scenario_attempts"})
+OPTIONAL_APPLICATION_TABLES = frozenset({"scenario_attempts", "checklist_answers"})
 DEMO_METADATA_TABLE = "demo_dataset_metadata"
 ALLOWED_TABLES = APPLICATION_TABLES | OPTIONAL_APPLICATION_TABLES | {DEMO_METADATA_TABLE, "sqlite_sequence"}
 STUDENT_RECORD_TABLES = (APPLICATION_TABLES | OPTIONAL_APPLICATION_TABLES) - {"students"}
@@ -469,6 +470,12 @@ def _assert_known_records(
         ).fetchone()
         if unknown_student is not None:
             raise DemoDataError(f"{table} contains records for an unknown learner")
+
+    if "checklist_answers" in tables:
+        try:
+            validate_checklist_answers_table(db)
+        except ValueError as exc:
+            raise DemoDataError("invalid synthetic checklist answer schema or records") from exc
 
     _assert_column_values(
         db,

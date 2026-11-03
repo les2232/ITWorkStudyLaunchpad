@@ -15,16 +15,17 @@ from urllib.parse import quote
 
 from .accounts import init_accounts_schema, revoke_all_sessions, validate_accounts_database
 from .storage import DEFAULT_DB_PATH, add_help_request_status_column, init_db, utc_now
+from .checklist_answers import add_checklist_answers_table, validate_checklist_answers_table
 
-# Version 2 adds stuck_reports.resolved_at. Version 1 files are never upgraded in
-# place; migrate_real_database writes an upgraded NEW copy.
-REAL_SCHEMA_VERSION = 2
+# Version 2 adds help-request status; version 3 adds Day 1 reflection answers.
+# Existing files are never upgraded in place: migration creates a NEW copy.
+REAL_SCHEMA_VERSION = 3
 BASE_TABLES = frozenset({
     "students", "assessment_results", "module_progress", "module_quiz_results",
     "checklist_progress", "activity_progress", "scenario_attempts", "stuck_reports",
 })
 ACCOUNT_TABLES = frozenset({"accounts", "mentor_assignments", "auth_sessions", "access_audit"})
-ALLOWED_TABLES = BASE_TABLES | ACCOUNT_TABLES | {"real_dataset_metadata", "sqlite_sequence"}
+ALLOWED_TABLES = BASE_TABLES | ACCOUNT_TABLES | {"checklist_answers", "real_dataset_metadata", "sqlite_sequence"}
 
 
 class RealDataError(ValueError):
@@ -76,6 +77,8 @@ def assert_non_real_database(value: str | Path) -> None:
 
 def validate_real_database(value: str | Path, *, schema_version: int = REAL_SCHEMA_VERSION) -> dict[str, object]:
     """Validate recognized real-user data without initializing or rewriting it."""
+    if schema_version not in (1, 2, 3):
+        raise RealDataError("unsupported real-user schema version")
     path = real_database_path(value)
     if not path.is_file():
         raise RealDataError("real-user database is missing; provision explicitly or restore it")
@@ -83,7 +86,12 @@ def validate_real_database(value: str | Path, *, schema_version: int = REAL_SCHE
         with closing(_readonly(path)) as db:
             tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             required = BASE_TABLES | ACCOUNT_TABLES | {"real_dataset_metadata"}
-            if not required <= tables or tables - ALLOWED_TABLES:
+            allowed = ALLOWED_TABLES
+            if schema_version >= 3:
+                required = required | {"checklist_answers"}
+            else:
+                allowed = allowed - {"checklist_answers"}
+            if not required <= tables or tables - allowed:
                 raise RealDataError("database is not the supported real-user schema")
             marker = db.execute(
                 "SELECT schema_version, dataset_id FROM real_dataset_metadata WHERE singleton=1"
@@ -93,6 +101,8 @@ def validate_real_database(value: str | Path, *, schema_version: int = REAL_SCHE
             help_columns = {row[1] for row in db.execute("PRAGMA table_info(stuck_reports)")}
             if ("resolved_at" in help_columns) != (schema_version >= 2):
                 raise RealDataError("real-user help-request columns do not match the schema version")
+            if schema_version >= 3:
+                validate_checklist_answers_table(db)
             if db.execute("SELECT count(*) FROM real_dataset_metadata").fetchone()[0] != 1:
                 raise RealDataError("real-user database marker is invalid")
             if db.execute("PRAGMA quick_check").fetchone() != ("ok",) or db.execute("PRAGMA foreign_key_check").fetchone():
@@ -160,14 +170,25 @@ def initialize_real_database(value: str | Path) -> Path:
 
 
 def migrate_real_database(source: str | Path, destination: str | Path, *, timeout: float = 30) -> Path:
-    """Write a NEW schema-version-2 copy of a version-1 dataset; the source is unchanged.
+    """Write a NEW version-3 copy of a version-1 or version-2 dataset.
 
-    Every existing help request keeps its text and creation time and starts as
-    Open (resolved_at NULL). Accounts, grants and sessions are copied as-is.
+    The source is unchanged. Existing records, account mappings, grants and
+    sessions are copied as-is. Version-1 help requests start as Open; version-2
+    help-request status is preserved. Reflection answers start empty.
     """
     source_path = real_database_path(source)
     target = real_database_path(destination)
-    validate_real_database(source_path, schema_version=1)
+    try:
+        with closing(_readonly(source_path)) as source_db:
+            row = source_db.execute(
+                "SELECT schema_version FROM real_dataset_metadata WHERE singleton=1"
+            ).fetchone()
+        source_version = row[0] if row else None
+    except (sqlite3.DatabaseError, OSError) as exc:
+        raise RealDataError("migration source is not a recognized real-user dataset") from exc
+    if source_version not in (1, 2):
+        raise RealDataError("migration requires a version-1 or version-2 source")
+    validate_real_database(source_path, schema_version=source_version)
     if timeout <= 0:
         raise RealDataError("migration timeout must be positive")
     identity = _claim_new(target)
@@ -180,16 +201,18 @@ def migrate_real_database(source: str | Path, destination: str | Path, *, timeou
     try:
         with closing(_readonly(source_path)) as original, closing(sqlite3.connect(target)) as copied:
             original.backup(copied, pages=128, progress=check_deadline, sleep=0.05)
+        validate_real_database(target, schema_version=source_version)
         with closing(sqlite3.connect(target)) as copied:
             with copied:
                 add_help_request_status_column(copied)
+                add_checklist_answers_table(copied)
                 copied.execute("UPDATE real_dataset_metadata SET schema_version=? WHERE singleton=1", (REAL_SCHEMA_VERSION,))
         validate_real_database(target)
         _flush(target)
         return target
     except (sqlite3.DatabaseError, OSError, ValueError):
         _remove_owned_failure(target, identity)
-        raise RealDataError("migration refused; check the version-1 source and a new destination") from None
+        raise RealDataError("migration refused; check the version-1 or version-2 source and a new destination") from None
 
 
 def copy_real_snapshot(source: str | Path, destination: str | Path, *, restore: bool = False, timeout: float = 30) -> Path:

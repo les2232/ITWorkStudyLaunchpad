@@ -13,7 +13,7 @@ from launchpad.accounts import (
 )
 from launchpad.demo import prepare_demo_database
 from launchpad.real_data import (
-    RealDataError, copy_real_snapshot, initialize_real_database, validate_real_database,
+    REAL_SCHEMA_VERSION, RealDataError, copy_real_snapshot, initialize_real_database, validate_real_database,
 )
 from launchpad.storage import (
     init_db, mark_module_complete, module_is_complete,
@@ -54,7 +54,7 @@ class RealDataTests(unittest.TestCase):
     def test_validation_read_only_and_missing_database_not_created(self):
         before = hashlib.sha256(self.database.read_bytes()).hexdigest()
         marker = validate_real_database(self.database)
-        self.assertEqual(marker["schema_version"], 2)
+        self.assertEqual(marker["schema_version"], REAL_SCHEMA_VERSION)
         self.assertEqual(hashlib.sha256(self.database.read_bytes()).hexdigest(), before)
         missing = self.root / "missing.sqlite"
         with self.assertRaises(RealDataError):

@@ -25,18 +25,24 @@
       {% if learner_required %}
         <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
       {% else %}
-        <button class="button primary" type="submit">Save Checklist Progress</button>
+        <button class="button primary" type="submit">{{ "Save Answers and Progress" if item.slug == "day_1" else "Save Checklist Progress" }}</button>
       {% endif %}
     </div>
     <div class="markdown-body checklist-body">
+      {% if item.slug == "day_1" %}
+        {{ body_before_answers|replace("<h1>", '<p class="markdown-body__source-title" hidden>', 1)|replace("</h1>", "</p>", 1)|safe }}
+        {% include "_day_one_answers.html" %}
+        {{ body_after_answers|safe }}
+      {% else %}
       {{ body|replace("<h1>", '<p class="markdown-body__source-title" hidden>', 1)|replace("</h1>", "</p>", 1)|safe }}
+      {% endif %}
     </div>
     <div class="toolbar progress-panel">
       <div>
         <strong>Ready to save?</strong>
-        <span>Check off what you have practiced, then save your {{ "training" if real_mode else "demo" }} progress.</span>
+        <span>Check off what you have practiced{% if item.slug == "day_1" %} and enter your reflection answers{% endif %}, then save your {{ "training" if real_mode else "demo" }} progress.</span>
       </div>
-      <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="checklist-learner-required"{% endif %}>Save Checklist Progress</button>
+      <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="checklist-learner-required"{% endif %}>{{ "Save Answers and Progress" if item.slug == "day_1" else "Save Checklist Progress" }}</button>
     </div>
   {% if real_mode and not current_student %}</fieldset>{% endif %}
 </form>

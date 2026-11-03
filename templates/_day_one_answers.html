@@ -1,0 +1,18 @@
+<section class="checklist-reflection" aria-labelledby="day-one-reflection-title">
+  <h2 id="day-one-reflection-title">End-of-Day Reflection</h2>
+  <p id="day-one-answer-guidance">Use training examples. Do not include passwords, private personal information, student or employee records, or details from live tickets. Each answer can be up to 4,000 characters.</p>
+  {% if answer_error %}<p role="alert">{{ answer_error }}</p>{% endif %}
+  {% if answers_saved_at %}
+    <p role="status">Answers last saved: {{ answers_saved_at|campus_time }}. You can edit them and save again.</p>
+  {% else %}
+    <p>Your answers will be saved with your checklist progress. You can save a partial response and return later.</p>
+  {% endif %}
+  {% for answer_id, question in reflection_questions %}
+    <div class="field">
+      <label for="answer-{{ answer_id }}">{{ loop.index }}. {{ question }}</label>
+      <textarea id="answer-{{ answer_id }}" name="answer_{{ answer_id }}" rows="4"
+        maxlength="{{ max_answer_length }}" aria-describedby="day-one-answer-guidance"
+        {% if learner_required %}disabled{% endif %}>{{ reflection_answers.get(answer_id, '') }}</textarea>
+    </div>
+  {% endfor %}
+</section>

@@ -72,7 +72,7 @@ def init_accounts_schema(db_path: str | Path, *, allow_existing_records: bool = 
         tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         if "demo_dataset_metadata" in tables or not _BASE_TABLES <= tables:
             raise AccountError("Account initialization requires a complete, non-demo base database.")
-        if not tables <= _BASE_TABLES | ACCOUNT_TABLES | {"sqlite_sequence", "real_dataset_metadata"}:
+        if not tables <= _BASE_TABLES | ACCOUNT_TABLES | {"sqlite_sequence", "real_dataset_metadata", "checklist_answers"}:
             raise AccountError("Account initialization found an unexpected table.")
         if tables & ACCOUNT_TABLES:
             validate_accounts_database(db_path)
@@ -128,7 +128,7 @@ def validate_accounts_database(db_path: str | Path) -> None:
     with closing(_connect(db_path, readonly=True)) as db:
         tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         if not (_BASE_TABLES | ACCOUNT_TABLES) <= tables or not tables <= (
-            _BASE_TABLES | ACCOUNT_TABLES | {"sqlite_sequence", "real_dataset_metadata"}
+            _BASE_TABLES | ACCOUNT_TABLES | {"sqlite_sequence", "real_dataset_metadata", "checklist_answers"}
         ):
             raise AccountError("Database is not a recognized real-user account schema.")
         for table, columns in _ACCOUNT_COLUMNS.items():

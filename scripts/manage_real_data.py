@@ -41,7 +41,7 @@ def parser() -> argparse.ArgumentParser:
         item = commands.add_parser(name, help="create a new snapshot; never overwrite")
         item.add_argument("--source", required=True, type=Path)
         item.add_argument("--destination", required=True, type=Path)
-    migrate = commands.add_parser("migrate", help="write a NEW schema-version-2 copy of a version-1 dataset; never overwrite")
+    migrate = commands.add_parser("migrate", help="write a NEW schema-version-3 copy of a version-1 or version-2 dataset; never overwrite")
     migrate.add_argument("--source", required=True, type=Path)
     migrate.add_argument("--destination", required=True, type=Path)
     for name in ("enroll", "bind-existing"):
@@ -108,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     print("Operation completed; record the authorized change in the restricted operations log.")
     if args.command == "migrate":
-        print("Migrated copy written; the source was not changed. Existing help requests start as Open. Keep learner traffic stopped until the service points at the NEW database, then run smoke checks.")
+        print("Migrated version-3 copy written; the source was not changed. Version-1 help requests start as Open; version-2 status is preserved. Day 1 answers start empty. Keep learner traffic stopped until the NEW release points at the NEW database, then run smoke checks.")
     if args.command == "restore":
         print("Restored sessions were revoked. Keep traffic closed, rotate the signing key, review account/grant changes since the snapshot, select the NEW database path and run smoke checks.")
     return 0
