@@ -188,7 +188,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Check off what you have practiced", response.data)
-        self.assertGreaterEqual(response.data.count(b"Save Checklist Progress"), 2)
+        self.assertGreaterEqual(response.data.count(b"Save Answers and Progress"), 2)
         self.assertEqual(response.data.count(b"<h1"), 1)
         self.assertIn(b"markdown-body__source-title\x22 hidden", response.data)
 

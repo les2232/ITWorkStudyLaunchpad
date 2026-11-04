@@ -82,6 +82,11 @@ from .storage import (
     student_progress_summary,
 )
 from .stuck import generate_stuck_summary
+from .checklist_answers import (
+    DAY_ONE_QUESTIONS, MAX_ANSWER_LENGTH, ChecklistAnswerError,
+    load_checklist_answers, save_checklist_submission,
+    split_day_one_reflection, submitted_day_one_answers,
+)
 
 
 def create_app(config: dict[str, Any] | None = None) -> Flask:
@@ -364,21 +369,47 @@ def create_app(config: dict[str, Any] | None = None) -> Flask:
             abort(404)
         markdown = read_checklist_markdown(slug)
         items = extract_checklist_items(markdown)
-        if request.method == "POST":
-            student = _ensure_student()
-            completed_items = set(request.form.getlist("completed_items"))
-            for index, _item in enumerate(items):
-                save_checklist_progress(student["id"], slug, str(index), str(index) in completed_items, _db_path())
-            return redirect(url_for("checklist_reader", slug=slug))
-        student = _current_student()
+        student = _ensure_student() if request.method == "POST" else _current_student()
+        if request.method == "POST" and student is None:
+            abort(403)
         checked_items = checklist_progress(student["id"], slug, _db_path()) if student else {}
+        answer_state = (
+            load_checklist_answers(student["id"], slug, _db_path())
+            if student and slug == "day_1" else {"answers": {}, "updated_at": None}
+        )
+        answer_error = None
+        status = 200
+        if request.method == "POST":
+            completed_items = set(request.form.getlist("completed_items"))
+            submitted = submitted_day_one_answers(request.form) if slug == "day_1" else {}
+            try:
+                save_checklist_submission(
+                    student["id"], slug, [str(i) for i in range(len(items))],
+                    completed_items, submitted, _db_path(),
+                )
+            except ChecklistAnswerError as exc:
+                answer_error = str(exc)
+                status = 400
+                answer_state["answers"].update(submitted)
+                checked_items = {str(i): str(i) in completed_items for i in range(len(items))}
+            else:
+                return redirect(url_for("checklist_reader", slug=slug))
+        body = render_markdown(markdown, checked_items)
+        before_answers, after_answers = split_day_one_reflection(body) if slug == "day_1" else (body, "")
         return render_template(
             "checklist.html",
             item=checklist,
-            body=render_markdown(markdown, checked_items),
+            body=body,
+            body_before_answers=before_answers,
+            body_after_answers=after_answers,
             items=items,
             checked_count=sum(1 for checked in checked_items.values() if checked),
-        )
+            reflection_questions=DAY_ONE_QUESTIONS,
+            reflection_answers=answer_state["answers"],
+            answers_saved_at=answer_state["updated_at"],
+            max_answer_length=MAX_ANSWER_LENGTH,
+            answer_error=answer_error,
+        ), status
 
     @app.get("/day-1-checklist")
     def day_1_checklist():

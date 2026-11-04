@@ -58,6 +58,7 @@ def build_version_1_real_database(path):
     init_db(path)
     with closing(sqlite3.connect(path)) as db, db:
         db.execute("ALTER TABLE stuck_reports DROP COLUMN resolved_at")
+        db.execute("DROP TABLE checklist_answers")
     init_accounts_schema(path)
     with closing(sqlite3.connect(path)) as db, db:
         db.execute("""CREATE TABLE real_dataset_metadata (
@@ -439,9 +440,9 @@ class RealDatabaseMigrationTests(unittest.TestCase):
         with redirect_stdout(output), redirect_stderr(errors):
             status = manage_real_data.main(["migrate", "--source", str(self.source), "--destination", str(target)])
         self.assertEqual(status, 0)
-        self.assertIn("Existing help requests start as Open", output.getvalue())
+        self.assertIn("Version-1 help requests start as Open", output.getvalue())
         self.assertNotIn(str(self.root), output.getvalue() + errors.getvalue())
-        self.assertEqual(validate_real_database(target)["schema_version"], 2)
+        self.assertEqual(validate_real_database(target)["schema_version"], REAL_SCHEMA_VERSION)
         with redirect_stdout(io.StringIO()), redirect_stderr(errors):
             refused = manage_real_data.main(["migrate", "--source", str(self.source), "--destination", str(target)])
         self.assertEqual(refused, 2)

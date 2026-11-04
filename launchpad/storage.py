@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .content import configured_activity_ids
+from .checklist_answers import add_checklist_answers_table
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -117,6 +118,7 @@ def init_db(db_path: str | Path = DEFAULT_DB_PATH) -> None:
             """
         )
         add_help_request_status_column(db)
+        add_checklist_answers_table(db)
 
 
 def add_help_request_status_column(db: sqlite3.Connection) -> None:
