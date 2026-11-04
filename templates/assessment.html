@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ assessment.title }} | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% set learner_required = demo_mode and not current_student %}
 <section class="content-header">
   <p class="eyebrow">Check-in</p>
   <h1>{{ assessment.title }}</h1>
@@ -52,30 +53,51 @@
 {% endif %}
 {% endif %}
 
+{% if learner_required %}
+<section class="notice-inline identity-required" id="assessment-learner-required" role="status">
+  <strong>Choose a synthetic learner before starting.</strong>
+  <span>Demo mode saves answers only to one of the three fixed synthetic personas.</span>
+  <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
+</section>
+{% endif %}
+
 <form class="assessment-form" method="post" action="{{ action }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+  {% include "_written_answer_notice.html" %}
+  {% if demo_preset_available and assessment.id == "pre_assessment_v1" %}
+    <section class="result-panel demo-shortcut" aria-labelledby="synthetic-preset-heading">
+      <p class="eyebrow">Synthetic demo shortcut</p>
+      <h2 id="synthetic-preset-heading">Use fixed beginner answers</h2>
+      <p>This submits invented answers for <strong>DEMO Nova Byte</strong>. It is available only when the app is started in explicit demo mode.</p>
+      <button class="button" type="submit" name="synthetic_preset" value="beginner" formnovalidate>
+        Submit Synthetic Beginner Answers
+      </button>
+    </section>
+  {% endif %}
   {% for section in assessment.sections %}
     <section class="form-section">
       <h2>{{ section.title }}</h2>
       {% if section.intro %}<p>{{ section.intro }}</p>{% endif %}
       {% for question in section.questions %}
         <fieldset class="question">
-          <legend>{{ question.prompt }}</legend>
+          <legend id="question-{{ question.id }}-prompt">{{ question.prompt }}</legend>
           {% if question.score_scope == "role_alignment" or section.score_scope == "role_alignment" %}
-            <p class="meta">{{ question.category }} · separate role-alignment signal</p>
+            <p class="meta" id="question-{{ question.id }}-meta">{{ question.category }} · separate role-alignment signal</p>
           {% else %}
-            <p class="meta">{{ question.category }} · {{ question.points }} points</p>
+            <p class="meta" id="question-{{ question.id }}-meta">{{ question.category }} · {{ question.points }} points</p>
           {% endif %}
           {% if question.type == "multiple_choice" %}
             {% for option in question.options %}
               <label class="choice">
-                <input type="radio" name="{{ question.id }}" value="{{ option.value }}" required>
+                <input type="radio" name="{{ question.id }}" value="{{ option.value }}" required{% if learner_required %} disabled{% endif %}>
                 <span>{{ option.label }}</span>
               </label>
             {% endfor %}
           {% elif question.type == "select_all" %}
             {% for option in question.options %}
               <label class="choice">
-                <input type="checkbox" name="{{ question.id }}" value="{{ option.value }}">
+                <input type="checkbox" name="{{ question.id }}" value="{{ option.value }}"{% if learner_required %} disabled{% endif %}>
                 <span>{{ option.label }}</span>
               </label>
             {% endfor %}
@@ -83,20 +105,21 @@
             <div class="rating-row" role="group" aria-label="{{ question.prompt }}">
               {% for value in ["1", "2", "3", "4", "5"] %}
                 <label>
-                  <input type="radio" name="{{ question.id }}" value="{{ value }}" required>
+                  <input type="radio" name="{{ question.id }}" value="{{ value }}" required{% if learner_required %} disabled{% endif %}>
                   <span>{{ value }}</span>
                 </label>
               {% endfor %}
             </div>
           {% elif question.type == "free_response" %}
-            <textarea name="{{ question.id }}" rows="4" required></textarea>
+            <textarea id="question-{{ question.id }}" name="{{ question.id }}" rows="4" required aria-labelledby="question-{{ question.id }}-prompt" aria-describedby="question-{{ question.id }}-meta"{% if learner_required %} disabled{% endif %}></textarea>
           {% endif %}
         </fieldset>
       {% endfor %}
     </section>
   {% endfor %}
-  <button class="button primary" type="submit">
+  <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="assessment-learner-required"{% endif %}>
     {% if assessment.id == "pre_assessment_v1" %}See My Recommended Path{% else %}Review My Progress{% endif %}
   </button>
+{% if real_mode and not current_student %}</fieldset>{% endif %}
 </form>
 {% endblock %}

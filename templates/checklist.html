@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ item.title }} | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% set learner_required = demo_mode and not current_student %}
 <article class="reader">
   <div class="reader-heading">
     <a href="{{ url_for('home') }}">Home</a>
@@ -8,6 +9,8 @@
     <p>{{ item.summary }}</p>
   </div>
   <form method="post" action="{{ url_for('checklist_reader', slug=item.slug) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
     <div class="toolbar progress-panel">
       <div>
         <strong>Saved Progress</strong>
@@ -15,22 +18,27 @@
           {% if current_student %}
             {{ checked_count }} / {{ items|length }} items complete for {{ current_student.display_name }}
           {% else %}
-            Choose a demo display name to save checklist progress locally.
+            <span id="checklist-learner-required">Choose a synthetic learner to save checklist progress locally.</span>
           {% endif %}
         </span>
       </div>
-      <button class="button primary" type="submit">Save Checklist Progress</button>
+      {% if learner_required %}
+        <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
+      {% else %}
+        <button class="button primary" type="submit">Save Checklist Progress</button>
+      {% endif %}
     </div>
     <div class="markdown-body checklist-body">
-      {{ body|safe }}
+      {{ body|replace("<h1>", '<p class="markdown-body__source-title" hidden>', 1)|replace("</h1>", "</p>", 1)|safe }}
     </div>
     <div class="toolbar progress-panel">
       <div>
         <strong>Ready to save?</strong>
-        <span>Check off what you have practiced, then save your demo progress.</span>
+        <span>Check off what you have practiced, then save your {{ "training" if real_mode else "demo" }} progress.</span>
       </div>
-      <button class="button primary" type="submit">Save Checklist Progress</button>
+      <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="checklist-learner-required"{% endif %}>Save Checklist Progress</button>
     </div>
-  </form>
+  {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
 </article>
 {% endblock %}

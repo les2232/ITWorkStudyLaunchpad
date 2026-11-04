@@ -278,6 +278,64 @@ def knowledge_gaps(result: dict[str, Any], threshold: int = 70) -> list[dict[str
     return gaps
 
 
+# The only question asked identically in both check-ins. Other questions differ,
+# so the overall score change is approximate rather than a like-for-like measure.
+MATCHED_CONFIDENCE_QUESTION = {
+    "label": "Confidence asking for help when stuck",
+    "pre": ("pre_assessment_v1", "q6"),
+    "post": ("post_assessment_v1", "q1"),
+}
+
+
+def assessment_growth(pre: dict[str, Any] | None, post: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Compare two saved results using recorded values only; never rescore answers."""
+    if not pre or not post:
+        return None
+    pre_saved_at, post_saved_at = pre.get("created_at") or "", post.get("created_at") or ""
+    # Both timestamps come from storage.utc_now(), so string order is time order.
+    if not pre_saved_at or not post_saved_at or post_saved_at < pre_saved_at:
+        return {"comparable": False, "pre_saved_at": pre_saved_at, "post_saved_at": post_saved_at}
+
+    pre_score, post_score = _recorded_number(pre.get("technical_score")), _recorded_number(post.get("technical_score"))
+    pre_rating = _recorded_rating(pre, MATCHED_CONFIDENCE_QUESTION["pre"])
+    post_rating = _recorded_rating(post, MATCHED_CONFIDENCE_QUESTION["post"])
+    return {
+        "comparable": True,
+        "pre_saved_at": pre_saved_at,
+        "post_saved_at": post_saved_at,
+        "pre_score": pre_score,
+        "post_score": post_score,
+        "score_change": post_score - pre_score if pre_score is not None and post_score is not None else None,
+        "confidence": {
+            "label": MATCHED_CONFIDENCE_QUESTION["label"],
+            "pre": pre_rating,
+            "post": post_rating,
+            "change": post_rating - pre_rating,
+        } if pre_rating is not None and post_rating is not None else None,
+    }
+
+
+def _recorded_number(value: Any) -> int | float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return value
+
+
+def _recorded_rating(saved: dict[str, Any], question: tuple[str, str]) -> int | None:
+    assessment_id, question_id = question
+    answers = saved.get("answers")
+    if saved.get("assessment_id") != assessment_id or not isinstance(answers, dict):
+        return None
+    value = answers.get(question_id)
+    if isinstance(value, bool):
+        return None
+    try:
+        rating = int(str(value).strip())
+    except ValueError:
+        return None
+    return rating if 1 <= rating <= 5 else None
+
+
 def collect_form_responses(assessment: dict[str, Any], form: Any) -> dict[str, Any]:
     responses = {}
     for question in all_questions(assessment):

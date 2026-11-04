@@ -124,6 +124,14 @@ class StorageTests(unittest.TestCase):
     def test_supervisor_overview_loads_persisted_progress(self):
         student = create_or_find_student("Morgan", self.db_path)
         mark_module_complete(student["id"], "hardware_basics", True, self.db_path)
+        save_assessment_result(
+            student["id"],
+            "post_assessment_v1",
+            "post",
+            {"score": 80, "readiness_label": "Ready for Supervised Beginner Tasks"},
+            {},
+            self.db_path,
+        )
 
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
         client = app.test_client()
@@ -135,6 +143,8 @@ class StorageTests(unittest.TestCase):
         self.assertIn(b"Morgan", response.data)
         self.assertIn(b"Modules complete: 1", response.data)
         self.assertIn(b"Module quizzes complete: 0", response.data)
+        self.assertIn(b"Latest progress check: 80% auto-scored", response.data)
+        self.assertIn(b"Ready for Supervised Beginner Tasks", response.data)
 
     def test_web_progress_forms_create_demo_student_and_summary_counts(self):
         app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
@@ -175,6 +185,105 @@ class StorageTests(unittest.TestCase):
         self.assertEqual(summary[0]["checklist_completed_count"], 2)
         self.assertEqual(summary[0]["stuck_report_count"], 1)
         self.assertIn(b"Module quizzes complete: 1", student_response.data)
+
+    def test_student_progress_links_to_saved_recommended_path(self):
+        student = create_or_find_student("Avery Demo", self.db_path)
+        assessment = load_assessment("pre_assessment_v1")
+        result = score_assessment(assessment, {})
+        path = get_training_path(result["score"])
+        result["path_label"] = path["label"]
+        result["recommended_path"] = path["recommended_path"]
+        save_assessment_result(student["id"], assessment["id"], "pre", result, {}, self.db_path)
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Avery Demo"})
+
+        response = client.get("/student")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Your Next Step: What Does IT Do?", response.data)
+        self.assertIn(b"Continue with What Does IT Do?", response.data)
+        self.assertIn(b'href="/modules/what_does_it_do"', response.data)
+
+    def test_student_progress_without_saved_path_links_to_starting_check(self):
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Casey Demo"})
+
+        response = client.get("/student")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Find Your Starting Path", response.data)
+        self.assertIn(b"not a pass/fail test", response.data)
+        self.assertIn(b'href="/pre-assessment"', response.data)
+
+    def test_home_requires_demo_name_before_anonymous_starting_check(self):
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Start assessment", response.data)
+        self.assertIn(b'href="/student?next=/pre-assessment"', response.data)
+
+        started = client.post(
+            "/student?next=/pre-assessment",
+            data={"display_name": "Home Start Demo"},
+        )
+        self.assertEqual(started.status_code, 302)
+        self.assertEqual(started.headers["Location"], "/pre-assessment")
+
+    def test_home_links_named_student_without_path_to_starting_check(self):
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Home New Demo"})
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Start assessment", response.data)
+        self.assertIn(b'href="/pre-assessment"', response.data)
+        self.assertNotIn(b"Save a Demo Name", response.data)
+
+    def test_home_links_returning_student_to_first_unfinished_step(self):
+        student = create_or_find_student("Home Returning Demo", self.db_path)
+        assessment = load_assessment("pre_assessment_v1")
+        result = score_assessment(assessment, {})
+        path = get_training_path(result["score"])
+        result["path_label"] = path["label"]
+        result["recommended_path"] = path["recommended_path"]
+        save_assessment_result(student["id"], assessment["id"], "pre", result, {}, self.db_path)
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Home Returning Demo"})
+
+        response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Continue: What Does IT Do?", response.data)
+        self.assertIn(b"What Does IT Do?", response.data)
+        self.assertIn(b'href="/modules/what_does_it_do"', response.data)
+
+    def test_student_progress_with_incomplete_saved_result_falls_back_safely(self):
+        student = create_or_find_student("Jordan Demo", self.db_path)
+        save_assessment_result(
+            student["id"],
+            "pre_assessment_v1",
+            "pre",
+            {"recommended_path": "Full IT Foundations path"},
+            {},
+            self.db_path,
+        )
+        app = create_app({"TESTING": True, "LAUNCHPAD_DB_PATH": str(self.db_path)})
+        client = app.test_client()
+        client.post("/student", data={"display_name": "Jordan Demo"})
+
+        response = client.get("/student")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Find Your Starting Path", response.data)
+        self.assertIn(b'href="/pre-assessment"', response.data)
 
 
 if __name__ == "__main__":

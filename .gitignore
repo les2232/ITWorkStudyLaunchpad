@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 .env
+.env.*
 
 # Databases / generated files
 *.db
@@ -23,3 +24,31 @@ instance/
 # Cache
 .cache/
 .pytest_cache/
+
+# Deployment credentials and private certificate artifacts (examples are safe)
+*.key
+*.pem
+*.p12
+*.pfx
+deploy/vm/*.env
+
+# Local public AD certificate review uploads
+/work/ad-ca-review/
+
+# Isolated controlled-login configuration and test records
+/work/ad-login-test/
+
+# Isolated controlled work-study datasets, identity mappings and signing keys
+/work/controlled-work-study/
+
+# Isolated visual-review candidates and synthetic browser captures
+/work/visual-review/
+
+# Isolated native-form authentication regression review
+/work/login-origin-review/
+
+# Isolated read-only mentor review candidates and private verification
+/work/mentor-review/
+
+# Isolated AD username update preparation
+/work/username-review/

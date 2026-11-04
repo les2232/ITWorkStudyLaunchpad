@@ -1,0 +1,63 @@
+{
+  "document_type": "operator_policy_template_not_application_configuration",
+  "status": "CCA_DECISION_REQUIRED",
+  "application_reads_this_file": false,
+  "automatic_deletion_implemented": false,
+  "custodian_role": null,
+  "policy_reference": null,
+  "learner_notice_reference": null,
+  "records": {
+    "progress_and_assessment_results": {
+      "retain_days": null,
+      "start_event": null,
+      "includes": [
+        "scores",
+        "path_and_readiness_labels",
+        "derived_work_style_and_support_signals"
+      ]
+    },
+    "written_answers_help_and_practice": {
+      "retain_days": null,
+      "start_event": null
+    },
+    "identity_mapping_after_departure": {
+      "retain_days": null,
+      "start_event": null
+    },
+    "expired_or_revoked_sessions": {
+      "retain_days": null,
+      "start_event": null
+    },
+    "access_audit": {
+      "retain_days": null,
+      "start_event": null
+    },
+    "legacy_and_migration_copies": {
+      "retain_days": null,
+      "start_event": null
+    }
+  },
+  "backups": {
+    "owner_role": null,
+    "approved_destination_reference": null,
+    "encryption_and_key_custodian_reference": null,
+    "interval_hours": null,
+    "retain_days": null,
+    "recovery_point_target_hours": null,
+    "recovery_time_target_hours": null,
+    "restore_drill_interval_days": null,
+    "failure_alert_recipient_role": null
+  },
+  "external_logs": {
+    "proxy_and_host_retain_days": null,
+    "identity_provider_retain_days": null,
+    "access_owner_role": null
+  },
+  "holds_corrections_and_disposal": {
+    "approval_role": null,
+    "approved_process_reference": null,
+    "backup_and_restored_copy_handling_reference": null,
+    "enforcement_procedure_reference": null
+  },
+  "note": "Null means undecided, not zero days or approved indefinite retention. Filling this template does not delete records or configure enforcement. Resolve CCA policy and an approved procedure before real training. Do not include credentials or learner identifiers."
+}

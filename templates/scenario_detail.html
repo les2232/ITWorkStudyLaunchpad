@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ scenario.title }} | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% set learner_required = demo_mode and not current_student %}
 <section class="content-header">
   <p class="eyebrow">Scenario Practice</p>
   <h1>{{ scenario.title }}</h1>
@@ -12,11 +13,18 @@
     <h2>Situation</h2>
     <p>{{ scenario.situation }}</p>
     <p><strong>{{ scenario.student_prompt }}</strong></p>
+    {% if learner_required %}
+      <p class="notice-inline" id="scenario-learner-required">Choose a synthetic learner before writing a saved practice draft. <a href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a></p>
+    {% endif %}
     <form class="question-form" method="post" action="{{ url_for('scenario_detail', scenario_id=scenario.id) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+      {% include "_written_answer_notice.html" %}
       <label for="student_response">Your draft response</label>
-      <textarea id="student_response" name="student_response" rows="7" required>{{ student_response }}</textarea>
-      <button class="button primary" type="submit">Review Scenario</button>
-    </form>
+      <textarea id="student_response" name="student_response" rows="7" required{% if learner_required %} disabled{% endif %}>{{ student_response }}</textarea>
+      <button class="button primary" type="submit"{% if learner_required %} disabled aria-describedby="scenario-learner-required"{% endif %}>Review Scenario</button>
+    {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
   </div>
   <div>
     <h2>Related Modules</h2>

@@ -1,0 +1,3 @@
+<p class="step-meta"><span class="status-badge status-badge--{{ step.status|replace('_', '-') }}">{{ step.status_label }}</span>{% if step.status_detail %} <span class="meta">{{ step.status_detail }}</span>{% endif %}</p>
+{% if step.summary %}<p>{{ step.summary }}</p>{% endif %}
+{% if step.purpose %}<p class="step-purpose"><strong>Why it matters:</strong> {{ step.purpose }}</p>{% endif %}

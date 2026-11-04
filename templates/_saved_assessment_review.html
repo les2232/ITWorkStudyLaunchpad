@@ -1,0 +1,48 @@
+<div class="summary-output">
+  <h3>{{ assessment_label }}</h3>
+  <p class="meta">Assessment: {{ saved_result.assessment_id }} · Saved: {{ saved_result.saved_at or "Time not recorded" }}</p>
+  <dl>
+    <dt>Recorded auto-scored result</dt>
+    <dd>{% if saved_result.score is not none %}{{ saved_result.score }}%{% else %}Score not recorded{% endif %}</dd>
+    <dt>{% if saved_result.assessment_type == "pre" %}Recorded readiness / path level{% else %}Recorded readiness{% endif %}</dt>
+    <dd>{{ saved_result.readiness_label or "Not recorded" }}</dd>
+    <dt>Recorded training path</dt>
+    <dd>{{ saved_result.recommended_path or "Not recorded" }}</dd>
+    <dt>Recorded role alignment</dt>
+    <dd>{{ saved_result.role_alignment_label or "Not recorded" }}</dd>
+  </dl>
+  {% if saved_result.role_alignment %}
+    {% set alignment = saved_result.role_alignment %}
+    {% if alignment.title %}<p><strong>{{ alignment.title }}</strong></p>{% endif %}
+    {% if alignment.recommended_alignment and alignment.recommended_alignment.summary %}<p>{{ alignment.recommended_alignment.summary }}</p>{% endif %}
+    {% if alignment.signals %}
+      <ul>{% for signal in alignment.signals %}<li>{{ signal.label }}: {{ signal.score }} / {{ signal.possible }}{% if signal.percent is defined %} ({{ signal.percent }}%){% endif %}{% if signal.level %} · {{ signal.level }}{% endif %}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if alignment.mentor_note %}<p class="meta">{{ alignment.mentor_note }}</p>{% endif %}
+    {% if alignment.recommended_alignment and alignment.recommended_alignment.next_steps %}
+      <p><strong>Recorded check-in suggestions</strong></p>
+      <ul>{% for step in alignment.recommended_alignment.next_steps %}<li>{{ step }}</li>{% endfor %}</ul>
+    {% endif %}
+  {% else %}
+    <p>Role-alignment detail was not recorded.</p>
+  {% endif %}
+  <p class="meta">Detailed technical category scores, point totals, and per-answer correctness were not stored and are unavailable. These results have not been rescored.</p>
+  {% if saved_result.answer_items %}
+    <details>
+      <summary>Saved answers ({{ saved_result.answer_items|length }})</summary>
+      <p class="meta">Saved answer values appear exactly as recorded. Technical question and option labels come from current assessment content; original technical-question wording was not stored. Recorded role-alignment labels are identified when available.</p>
+      <ol>
+        {% for item in saved_result.answer_items %}
+          <li>
+            <p><strong>{{ item.id }}</strong> · {{ item.prompt or "Question label unavailable" }}</p>
+            {% if item.prompt %}<span class="meta">{% if item.prompt_recorded %}Recorded question label{% else %}Current question label{% endif %}</span>{% endif %}
+            <pre>{{ item.response }}</pre>
+            {% if item.recorded_option_label %}<p class="meta">Recorded option label: {{ item.recorded_option_label }}</p>{% elif item.current_option_labels %}<p class="meta">Current option label: {{ item.current_option_labels|join("; ") }}</p>{% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </details>
+  {% else %}
+    <p>No answer details were recorded for this assessment.</p>
+  {% endif %}
+</div>

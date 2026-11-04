@@ -1,0 +1,33 @@
+# SYNTHETIC-ONLY reference: this is not the real-user release configuration.
+# Creating this paid service requires explicit authorization.
+services:
+  - type: web
+    name: it-work-study-launchpad-pilot
+    runtime: python
+    plan: 0.5c-512mb
+    numInstances: 1
+    autoDeployTrigger: "off"
+    buildCommand: pip install -r requirements-real.txt && python scripts/check_all.py
+    startCommand: python scripts/start_pilot.py
+    # All HTTP routes require invitation credentials; use Render's TCP check.
+    disk:
+      name: launchpad-synthetic-pilot
+      mountPath: /tmp/launchpad-pilot
+      sizeGB: 1
+    envVars:
+      - key: LAUNCHPAD_PILOT_MODE
+        value: "1"
+      - key: LAUNCHPAD_DEMO_MODE
+        value: "1"
+      - key: LAUNCHPAD_DATA_DIR
+        value: /tmp/launchpad-pilot
+      - key: LAUNCHPAD_DB_PATH
+        value: /tmp/launchpad-pilot/pilot.sqlite
+      - key: LAUNCHPAD_INITIALIZE_DEMO
+        value: "0"
+      - key: LAUNCHPAD_SECRET_KEY
+        generateValue: true
+      - key: LAUNCHPAD_PILOT_USERNAME
+        sync: false
+      - key: LAUNCHPAD_PILOT_PASSWORD_HASH
+        sync: false

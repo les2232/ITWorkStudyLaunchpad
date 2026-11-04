@@ -1,69 +1,70 @@
 {% extends "base.html" %}
 {% block title %}Home | IT Work Study Launchpad{% endblock %}
 {% block content %}
-<section class="intro-band">
-  <div>
-    <p class="eyebrow">Beginner IT onboarding</p>
-    <h1>Start here: learn the basics, practice safely, and ask for help.</h1>
-    <p class="lede">Welcome to the team. This prototype helps new work-study students find a starting path, read foundation modules, practice with checklists and scenarios, ask beginner questions, and prepare mentor summaries.</p>
+<section class="focus-panel" id="home-next-action" aria-labelledby="home-heading">
+  {% if recommended_path and continuation and continuation.complete %}
+    <p class="eyebrow">Review onboarding · {{ recommended_path.label }} path</p>
+    <h1 id="home-heading">Required steps recorded</h1>
+    <p>You have recorded the steps in your current path. Review your progress with a mentor before taking on new work.</p>
+    <p class="meta">Recorded completion is not mentor-confirmed readiness or permission to work independently.</p>
+    {% if path_progress and path_progress.follow_up %}{% with follow_up = path_progress.follow_up, heading_level = 2 %}{% include "_follow_up.html" %}{% endwith %}{% endif %}
+  {% elif recommended_path and continuation %}
+    <p class="eyebrow">Your next step · {{ recommended_path.label }} path</p>
+    <h1 id="home-heading">Welcome back, {{ current_student.display_name }}.</h1>
+    {% if path_progress and path_progress.current %}
+      <h2 class="next-step-title">Next: {{ path_progress.current.title }}</h2>
+      {% with step = path_progress.current %}{% include "_step_explainer.html" %}{% endwith %}
+    {% else %}
+      <p>Pick up at your first unfinished step.</p>
+    {% endif %}
+  {% else %}
+    <p class="eyebrow">Start here</p>
+    <h1 id="home-heading">Welcome to the Launchpad.</h1>
+    <p>Learn IT basics, practice safe decisions, and know when to ask for help. Start with an assessment to find your learning path.</p>
+    {% if not current_student %}<p class="meta">Choose a synthetic learner first so your demo progress stays together.</p>{% endif %}
+  {% endif %}
+
+  <div class="focus-panel__actions">
+    {% if recommended_path and continuation and continuation.complete %}
+      {% if path_progress and path_progress.follow_up %}
+        <a class="button primary" href="{{ path_progress.follow_up.url }}">{{ path_progress.follow_up.action }}</a>
+      {% else %}
+        <a class="button primary" href="{{ url_for('student_identity') }}">Review progress</a>
+      {% endif %}
+    {% elif recommended_path and continuation %}
+      <a class="button primary" href="{{ continuation.url }}">Continue: {{ continuation.title }}</a>
+    {% else %}
+      <a class="button primary" href="{{ url_for('pre_assessment') if current_student else url_for('student_identity', next=url_for('pre_assessment')) }}">Start assessment</a>
+    {% endif %}
+    <div class="quiet-links">
+      {% if recommended_path %}
+        <a href="{{ url_for('training_path', slug=recommended_path.slug) }}">View full learning plan</a>
+      {% else %}
+        <a href="{{ url_for('day_1_checklist') }}">Day 1 checklist</a>
+      {% endif %}
+      <a href="{{ url_for('help') }}">Get help</a>
+    </div>
   </div>
-  <div class="status-panel">
-    <span>{{ module_count }} modules</span>
-    <span>{{ checklist_count }} checklists</span>
-    <span>{{ scenario_count }} scenarios</span>
-    <span>{{ paths|length }} paths</span>
-  </div>
+
+  {% if path_progress %}
+    <div class="progress-summary">
+      <label for="home-path-progress">{{ path_progress.completed_count }} of {{ path_progress.total_count }} path steps recorded</label>
+      <progress id="home-path-progress" value="{{ path_progress.completed_count }}" max="{{ path_progress.total_count or 1 }}">{{ path_progress.completed_count }} of {{ path_progress.total_count }}</progress>
+      <p class="meta">Knowledge checks and mentor review are shown separately in your plan.</p>
+    </div>
+  {% endif %}
 </section>
 
-<section class="action-grid" aria-label="Launchpad actions">
-  <a class="action-card primary" href="{{ url_for('pre_assessment') }}">
-    <span>Start</span>
-    <strong>Starting Point Check</strong>
-    <small>Find a recommended starting path.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('module_index') }}">
-    <span>Learn</span>
-    <strong>IT Foundations</strong>
-    <small>Read modules and check your understanding.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('day_1_checklist') }}">
-    <span>Check</span>
-    <strong>Day 1 Checklist</strong>
-    <small>Walk through first-day basics.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('week_1_checklist') }}">
-    <span>Build</span>
-    <strong>Week 1 Checklist</strong>
-    <small>Move into supervised practice.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('ask') }}">
-    <span>Ask</span>
-    <strong>Ask a Question</strong>
-    <small>Get safe beginner guidance.</small>
-  </a>
-  <a class="action-card urgent" href="{{ url_for('stuck') }}">
-    <span>Ask for help</span>
-    <strong>I'm Stuck</strong>
-    <small>Create a mentor-ready summary.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('scenario_index') }}">
-    <span>Practice</span>
-    <strong>Practice Scenarios</strong>
-    <small>Try safe judgment exercises.</small>
-  </a>
-  <a class="action-card" href="{{ url_for('post_assessment') }}">
-    <span>Review</span>
-    <strong>Progress Check</strong>
-    <small>Check what feels clearer after training.</small>
-  </a>
-</section>
+{% include "_help_request_status.html" %}
 
-<section class="path-strip" aria-label="Training paths">
-  {% for path in paths %}
-    <a href="{{ url_for('training_path', slug=path.slug) }}">
-      <strong>{{ path.label }}</strong>
-      <span>{{ path.min_score }}-{{ path.max_score }}</span>
-    </a>
-  {% endfor %}
+<section aria-labelledby="journey-heading">
+  <h2 id="journey-heading">Your onboarding journey</h2>
+  <ol class="journey-list">
+    <li><strong>Get set up</strong><p>Work through your first-day tasks.</p><a href="{{ url_for('day_1_checklist') }}">Day 1 checklist</a></li>
+    <li><strong>Assess</strong><p>Find your starting point.</p><a href="{{ url_for('pre_assessment') if current_student else url_for('student_identity', next=url_for('pre_assessment')) }}">Starting Point Check</a></li>
+    <li><strong>Follow your learning path</strong><p>Learn one step at a time.</p><a href="{{ url_for('learn') }}">Learn</a></li>
+    <li><strong>Practice</strong><p>Try safe decisions and ask for feedback.</p><a href="{{ url_for('scenario_index') }}">Practice scenarios</a></li>
+    <li><strong>Check readiness</strong><p>Review what you learned with a mentor.</p><a href="{{ url_for('post_assessment') }}">Progress Check</a></li>
+  </ol>
 </section>
 {% endblock %}

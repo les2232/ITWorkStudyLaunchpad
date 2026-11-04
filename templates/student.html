@@ -1,26 +1,115 @@
 {% extends "base.html" %}
-{% block title %}My Demo Progress | IT Work Study Launchpad{% endblock %}
+{% block title %}Progress | IT Work Study Launchpad{% endblock %}
 {% block content %}
-<section class="content-header">
+<header class="content-header">
   <p class="eyebrow">Saved progress</p>
-  <h1>My Demo Progress</h1>
-  <p class="lede">Use a demo display name so this local prototype can keep your learning progress and mentor summaries together. Do not enter real student records.</p>
-</section>
+  <h1>{% if real_mode %}My Progress{% else %}My Demo Progress{% endif %}</h1>
+  {% if current_student %}
+    <p>Progress for <strong>{{ current_student.display_name }}</strong>.</p>
+  {% elif demo_mode %}
+    <p>Choose one of the three fixed synthetic learners. Demo mode does not accept other names or real student information.</p>
+  {% else %}
+    <p>Save a demo display name to keep your progress together. Do not enter real student records.</p>
+  {% endif %}
+</header>
 
-<form class="question-form" method="post" action="{{ url_for('student_identity', next=next_url) }}">
-  <label>Display name
-    <input type="text" name="display_name" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}" required>
-  </label>
-  <button class="button primary" type="submit">Save Demo Name</button>
-</form>
+{% if current_student %}
+<section class="focus-panel" id="progress-next-action">
+  {% if recommended_path and continuation and continuation.complete %}
+    <p class="eyebrow">{{ recommended_path.label }} path</p>
+    <h2>Required steps recorded</h2>
+    <p>Review your progress with your mentor before moving into new or independent work. Recorded completion is not mentor-confirmed readiness.</p>
+    {% if path_progress and path_progress.follow_up %}
+      {% with follow_up = path_progress.follow_up %}{% include "_follow_up.html" %}{% endwith %}
+      <a class="button primary" href="{{ path_progress.follow_up.url }}">{{ path_progress.follow_up.action }}</a>
+    {% else %}
+      <a class="button primary" href="{{ url_for('training_path', slug=recommended_path.slug) }}">Review My Training Path</a>
+    {% endif %}
+  {% elif recommended_path and continuation %}
+    <p class="eyebrow">{{ recommended_path.label }} path</p>
+    <h2>Your Next Step: {{ continuation.title }}</h2>
+    {% if path_progress and path_progress.current %}{% with step = path_progress.current %}{% include "_step_explainer.html" %}{% endwith %}{% endif %}
+    <a class="button primary" href="{{ continuation.url }}">Continue with {{ continuation.title }}</a>
+  {% else %}
+    <h2>Find Your Starting Path</h2>
+    <p>Complete the Starting Point Check to find your learning path. This is not a pass/fail test.</p>
+    <a class="button primary" href="{{ url_for('pre_assessment') }}">Start assessment</a>
+  {% endif %}
+  {% if path_progress %}
+    <div class="progress-summary">
+      <label for="student-path-progress">{{ path_progress.completed_count }} of {{ path_progress.total_count }} path steps recorded</label>
+      <progress id="student-path-progress" value="{{ path_progress.completed_count }}" max="{{ path_progress.total_count or 1 }}">{{ path_progress.completed_count }} of {{ path_progress.total_count }}</progress>
+    </div>
+  {% endif %}
+  <div class="quiet-links">
+    <a href="{{ url_for('post_assessment') }}">Progress Check</a>
+    <a href="{{ url_for('help') }}">Get help</a>
+  </div>
+</section>
+{% include "_help_request_status.html" %}
+{% endif %}
 
 {% if progress %}
-<section class="progress-section">
-  <h2>Local Demo Progress Summary</h2>
-  <span>Modules complete: {{ progress.module_completed_count }}</span>
-  <span>Module quizzes complete: {{ progress.module_quiz_completed_count }}</span>
-  <span>Checklist items complete: {{ progress.checklist_completed_count }}</span>
-  <span>Help requests: {{ progress.stuck_report_count }}</span>
-</section>
+<details class="disclosure" id="progress-records">
+  <summary>Detailed saved records</summary>
+  <h2>{% if real_mode %}Saved Progress Summary{% else %}Local Demo Progress Summary{% endif %}</h2>
+  <ul class="resource-list">
+    <li>Modules complete: {{ progress.module_completed_count }}</li>
+    <li>Module quizzes complete: {{ progress.module_quiz_completed_count }}</li>
+    <li>Checklist items complete: {{ progress.checklist_completed_count }}</li>
+    <li>Help requests: {{ progress.stuck_report_count }}</li>
+  </ul>
+  <p class="meta">Knowledge checks and help requests are recorded separately from the path-step count.</p>
+  {% if recommended_path %}<p><a href="{{ url_for('assessment_results') }}">Review starting assessment results</a> · <a href="{{ url_for('training_path', slug=recommended_path.slug) }}">View full learning plan</a></p>{% endif %}
+</details>
+{% endif %}
+
+{% if not real_mode %}
+{% if current_student %}
+<details class="disclosure" id="learner-selection"{% if next_url != '/' %} open{% endif %}>
+  <summary>Switch demo learner</summary>
+{% endif %}
+<form class="question-form" method="post" action="{{ url_for('student_identity', next=next_url) }}">
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+  {% if demo_mode %}
+    <fieldset class="persona-picker">
+      <legend>Choose a synthetic learner</legend>
+      <p class="persona-picker__intro">Each persona begins at a different point in the demonstration. Selecting one changes only synthetic local progress.</p>
+      <div class="persona-grid">
+        <label class="persona-card persona-card--nova">
+          <input type="radio" name="display_name" value="DEMO Nova Byte"{% if current_student and current_student.display_name == "DEMO Nova Byte" %} checked{% endif %} required>
+          <span class="persona-card__content">
+            <span class="persona-card__role">New beginner</span>
+            <strong>DEMO Nova Byte</strong>
+            <span>Complete the starting assessment and open a recommended path.</span>
+          </span>
+        </label>
+        <label class="persona-card persona-card--riley">
+          <input type="radio" name="display_name" value="DEMO Riley Resume"{% if current_student and current_student.display_name == "DEMO Riley Resume" %} checked{% endif %} required>
+          <span class="persona-card__content">
+            <span class="persona-card__role">Returning learner</span>
+            <strong>DEMO Riley Resume</strong>
+            <span>Resume at the first unfinished Ready to Shadow activity.</span>
+          </span>
+        </label>
+        <label class="persona-card persona-card--quinn">
+          <input type="radio" name="display_name" value="DEMO Quinn Quest"{% if current_student and current_student.display_name == "DEMO Quinn Quest" %} checked{% endif %} required>
+          <span class="persona-card__content">
+            <span class="persona-card__role">Scenario learner</span>
+            <strong>DEMO Quinn Quest</strong>
+            <span>Continue directly to the no-display troubleshooting lab.</span>
+          </span>
+        </label>
+      </div>
+      <button class="button primary" type="submit">Use Selected Learner</button>
+    </fieldset>
+  {% else %}
+    <label>Display name
+      <input type="text" name="display_name" autocomplete="name" value="{{ current_student.display_name if current_student else '' }}" required>
+    </label>
+    <button class="button primary" type="submit">Save Demo Name</button>
+  {% endif %}
+</form>
+{% if current_student %}</details>{% endif %}
 {% endif %}
 {% endblock %}

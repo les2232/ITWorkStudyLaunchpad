@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Help | IT Work Study Launchpad{% endblock %}
+{% block content %}
+<section class="focus-panel" aria-labelledby="help-heading">
+  <p class="eyebrow">Support when you need it</p>
+  <h1 id="help-heading">Help</h1>
+  <p>If you are stuck or unsure about the next safe step, pause and ask a mentor or IT tech.</p>
+  <div class="focus-panel__actions">
+    <a class="button primary" href="{{ url_for('student_identity', next=url_for('stuck')) if demo_mode and not current_student else url_for('stuck') }}">Prepare a help request</a>
+  </div>
+  <p class="meta">This creates a summary for you to share with a mentor. It does not send a message.</p>
+  <div class="quiet-links">
+    <a href="{{ url_for('help_requests') }}">My help requests</a>
+    <a href="{{ url_for('ask') }}">Ask a question</a>
+    <a href="{{ url_for('mentor_summary') }}">View the mentor summary template</a>
+  </div>
+</section>
+
+{% include "_help_request_status.html" %}
+
+<section aria-labelledby="help-options-heading">
+  <h2 id="help-options-heading">Choose the support you need</h2>
+  <dl class="help-options">
+    <dt>Prepare a help request</dt>
+    <dd>Describe what you tried, what happened, and where you need guidance. {% if real_mode %}Include only the training details needed for help; never include passwords or private user information.{% else %}Use synthetic information only.{% endif %}</dd>
+    <dt>Ask a question</dt>
+    <dd>Look up a beginner explanation or safe first checks. These responses are general guidance; a mentor decides the next approved workplace step.</dd>
+    <dt>Mentor summary template</dt>
+    <dd>Review the format for a clear handoff before writing your own.</dd>
+  </dl>
+</section>
+{% endblock %}

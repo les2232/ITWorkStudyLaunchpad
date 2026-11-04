@@ -6,49 +6,47 @@
     <a href="{{ url_for('module_index') }}">All modules</a>
     <h1>{{ item.title }}</h1>
     <p>{{ item.summary }}</p>
-  </div>
-  <section class="progress-panel">
-    <h2>Saved Progress</h2>
     {% if current_student %}
-      <p>{{ "Completed" if completed else "Not completed yet" }} for {{ current_student.display_name }}.</p>
-    {% else %}
-      <p>Choose a demo display name to save module progress locally.</p>
+      <p class="progress-summary">{{ "Recorded" if completed else "Not recorded" }} for {{ current_student.display_name }}.</p>
     {% endif %}
-    <form method="post" action="{{ url_for('module_reader', slug=item.slug) }}">
-      {% if completed %}
-        <input type="hidden" name="completed" value="0">
-        <button class="button" type="submit">Mark Not Complete</button>
-      {% else %}
-        <input type="hidden" name="completed" value="1">
-        <button class="button primary" type="submit">Mark Module Complete</button>
-      {% endif %}
-    </form>
-  </section>
-  {% if quiz %}
-  <section class="progress-panel knowledge-check-panel">
-    <div>
-      <p class="eyebrow">Knowledge check</p>
-      <h2>{{ quiz.title }}</h2>
-      <p>Use a short, low-stakes knowledge check after reviewing this module.</p>
-      {% if latest_quiz_result %}
-        <span>Last saved result: {{ latest_quiz_result.earned }} / {{ latest_quiz_result.possible }} correct ({{ latest_quiz_result.score }}%).</span>
-      {% endif %}
-    </div>
-    <a class="button primary" href="{{ url_for('module_quiz', slug=item.slug) }}">Check Your Understanding</a>
-  </section>
-  {% endif %}
-  <div class="markdown-body">
-    {{ body|safe }}
   </div>
-  {% if quiz %}
-  <section class="progress-panel knowledge-check-panel">
-    <div>
-      <p class="eyebrow">Next step</p>
-      <h2>Ready to check your understanding?</h2>
-      <p>Read through the module first, then use the short knowledge check when you are ready.</p>
+  <div class="markdown-body">
+    {{ body|replace("<h1>", '<p class="markdown-body__source-title" hidden>', 1)|replace("</h1>", "</p>", 1)|safe }}
+  </div>
+  <section class="module-next-steps" aria-labelledby="module-next-heading">
+    <h2 id="module-next-heading">After reading</h2>
+    {% if current_student or not demo_mode %}
+      <form method="post" action="{{ url_for('module_reader', slug=item.slug) }}">
+  {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
+  {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+        {% if completed %}
+          <p>Reading recorded as complete. You can reopen it if you need to review again.</p>
+          <input type="hidden" name="completed" value="0">
+          <button class="button" type="submit">Mark Not Complete</button>
+        {% else %}
+          <p>Record your reading progress when you have worked through the module.</p>
+          <input type="hidden" name="completed" value="1">
+          <button class="button primary" type="submit">Mark Module Complete</button>
+        {% endif %}
+      {% if real_mode and not current_student %}</fieldset>{% endif %}
+</form>
+    {% else %}
+      <p>Choose a synthetic learner to save module progress locally.</p>
+      <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose Demo Learner</a>
+    {% endif %}
+    {% if quiz %}
+      <div class="module-knowledge-check">
+        <h3>Check your understanding</h3>
+        <p>Use the short knowledge check after reviewing this module.</p>
+        {% if latest_quiz_result %}
+          <p class="progress-summary">Last saved result: {{ latest_quiz_result.earned }} / {{ latest_quiz_result.possible }} correct ({{ latest_quiz_result.score }}%).</p>
+        {% endif %}
+        <a class="button{% if completed %} primary{% endif %}" href="{{ url_for('module_quiz', slug=item.slug) }}">Check Your Understanding</a>
+      </div>
+    {% endif %}
+    <div class="quiet-links">
+      <a href="{{ url_for('learn') }}">Back to your learning plan</a>
     </div>
-    <a class="button primary" href="{{ url_for('module_quiz', slug=item.slug) }}">Check Your Understanding</a>
   </section>
-  {% endif %}
 </article>
 {% endblock %}

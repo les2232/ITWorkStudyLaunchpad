@@ -25,6 +25,20 @@ def list_checklists() -> list[dict[str, Any]]:
     return load_json("checklists.json")
 
 
+def configured_activity_ids() -> set[str]:
+    activity_ids = set()
+    for path in load_json("training_paths.json").get("levels", []):
+        if not isinstance(path, dict):
+            continue
+        for item in path.get("required_items", []):
+            if not isinstance(item, dict):
+                continue
+            activity_id = item.get("id")
+            if item.get("type") == "activity" and isinstance(activity_id, str) and activity_id:
+                activity_ids.add(activity_id)
+    return activity_ids
+
+
 def get_module(slug: str) -> dict[str, Any] | None:
     return _find_by_slug(list_modules(), slug)
 

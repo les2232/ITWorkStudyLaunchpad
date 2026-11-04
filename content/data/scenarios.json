@@ -183,5 +183,105 @@
       "Do not promise completion before a mentor confirms the workflow."
     ],
     "mentor_feedback": "A strong answer protects the user and the department by asking for approval before acting. Confidence in IT includes knowing when not to proceed alone."
+  },
+  {
+    "id": "classroom_no_display",
+    "title": "Classroom Computer Has No Display",
+    "summary": "Practice a deliberate, beginner-safe check of a classroom workstation with a loose DisplayPort cable.",
+    "readiness_levels": ["developing"],
+    "module_slugs": ["hardware_basics", "how_to_ask_for_help", "escalation_rules"],
+    "situation": "A classroom computer is powered on, but its monitor shows No Signal. In this practice scenario, the fixed fault is a DisplayPort cable that is visibly loose where it connects to the computer.",
+    "student_prompt": "Inspect each visible condition before choosing a resolution. Avoid changes that are unnecessary, unsafe, or outside a beginner's role.",
+    "safe_actions": [
+      "Inspect the computer power indicator without opening the case.",
+      "Inspect the monitor power indicator and visible status message.",
+      "Confirm the monitor's selected input source.",
+      "Inspect the external display cable at both ends.",
+      "Reconnect the visibly loose DisplayPort cable only after completing the observations."
+    ],
+    "document": [
+      "The computer and monitor power indicators.",
+      "The exact message displayed by the monitor.",
+      "The selected monitor input source.",
+      "The loose DisplayPort connection and the result after reconnecting it."
+    ],
+    "ask_mentor_when": [
+      "The cable or connector appears damaged.",
+      "The display does not return after the approved external checks.",
+      "Any next step would require opening equipment, changing settings, using elevated access, or replacing hardware."
+    ],
+    "avoid": [
+      "Do not open the computer case.",
+      "Do not change BIOS, drivers, or other system settings.",
+      "Do not reimage the computer or replace equipment for a visible loose-cable fault.",
+      "Do not claim completion until the display is restored and the result is explicitly saved."
+    ],
+    "mentor_feedback": "A strong response checks visible facts in order, reconnects only the visibly loose external cable, confirms that the display returns, and escalates instead of attempting unrelated or restricted changes.",
+    "scenario_type": "guided_troubleshooting",
+    "activity_id": "developing_no_display_troubleshooting",
+    "required_inspections": [
+      "computer_power",
+      "monitor_status",
+      "input_source",
+      "display_cable"
+    ],
+    "inspections": [
+      {
+        "id": "computer_power",
+        "label": "Inspect computer power",
+        "feedback": "The computer's power indicator is on. The computer appears to be running, so continue gathering visible facts."
+      },
+      {
+        "id": "monitor_status",
+        "label": "Inspect monitor status",
+        "feedback": "The monitor's power indicator is on, and the screen displays No Signal. Record the exact message before continuing."
+      },
+      {
+        "id": "input_source",
+        "label": "Inspect input source",
+        "feedback": "The monitor is set to DisplayPort, which matches the connected display cable. Continue to the external connection."
+      },
+      {
+        "id": "display_cable",
+        "label": "Inspect display cable",
+        "feedback": "The DisplayPort cable is visibly loose where it connects to the computer. This is the fault set up for this practice exercise."
+      }
+    ],
+    "actions": [
+      {
+        "id": "reconnect_displayport",
+        "label": "Reconnect the loose DisplayPort cable",
+        "kind": "resolution",
+        "feedback": "The cable is seated securely and the practice classroom display returns. Confirm the result, then finish and save the activity."
+      },
+      {
+        "id": "replace_monitor",
+        "label": "Replace the monitor",
+        "kind": "premature",
+        "feedback": "Pause before replacing equipment. Complete the visible power, status, input, and cable checks first; the evidence may point to a smaller approved action."
+      },
+      {
+        "id": "open_computer_case",
+        "label": "Open the computer case",
+        "kind": "unsafe",
+        "feedback": "Stop and ask a mentor. Opening equipment is unnecessary for this visible external-cable issue and is outside this beginner-safe exercise."
+      },
+      {
+        "id": "change_bios_settings",
+        "label": "Change BIOS settings",
+        "kind": "unsafe",
+        "feedback": "Stop and ask a mentor. Do not change BIOS settings for a no-display report when approved visible checks are not complete."
+      },
+      {
+        "id": "reimage_computer",
+        "label": "Reimage the computer",
+        "kind": "unsafe",
+        "feedback": "Stop and ask a mentor. Reimaging can affect software and data and is not an appropriate response to a visible loose cable."
+      }
+    ],
+    "resolution": {
+      "action_id": "reconnect_displayport",
+      "confirmation": "The practice display is restored after the loose DisplayPort cable is reconnected."
+    }
   }
 ]

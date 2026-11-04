@@ -72,6 +72,22 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Work Style and Support Needs", response.data)
         self.assertIn(b"separate role-alignment signal", response.data)
+        self.assertIn(b"id=\x22question-q3\x22", response.data)
+        self.assertIn(b"aria-labelledby=\x22question-q3-prompt\x22", response.data)
+
+    def test_invalid_saved_student_session_recovers_to_anonymous_view(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+            session["student_id"] = "invalid"
+            session["student_display_name"] = "Stale Demo"
+
+        response = self.client.get("/student")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Save Demo Name", response.data)
+        with self.client.session_transaction() as session:
+            self.assertNotIn("student_id", session)
+            self.assertNotIn("student_display_name", session)
 
     def test_pre_assessment_results_explain_mentor_review_items(self):
         assessment = load_assessment("pre_assessment_v1")
@@ -84,8 +100,11 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         result.pop("questions", None)
         result.pop("role_alignment", None)
 
-        with self.client.session_transaction() as session:
-            session["pre_assessment_result"] = result
+        from launchpad.storage import create_or_find_student, save_assessment_result
+        student = create_or_find_student("DEMO Saved Review", self.db_path)
+        save_assessment_result(student["id"], assessment["id"], "pre", result,
+                               {"q3": "I want help learning imaging safely."}, self.db_path)
+        self.client.post("/student", data={"display_name": student["display_name"]})
 
         response = self.client.get("/assessment-results")
 
@@ -94,6 +113,7 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"Free-Response Review Items", response.data)
         self.assertIn(b"not auto-scored", response.data)
         self.assertIn(b"A high auto-score does not mean the whole check-in is complete", response.data)
+        self.assertIn(b"aria-label=\x22IT Vocabulary:", response.data)
         self.assertNotIn(b"automatically scored", response.data)
 
     def test_post_assessment_result_explains_mentor_review_items(self):
@@ -136,9 +156,10 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Welcome to the team", response.data)
-        self.assertIn(b"Starting Point Check", response.data)
-        self.assertIn(b"Practice Scenarios", response.data)
+        self.assertIn(b"Welcome to the Launchpad", response.data)
+        self.assertIn(b"Start assessment", response.data)
+        self.assertIn(b'href="/student?next=/pre-assessment"', response.data)
+        self.assertIn(b"Practice scenarios", response.data)
         self.assertIn(b'href="/scenarios"', response.data)
         self.assertIn(b"Progress Check", response.data)
         self.assertIn(b'href="/post-assessment"', response.data)
@@ -147,12 +168,20 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         response = self.client.get("/modules/hardware_basics")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Knowledge check", response.data)
+        self.assertIn(b"After reading", response.data)
         self.assertIn(b'href="/modules/hardware_basics/quiz"', response.data)
         self.assertIn(b"Check Your Understanding", response.data)
-        self.assertIn(b"Ready to check your understanding?", response.data)
-        self.assertIn(b"Read through the module first", response.data)
-        self.assertGreaterEqual(response.data.count(b"Check Your Understanding"), 2)
+        self.assertIn(b"Use the short knowledge check", response.data)
+        self.assertEqual(response.data.count(b"Check Your Understanding"), 1)
+        self.assertEqual(
+            response.data.count(b'href="/modules/hardware_basics/quiz"'), 1
+        )
+        self.assertLess(
+            response.data.index(b'class="markdown-body"'),
+            response.data.index(b'href="/modules/hardware_basics/quiz"'),
+        )
+        self.assertEqual(response.data.count(b"<h1"), 1)
+        self.assertIn(b"markdown-body__source-title\x22 hidden", response.data)
 
     def test_checklist_repeats_save_action_after_items(self):
         response = self.client.get("/checklists/day_1")
@@ -160,6 +189,8 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Check off what you have practiced", response.data)
         self.assertGreaterEqual(response.data.count(b"Save Checklist Progress"), 2)
+        self.assertEqual(response.data.count(b"<h1"), 1)
+        self.assertIn(b"markdown-body__source-title\x22 hidden", response.data)
 
     def test_module_quiz_renders_and_scores_submission(self):
         response = self.client.get("/modules/hardware_basics/quiz")
@@ -192,9 +223,11 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         result.pop("questions", None)
         result.pop("role_alignment", None)
 
-        with self.client.session_transaction() as session:
-            session.clear()
-            session["pre_assessment_result"] = result
+        from launchpad.storage import create_or_find_student, save_assessment_result
+        student = create_or_find_student("DEMO Mentor Review", self.db_path)
+        save_assessment_result(student["id"], assessment["id"], "pre", result,
+                               {"q3": "I want help understanding imaging safely."}, self.db_path)
+        self.client.post("/student", data={"display_name": student["display_name"]})
 
         response = self.client.get("/supervisor")
 
@@ -205,6 +238,23 @@ class FlaskRouteSmokeTests(unittest.TestCase):
         self.assertIn(b"not auto-scored", response.data)
         self.assertIn(b"I want help understanding imaging safely.", response.data)
         self.assertNotIn(b"automatically scored", response.data)
+
+    def test_supervisor_renders_current_session_post_assessment(self):
+        response = self.client.post(
+            "/post-assessment",
+            data={
+                "q2": "I understand tickets better.",
+                "q10": "I would record the exact error and stop.",
+                "q11": "Monitor had power and still showed No Signal.",
+                "q12": "Imaging error appeared; I stopped.",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+        supervisor = self.client.get("/supervisor")
+
+        self.assertEqual(supervisor.status_code, 200)
+        self.assertIn(b"Auto-scored progress check", supervisor.data)
 
     def test_supervisor_renders_stuck_report_details(self):
         with self.client.session_transaction() as session:
