@@ -8,91 +8,54 @@ The goal is not to make the student fully independent on Day 1. The goal is to h
 
 ---
 
-## Student Information
+## Meet Your Team
 
-Student:
-Start Date:
-Mentor:
-Supervisor:
-Location:
-
----
-
-## Before Hands-On Work
-
-- [ ] Meet supervisor or assigned mentor.
-- [ ] Confirm work schedule and reporting location.
-- [ ] Review who to contact if late, absent, stuck, or unsure.
-- [ ] Review department expectations for professionalism and communication.
-- [ ] Review confidentiality expectations.
-- [ ] Review what the student is not allowed to do yet.
-- [ ] Confirm that asking basic questions is expected.
+- [ ] Meet your mentor or supervisor.
+- [ ] Confirm your work schedule and where to report.
+- [ ] Know who to contact if you are late, absent, stuck, or unsure.
+- [ ] Review expectations for professionalism, communication, and confidentiality.
+- [ ] Review what you are not allowed to do yet. Asking basic questions is expected.
 
 ---
 
-## Access and Tools Orientation
+## Get Logged In
 
-- [ ] Confirm computer login works.
-- [ ] Confirm email access works.
-- [ ] Confirm Teams or department communication access works.
-- [ ] Review where training materials are located.
-- [ ] Review ticket/work-order system purpose without requiring independent updates.
-- [ ] Review inventory or asset tracking purpose without requiring independent updates.
-- [ ] Review timekeeping or timesheet expectations.
-- [ ] Confirm where approved procedures are stored.
+- [ ] Confirm your computer login works.
+- [ ] Confirm email and Teams work.
+- [ ] Know how to record your hours.
+- [ ] Know where training materials and approved procedures are stored.
 
 ---
 
-## Safety Boundaries
+## Safety Rules
 
-The student should understand:
+Until you are trained and authorized, do not:
 
-- [ ] Do not ask users for passwords.
-- [ ] Do not use admin credentials unless trained and authorized.
-- [ ] Do not reset passwords unless trained and authorized.
-- [ ] Do not change account permissions.
-- [ ] Do not bypass MFA.
-- [ ] Do not delete, move, or copy user data without approval.
-- [ ] Do not choose imaging workflows by guessing.
-- [ ] Do not create, edit, close, or update tickets/work orders until trained and authorized.
-- [ ] Stop and ask when unsure.
+- Ask users for their passwords.
+- Use admin credentials, reset passwords, or change account permissions.
+- Bypass MFA.
+- Delete, move, or copy user data without approval.
+- Choose imaging workflows by guessing.
+- Create, edit, close, or update tickets or work orders.
+
+- [ ] I have read these rules and will stop and ask when unsure.
 
 ---
 
-## Required Day 1 Learning
+## Start Learning
 
-- [ ] Complete or review the pre-assessment.
-- [ ] Review assigned training path.
+- [ ] Take the Starting Point Check and look at your learning path.
 - [ ] Read Common IT Words.
-- [ ] Read What Does IT Do?
 - [ ] Read How to Ask for Help.
-- [ ] Review Escalation Rules.
-- [ ] Ask mentor at least one question about local workflow.
+- [ ] Ask your mentor one question about how things work here.
 
 ---
 
-## First Shadowing Activity
+## Shadow Your Mentor
 
-The student should shadow an approved mentor or IT tech.
+While you watch, notice how your mentor greets the user, figures out the issue, documents the work, and decides when to escalate. Afterward, ask which parts were beginner-safe and which needed training.
 
-- [ ] Observe how the mentor greets or responds to a user.
-- [ ] Observe how the mentor identifies the issue.
-- [ ] Observe how the mentor documents work.
-- [ ] Observe when the mentor escalates or asks another person.
-- [ ] Ask what parts of the work were beginner-safe.
-- [ ] Ask what parts required training or authorization.
-
----
-
-## Beginner-Safe Practice
-
-Only complete items approved by the mentor.
-
-- [ ] Locate an asset tag on a device.
-- [ ] Identify a monitor, keyboard, mouse, dock, and network cable.
-- [ ] Practice writing down an exact error message from a sample scenario.
-- [ ] Draft a short mentor summary from a sample issue.
-- [ ] Practice saying, "I am not sure, but I will check with my mentor."
+- [ ] Shadow your mentor on at least one request.
 
 ---
 
@@ -107,18 +70,8 @@ Student answers:
 
 ---
 
-## Mentor Check-Out
+## Check Out
 
-Mentor confirms:
+Before you leave, your mentor will confirm that you know who to ask for help, understand the safety rules, and have your next training assignment.
 
-- [ ] Student knows who to ask for help.
-- [ ] Student understands basic safety boundaries.
-- [ ] Student knows where training materials are located.
-- [ ] Student completed the assigned Day 1 training items.
-- [ ] Student has a next-step training assignment.
-
-Mentor Notes:
-
-Next Assigned Modules:
-
-Follow-Up Date:
+- [ ] Check out with your mentor before you leave.
