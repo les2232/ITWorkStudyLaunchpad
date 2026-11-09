@@ -387,6 +387,20 @@ def validate_training_paths(
                     errors.append(f"{DATA_DIR / 'training_paths.json'}: duplicate activity id: {activity_id}")
                 if isinstance(activity_id, str) and activity_id:
                     seen_activity_ids.add(activity_id)
+                if "review_topics" in item:
+                    topics = item["review_topics"]
+                    if not isinstance(topics, list) or not topics or any(
+                        not isinstance(topic, str) or not topic.strip() for topic in topics
+                    ):
+                        errors.append(
+                            f"{DATA_DIR / 'training_paths.json'}: invalid review_topics for activity {activity_id}"
+                        )
+                if "completion_guidance" in item:
+                    guidance = item["completion_guidance"]
+                    if not isinstance(guidance, str) or not guidance.strip():
+                        errors.append(
+                            f"{DATA_DIR / 'training_paths.json'}: invalid completion_guidance for activity {activity_id}"
+                        )
                 if "scenario_id" in item:
                     scenario_id = item.get("scenario_id")
                     if not isinstance(scenario_id, str) or not re.fullmatch(

@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 {% block title %}{{ path.label }} Path | IT Work Study Launchpad{% endblock %}
 {% block content %}
+{% macro activity_review(item) %}
+  {% if item.type == 'activity' and item.review_topics %}
+    <p><strong>Review these topics with your mentor:</strong></p>
+    <ul>
+      {% for topic in item.review_topics %}<li>{{ topic }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
 {% macro step_row(step) %}
   <li class="path-step" id="{{ step.anchor }}">
     <p class="step-meta"><span class="step-kind">{{ step.kind|replace('_', ' ')|title }}</span> <span class="status-badge status-badge--{{ step.status|replace('_', '-') }}">{{ step.status_label }}</span>{% if step.status_detail %} <span class="meta">{{ step.status_detail }}</span>{% endif %}</p>
     <h3>{% if step.url %}<a href="{{ step.url }}">{{ step.title }}</a>{% else %}{{ step.title }}{% endif %}</h3>
     {% if step.purpose and not step.completed %}<p class="step-purpose"><strong>Why it matters:</strong> {{ step.purpose }}</p>{% endif %}
+    {{ activity_review(step.item) }}
     {% if step.quiz_url %}
       <p class="meta"><a href="{{ step.quiz_url }}">Knowledge check</a> · {{ 'Recorded' if step.quiz_recorded else 'Not recorded' }}</p>
     {% endif %}
@@ -15,7 +25,7 @@
   {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
   {% if csrf_required %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
           <input type="hidden" name="completed" value="{{ '0' if step.completed else '1' }}">
-          <p class="meta">{% if step.completed %}Saved as complete. Reopen it for more practice or mentor review.{% else %}Record this only after finishing it with any required mentor guidance.{% endif %}</p>
+          <p class="meta">{% if step.completed %}Saved as complete. Reopen it for more practice or mentor review.{% else %}{{ step.item.completion_guidance or 'Record this only after finishing it with any required mentor guidance.' }}{% endif %}</p>
           <button class="button" type="submit">{{ 'Reopen Activity' if step.completed else 'Mark Activity Complete' }}</button>
         {% if real_mode and not current_student %}</fieldset>{% endif %}
 </form>
@@ -47,11 +57,12 @@
       <p class="eyebrow"><span class="step-status">Current step</span> · {{ step.kind|replace('_', ' ')|title }}</p>
       <h2 id="current-step-heading">{{ step.title }}</h2>
       {% if current_student %}{% include "_step_explainer.html" %}{% else %}{% if step.summary %}<p>{{ step.summary }}</p>{% endif %}{% if step.purpose %}<p class="step-purpose"><strong>Why it matters:</strong> {{ step.purpose }}</p>{% endif %}{% endif %}
+      {{ activity_review(step.item) }}
       {% if not current_student %}
         <p id="path-learner-required">Choose a synthetic learner to save activity progress. You can explore the full plan below.</p>
         <a class="button primary" href="{{ url_for('student_identity', next=request.path) }}">Choose a learner</a>
       {% elif step.item.type == 'activity' and step.item.id and not step.item.scenario_id %}
-        <p>Finish this with any required mentor guidance, then record it here.</p>
+        <p>{{ step.item.completion_guidance or 'Finish this with any required mentor guidance, then record it here.' }}</p>
         {% if step.url %}<p><a href="{{ step.url }}">Open practice scenarios</a></p>{% endif %}
         <form method="post" action="{{ url_for('update_path_activity', slug=path.slug, activity_id=step.item.id) }}">
   {% if real_mode and not current_student %}<fieldset disabled><legend>Read-only training content</legend>{% endif %}
