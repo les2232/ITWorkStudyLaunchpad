@@ -16,6 +16,7 @@ from launchpad.storage import (
     set_activity_complete,
 )
 from scripts.validate_content import validate_training_paths
+from tests.test_ux_navigation import Page
 
 
 class ActivityProgressStorageTests(unittest.TestCase):
@@ -135,6 +136,23 @@ class TrainingPathActivityValidationTests(unittest.TestCase):
         )
 
         self.assertTrue(any("duplicate activity id: same_activity" in error for error in errors))
+
+    def test_optional_review_content_accepts_plain_text_and_rejects_invalid_shapes(self):
+        activity = {
+            "type": "activity", "id": "department_review", "label": "Department review",
+            "purpose": "Understand local expectations.",
+        }
+        self.assertEqual(validate_training_paths(self._path_data([activity])), [])
+        valid = {**activity, "review_topics": ["Ask who to contact."], "completion_guidance": "Review with your mentor."}
+        self.assertEqual(validate_training_paths(self._path_data([valid])), [])
+        for field, values in (
+            ("review_topics", ("A topic", [], [" "], [None], {"topic": "A topic"}, None)),
+            ("completion_guidance", ("", " ", ["Review first"], 1, None)),
+        ):
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    errors = validate_training_paths(self._path_data([{**activity, field: value}]))
+                    self.assertTrue(any(f"invalid {field}" in error for error in errors))
 
 
 class ProgressAwareContinuationTests(unittest.TestCase):
@@ -299,6 +317,68 @@ class ProgressAwareContinuationTests(unittest.TestCase):
         )
         self.assertEqual(reopened.status_code, 302)
         self.assertFalse(activity_progress(student["id"], self.db_path)[activity_id])
+
+    def test_department_review_guides_both_paths_without_changing_saved_progress(self):
+        topics = (
+            "Schedule and attendance:",
+            "Communication:",
+            "Daily work:",
+            "Timekeeping and breaks:",
+            "Professionalism:",
+            "Help and approval:",
+        )
+        for path_slug, score in (("ready_to_shadow", 75), ("advanced_beginner", 90)):
+            with self.subTest(path=path_slug):
+                student = self._student_with_score(f"SYN Department {path_slug}", score)
+                activity_id = f"{path_slug}_department_expectations"
+                route = f"/training-path/{path_slug}"
+                anchor = f"activity-{activity_id}"
+
+                for current in (False, True):
+                    if current:
+                        self._complete_checklist(student["id"])
+                    response = self.client.get(route)
+                    self.assertEqual(response.status_code, 200)
+                    page = Page(response)
+                    review = page.find(id=anchor)[0]
+                    for topic in topics:
+                        self.assertIn(topic, review.label)
+                    self.assertIn("Before marking this complete", review.label)
+                    self.assertIn("Mark Activity Complete", review.label)
+                    self.assertEqual(len(page.within(review, "li")), len(topics))
+                    self.assertEqual(activity_progress(student["id"], self.db_path), {})
+                    confidentiality = page.find(id=f"activity-{path_slug}_confidentiality_review")[0]
+                    self.assertNotIn("Schedule and attendance:", confidentiality.label)
+
+                completed = self.client.post(f"{route}/activities/{activity_id}", data={"completed": "1"})
+                self.assertEqual(completed.status_code, 302)
+                page = Page(self.client.get(route))
+                review = page.find(id=anchor)[0]
+                self.assertIn(page.find(id="completed-steps")[0], review.parents)
+                for topic in topics:
+                    self.assertIn(topic, review.label)
+                self.assertIn("Saved as complete", review.label)
+                self.assertIn("Reopen Activity", review.label)
+                self.assertNotIn("Before marking this complete", review.label)
+                self.assertEqual(activity_progress(student["id"], self.db_path), {activity_id: True})
+
+                reopened = self.client.post(f"{route}/activities/{activity_id}", data={"completed": "0"})
+                self.assertEqual(reopened.status_code, 302)
+                review = Page(self.client.get(route)).find(id=anchor)[0]
+                self.assertIn("Before marking this complete", review.label)
+                self.assertFalse(activity_progress(student["id"], self.db_path)[activity_id])
+
+    def test_department_review_is_readable_without_a_selected_learner(self):
+        for path_slug in ("ready_to_shadow", "advanced_beginner"):
+            with self.subTest(path=path_slug):
+                response = self.client.get(f"/training-path/{path_slug}")
+                self.assertEqual(response.status_code, 200)
+                page = Page(response)
+                review = page.find(id=f"activity-{path_slug}_department_expectations")[0]
+                self.assertIn("Schedule and attendance:", review.label)
+                self.assertIn("Help and approval:", review.label)
+                self.assertIn("Choose a learner to save progress", review.label)
+                self.assertEqual(page.within(review, "form"), [])
 
 
 if __name__ == "__main__":
